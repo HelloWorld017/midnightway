@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    // Strictness
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Module
+    "module": "preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+
+    // Types
+    "types": [
+      "node",
+      "@girs/gjs",
+      "@girs/gtk-4.0"
+    ],
+    "typeRoots": [
+      "./node_modules",
+      "./node_modules/@types"
+    ],
+
+    // Others
+    "jsx": "preserve",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "composite": true,
+    "incremental": true,
+  },
+
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "eslint.config.js"
+  ]
+}
