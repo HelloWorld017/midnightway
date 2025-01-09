@@ -13,9 +13,7 @@
 
     // Types
     "types": [
-      "node",
-      "@girs/gjs",
-      "@girs/gtk-4.0"
+      "node"
     ],
     "typeRoots": [
       "./node_modules",
@@ -24,6 +22,7 @@
 
     // Others
     "jsx": "preserve",
+    "jsxImportSource": "astal/gtk4",
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,

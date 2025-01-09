@@ -19,7 +19,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, astal, flake-utils, ... }:
+  outputs = { nixpkgs, astal, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       astalPkgs = astal.packages.${system};
@@ -27,6 +27,12 @@
         astalPkgs.astal4
         astalPkgs.io
         astalPkgs.gjs
+        pkgs.gjs
+      ];
+      devDeps = [
+        astalPkgs.astal3
+        pkgs.glib
+        pkgs.gobject-introspection
         pkgs.nodejs_23
         pkgs.nodePackages.pnpm
       ];
@@ -35,10 +41,7 @@
         name = "midnightway";
         src = ./.;
 
-        nativeBuildInputs = [
-          pkgs.wrapGAppsHook
-          pkgs.gobject-introspection
-        ];
+        nativeBuildInputs = devDeps ++ [ pkgs.wrapGAppsHook ];
 
         buildInputs = deps;
 
@@ -49,7 +52,7 @@
       };
 
       devShells.default = pkgs.mkShell {
-        packages = deps;
+        packages = deps ++ devDeps;
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
           export VIRTUAL_ENV="midnightway";
