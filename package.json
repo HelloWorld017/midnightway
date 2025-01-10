@@ -7,7 +7,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "farm build",
-    "dev": "BUILD_MODE=development farm build && gjs -m dist/index.js",
+    "dev": "BUILD_MODE=development farm build && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" gjs -m dist/index.js",
     "generate": "ts-for-gir generate --outdir src/definitions/girs '*'",
     "lint": "eslint"
   },
