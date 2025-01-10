@@ -1,6 +1,7 @@
 import hash from '@emotion/hash';
 import { App } from 'astal/gtk4';
 import { compile, serialize, stringify } from 'stylis';
+import { DEFAULT_THEME } from '@/constants/theme';
 
 const stylePrefix = 'css-';
 const styleRegistry = new Set<string>();
@@ -20,3 +21,5 @@ export const css = (template: TemplateStringsArray, ...args: unknown[]) => {
   styleRegistry.add(rawHash);
   return className;
 };
+
+export const theme = DEFAULT_THEME;

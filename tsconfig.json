@@ -37,6 +37,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "eslint.config.js",
-    "farm.config.ts"
+    "rspack.config.ts"
   ]
 }

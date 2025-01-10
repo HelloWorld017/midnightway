@@ -22,10 +22,6 @@ export const StatusBar = ({ monitor }: StatusBarProps) => {
       application={App}
     >
       <centerbox>
-        <button onClicked="echo hello" hexpand halign={Gtk.Align.CENTER}>
-          Welcome to AGS!
-        </button>
-        <box />
         <menubutton hexpand halign={Gtk.Align.CENTER}>
           <label label={time()} />
           <popover>

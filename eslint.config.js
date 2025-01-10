@@ -14,7 +14,7 @@ export default ts.config(
       'src/**/*.ts',
       'src/**/*.tsx',
       'eslint.config.js',
-      'farm.config.ts',
+      'rspack.config.ts',
     ],
     ignores: ['src/definitions/girs/*'],
     extends: [
@@ -101,7 +101,7 @@ export default ts.config(
     },
   },
   {
-    files: ['src/definitions/*.ts', 'eslint.config.js', 'farm.config.ts'],
+    files: ['src/definitions/*.ts', 'eslint.config.js', 'rspack.config.ts'],
     rules: {
       'import-x/no-default-export': 'off',
     },
