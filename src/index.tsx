@@ -1,8 +1,11 @@
 import { App } from 'astal/gtk4';
-import { Bar } from './components/Bar';
+import { StatusBar } from './components/StatusBar';
 
 App.start({
   main() {
-    App.get_monitors().map(monitor => <Bar monitor={monitor} />);
+    import.meta.CSS_PATHS.forEach(cssFile => {
+      App.apply_css(`./dist/${cssFile}`);
+    });
+    App.get_monitors().map(monitor => <StatusBar monitor={monitor} />);
   },
 });

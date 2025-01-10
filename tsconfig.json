@@ -26,8 +26,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "composite": true,
-    "incremental": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
 
   "include": [

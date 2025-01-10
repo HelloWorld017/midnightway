@@ -1,26 +1,27 @@
 import { Variable } from 'astal';
 import { App, Astal, Gtk } from 'astal/gtk4';
+import styles from './StatusBar.module.less';
 import type { Gdk } from 'astal/gtk4';
 
 const time = Variable('').poll(1000, 'date');
 
-type BarProps = {
+type StatusBarProps = {
   monitor: Gdk.Monitor;
 };
 
-export const Bar = ({ monitor }: BarProps) => {
+export const StatusBar = ({ monitor }: StatusBarProps) => {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor;
 
   return (
     <window
       visible
-      cssClasses={['Bar']}
+      cssClasses={[styles.statusBar]}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       anchor={TOP | LEFT | RIGHT}
       application={App}
     >
-      <centerbox cssName="centerbox">
+      <centerbox>
         <button onClicked="echo hello" hexpand halign={Gtk.Align.CENTER}>
           Welcome to AGS!
         </button>
