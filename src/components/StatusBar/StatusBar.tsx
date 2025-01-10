@@ -1,6 +1,6 @@
 import { Variable } from 'astal';
 import { App, Astal, Gtk } from 'astal/gtk4';
-import styles from './StatusBar.module.less';
+import * as styles from './StatusBar.css';
 import type { Gdk } from 'astal/gtk4';
 
 const time = Variable('').poll(1000, 'date');
@@ -15,7 +15,7 @@ export const StatusBar = ({ monitor }: StatusBarProps) => {
   return (
     <window
       visible
-      cssClasses={[styles.statusBar]}
+      cssClasses={[styles.statusBarStyle]}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       anchor={TOP | LEFT | RIGHT}

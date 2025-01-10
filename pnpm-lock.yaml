@@ -9,6 +9,13 @@ pnpmfileChecksum: i4wmq2j5zgt7fchq2p6mn2niza
 importers:
 
   .:
+    dependencies:
+      '@emotion/hash':
+        specifier: ^0.9.2
+        version: 0.9.2
+      stylis:
+        specifier: ^4.3.4
+        version: 4.3.4
     devDependencies:
       '@eslint/js':
         specifier: ^9.17.0
@@ -18,7 +25,7 @@ importers:
         version: 1.0.4
       '@farmfe/core':
         specifier: ^1.6.4
-        version: link:../farm/packages/core
+        version: 1.6.4
       '@farmfe/js-plugin-less':
         specifier: ^1.12.0
         version: 1.12.0(@farmfe/core@1.6.4)(less@4.2.1)
@@ -37,6 +44,9 @@ importers:
       '@types/node':
         specifier: ^22.10.5
         version: 22.10.5
+      '@types/stylis':
+        specifier: ^4.2.7
+        version: 4.2.7
       '@typescript-eslint/utils':
         specifier: ^8.19.1
         version: 8.19.1(eslint@9.17.0)(typescript@5.7.3)
@@ -142,6 +152,9 @@ packages:
 
   '@changesets/write@0.3.2':
     resolution: {integrity: sha512-kDxDrPNpUgsjDbWBvUo27PzKX4gqeKOlhibaOXDJA6kuBisGqNHv/HwGJrAu8U/dSf8ZEFIeHIPtvSlZI1kULw==}
+
+  '@emotion/hash@0.9.2':
+    resolution: {integrity: sha512-MyqliTZGuOm3+5ZRSaaBGP3USLw6+EGykkwZns2EPC5g8jJ4z9OrdZY9apkl3+UP9+sdz76YYkwCKP5gh8iY3g==}
 
   '@eslint-community/eslint-utils@4.4.1':
     resolution: {integrity: sha512-s3O3waFUrMV8P/XaF/+ZTp1X9XBZW1a4B97ZnjQF2KYWaFD2A8KyFBsrsfSjEmjn3RGWAIuvlneuZm3CUK3jbA==}
@@ -610,6 +623,9 @@ packages:
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+
+  '@types/stylis@4.2.7':
+    resolution: {integrity: sha512-VgDNokpBoKF+wrdvhAAfS55OMQpL6QRglwTwNC3kIgBrzZxA4WsFj+2eLfEA/uMUDzBcEhYmjSbwQakn/i3ajA==}
 
   '@types/ua-parser-js@0.7.39':
     resolution: {integrity: sha512-P/oDfpofrdtF5xw433SPALpdSchtJmY7nsJItf8h3KXqOslkbySh8zq4dSWXH2oTjRvJ5PczVEoCZPow6GicLg==}
@@ -2233,6 +2249,9 @@ packages:
   strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
 
+  stylis@4.3.4:
+    resolution: {integrity: sha512-osIBl6BGUmSfDkyH2mB7EFvCJntXDrLhKjHTRj/rK6xLH0yuPrHULDRQzKokSOD4VoorhtKpfcfW1GAntu8now==}
+
   stylus@0.62.0:
     resolution: {integrity: sha512-v3YCf31atbwJQIMtPNX8hcQ+okD4NQaTuKGUWfII8eaqn+3otrbttGL1zSMZAAtiPsBztQnujVBugg/cXFUpyg==}
     hasBin: true
@@ -2599,6 +2618,8 @@ snapshots:
       fs-extra: 7.0.1
       human-id: 1.0.2
       prettier: 2.8.8
+
+  '@emotion/hash@0.9.2': {}
 
   '@eslint-community/eslint-utils@4.4.1(eslint@9.17.0)':
     dependencies:
@@ -3108,6 +3129,8 @@ snapshots:
       postcss: 8.4.49
 
   '@types/semver@7.5.8': {}
+
+  '@types/stylis@4.2.7': {}
 
   '@types/ua-parser-js@0.7.39': {}
 
@@ -4715,6 +4738,8 @@ snapshots:
   strip-json-comments@3.1.1: {}
 
   strnum@1.0.5: {}
+
+  stylis@4.3.4: {}
 
   stylus@0.62.0:
     dependencies:

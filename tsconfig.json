@@ -4,12 +4,15 @@
     "strict": true,
     "exactOptionalPropertyTypes": true,
 
-    // Module
+    // Module / Resolution
     "module": "preserve",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "esModuleInterop": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
 
     // Types
     "target": "es2021",
@@ -26,7 +29,8 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "incremental": true,
+    "composite": true
   },
 
   "include": [
