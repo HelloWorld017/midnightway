@@ -12,9 +12,9 @@
     "esModuleInterop": true,
 
     // Types
-    "types": [
-      "node"
-    ],
+    "target": "es2021",
+    "lib": ["es2021"],
+    "types": ["node"],
     "typeRoots": [
       "./node_modules",
       "./node_modules/@types"
@@ -33,6 +33,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "eslint.config.js"
+    "eslint.config.js",
+    "farm.config.ts"
   ]
 }

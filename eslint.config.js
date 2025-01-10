@@ -10,7 +10,12 @@ import * as ts from 'typescript-eslint';
 
 export default ts.config(
   {
-    files: ['src/**/*.ts', 'src/**/*.tsx', 'eslint.config.js'],
+    files: [
+      'src/**/*.ts',
+      'src/**/*.tsx',
+      'eslint.config.js',
+      'farm.config.ts',
+    ],
     ignores: ['src/definitions/girs/*'],
     extends: [
       js.configs.recommended,
@@ -96,7 +101,7 @@ export default ts.config(
     },
   },
   {
-    files: ['src/definitions/*.ts', 'eslint.config.js'],
+    files: ['src/definitions/*.ts', 'eslint.config.js', 'farm.config.ts'],
     rules: {
       'import-x/no-default-export': 'off',
     },
