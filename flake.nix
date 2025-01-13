@@ -27,6 +27,7 @@
         astalPkgs.astal4
         astalPkgs.io
         astalPkgs.gjs
+        astalPkgs.hyprland
         pkgs.gjs
       ];
       devDeps = [

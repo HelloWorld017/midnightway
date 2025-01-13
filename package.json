@@ -8,8 +8,12 @@
   "scripts": {
     "build": "NODE_OPTIONS=--experimental-transform-types rspack build",
     "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" gjs -m dist/index.js",
-    "generate": "ts-for-gir generate --outdir src/definitions/girs '*'",
-    "lint": "eslint"
+    "generate": "pnpm run generate:clean && pnpm run generate:gir",
+    "generate:clean": "rm -rf src/definitions/girs",
+    "generate:gir": "ts-for-gir generate --outdir src/definitions/girs --ignoreVersionConflicts '*'",
+    "lint": "eslint",
+    "postinstall": "pnpm run generate",
+    "watch": "nodemon --exec 'pnpm dev' --watch src -e ts,tsx"
   },
   "keywords": [
     "astal",
@@ -33,6 +37,7 @@
     "eslint-plugin-import-x": "^4.6.1",
     "eslint-plugin-no-autofix": "^2.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1"
