@@ -8,6 +8,16 @@ import noAutofix from 'eslint-plugin-no-autofix';
 import prettier from 'eslint-plugin-prettier/recommended';
 import * as ts from 'typescript-eslint';
 
+const importIgnoreList = [
+  'cairo',
+  'console',
+  'gettext',
+  'system',
+  '^file://',
+  '^gi://',
+  '^resource://',
+];
+
 export default ts.config(
   {
     files: [
@@ -56,6 +66,7 @@ export default ts.config(
       'import-x/newline-after-import': 'error',
       'import-x/no-default-export': 'error',
       'import-x/no-duplicates': 'error',
+      'import-x/no-unresolved': ['error', { ignore: importIgnoreList }],
       'import-x/order': [
         'error',
         {
@@ -98,6 +109,9 @@ export default ts.config(
     plugins: {
       '@stylistic': stylistic,
       'no-autofix': noAutofix,
+    },
+    settings: {
+      'import-x/ignore': importIgnoreList,
     },
   },
   {
