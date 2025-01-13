@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { defineConfig } from '@rspack/cli';
-import type { SwcLoaderOptions } from '@rspack/core';
+import { CopyRspackPlugin, type SwcLoaderOptions } from '@rspack/core';
 
 export default defineConfig({
   entry: {
@@ -64,6 +64,14 @@ export default defineConfig({
   ],
 
   externalsType: 'module-import',
+
+  plugins: [
+    new CopyRspackPlugin({
+      patterns: [
+        { from: join(process.cwd(), 'src/assets/icons'), to: 'icons' },
+      ],
+    }),
+  ],
 
   experiments: {
     outputModule: true,
