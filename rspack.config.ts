@@ -1,10 +1,11 @@
 import { join } from 'node:path';
 import { defineConfig } from '@rspack/cli';
-import { CopyRspackPlugin, type SwcLoaderOptions } from '@rspack/core';
+import { type SwcLoaderOptions } from '@rspack/core';
 
 export default defineConfig({
   entry: {
     index: './src/index.tsx',
+    renderer: './src/renderer.tsx',
   },
 
   output: {
@@ -32,7 +33,7 @@ export default defineConfig({
             transform: {
               react: {
                 runtime: 'automatic',
-                importSource: 'astal/gtk4',
+                importSource: 'react',
                 development: false,
                 refresh: false,
               },
@@ -47,12 +48,16 @@ export default defineConfig({
     alias: {
       '@': join(process.cwd(), 'src'),
     },
+    fallback: {
+      path: 'path-browserify',
+    },
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.wasm'],
     extensionAlias: {
       '.js': ['.ts', '.js'],
     },
   },
 
+  // prettier-ignore
   externals: [
     'cairo',
     'console',
@@ -64,14 +69,6 @@ export default defineConfig({
   ],
 
   externalsType: 'module-import',
-
-  plugins: [
-    new CopyRspackPlugin({
-      patterns: [
-        { from: join(process.cwd(), 'src/assets/icons'), to: 'icons' },
-      ],
-    }),
-  ],
 
   experiments: {
     outputModule: true,

@@ -1,0 +1,20 @@
+import type AstalHyprland from 'gi://AstalHyprland';
+
+/* Definitions */
+export type InitParams = InitParamsDock | InitParamsStatusBar;
+export type InitParamsDock = { kind: 'dock'; params: { monitor: string } };
+export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: string } };
+
+export type BridgeMethodsMain = {
+  update: (params: { id: string; value: unknown }) => void;
+};
+
+export type BridgeMethodsRenderer = {
+  initParams: (params: void) => InitParams;
+  subscribe: (params: { path: string; pick?: string[] | null }) => { id: string; value: unknown };
+  unsubscribe: (params: { id: string }) => void;
+};
+
+export type BridgeRepository = {
+  hyprland: AstalHyprland.Hyprland;
+};

@@ -16,7 +16,7 @@
 
     // Types
     "target": "es2021",
-    "lib": ["es2021"],
+    "lib": ["es2021", "dom"],
     "types": ["node"],
     "typeRoots": [
       "./node_modules",
@@ -25,7 +25,7 @@
 
     // Others
     "jsx": "preserve",
-    "jsxImportSource": "astal/gtk4",
+    "jsxImportSource": "react",
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,

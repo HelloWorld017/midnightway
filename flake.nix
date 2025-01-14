@@ -29,6 +29,7 @@
         astalPkgs.gjs
         astalPkgs.hyprland
         pkgs.gjs
+        pkgs.webkitgtk_6_0
       ];
       devDeps = [
         astalPkgs.astal3
