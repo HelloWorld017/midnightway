@@ -41,6 +41,11 @@ export default defineConfig({
           },
         } satisfies SwcLoaderOptions,
       },
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: [{ loader: '@svgr/webpack', options: { svgo: false } }],
+      },
     ],
   },
 

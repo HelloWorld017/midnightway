@@ -27,6 +27,7 @@
     "@rspack/cli": "^1.1.8",
     "@rspack/core": "^1.1.8",
     "@stylistic/eslint-plugin": "^2.12.1",
+    "@svgr/webpack": "^8.1.0",
     "@ts-for-gir/cli": "4.0.0-beta.19",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.10.5",
