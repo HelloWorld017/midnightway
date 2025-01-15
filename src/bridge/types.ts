@@ -1,3 +1,4 @@
+import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 import type AstalHyprland from 'gi://AstalHyprland';
 
 /* Definitions */
@@ -11,7 +12,7 @@ export type BridgeMethodsMain = {
 
 export type BridgeMethodsRenderer = {
   initParams: (params: void) => InitParams;
-  subscribe: (params: { path: string; pick?: string[] | null }) => { id: string; value: unknown };
+  subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;
 };
 

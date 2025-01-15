@@ -1,4 +1,4 @@
-import { createMethodsProxy } from '@/utils/proxy';
+import { createMethodsProxy } from '@/utils/methodsProxy';
 import { methodsMainImpl } from './implementations/main';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from './types';
 

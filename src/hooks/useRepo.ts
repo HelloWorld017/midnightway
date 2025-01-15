@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react';
 import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
-import { getRepositoryProxyPath } from '@/utils/proxy';
-import type { RepositoryProxy } from '@/utils/proxy';
+import { getRepositoryProxyDescriptor } from '@/utils/repositoryProxy';
+import type { RepositoryProxy } from '@/utils/repositoryProxy';
 
 const subscriptions = new Map<string, (nextValue: unknown) => void>();
 
-export const useRepo = <T, TKey extends keyof T & string>(
-  repo: RepositoryProxy<T>,
-  ...pick: TKey[]
-) => {
-  const path = getRepositoryProxyPath(repo);
-
-  const [value, setValue] = useState<Pick<T, TKey> | null>(null);
+export const useRepo = <T>(repo: RepositoryProxy<T>, deps: unknown[] = []) => {
+  const [value, setValue] = useState<T | null>(null);
+  const descriptor = getRepositoryProxyDescriptor(repo);
   useEffect(() => {
     let id: string | null = null;
-    void bridgeRenderer.subscribe({ path, pick: pick.length ? pick : null }).then(result => {
+    void bridgeRenderer.subscribe({ descriptor }).then(result => {
       id = result.id;
       setValue(result.value as T);
       subscriptions.set(id, nextValue => {
@@ -28,7 +24,7 @@ export const useRepo = <T, TKey extends keyof T & string>(
         subscriptions.delete(id);
       }
     };
-  }, [path]);
+  }, deps);
 
   return value;
 };

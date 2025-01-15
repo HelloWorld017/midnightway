@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
 
@@ -7,22 +6,19 @@ type StatusBarProps = {
 };
 
 export const StatusBar = ({ monitorName }: StatusBarProps) => {
-  const focusedWorkspace = useRepo(repo.hyprland.focusedWorkspace, 'id');
-  const focusedWorkspaceClients = useRepo(repo.hyprland.focusedWorkspace.clients, 'length');
-  const monitors = useRepo(repo.hyprland.monitors);
-  const monitor = useMemo(
-    () => monitors?.find(({ name }) => name === monitorName),
-    [monitors, monitorName]
+  const focusedWorkspaceId = useRepo(repo.hyprland.focusedWorkspace.id);
+  const focusedWorkspaceClients = useRepo(repo.hyprland.focusedWorkspace.clients.length);
+  const activeWorkspaceId = useRepo(
+    repo.hyprland.monitors.$find('name', 'is', monitorName).activeWorkspace.id,
+    [monitorName]
   );
 
-  const isIdle =
-    monitor?.activeWorkspace.id !== focusedWorkspace?.id || !focusedWorkspaceClients?.length;
-
+  const isIdle = activeWorkspaceId !== focusedWorkspaceId || !focusedWorkspaceClients;
   return (
     <>
       {monitorName}
       {isIdle && 'Idle'}
-      {focusedWorkspace?.id}
+      {focusedWorkspaceId}
     </>
   );
 };

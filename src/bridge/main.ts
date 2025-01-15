@@ -1,5 +1,5 @@
 import JavaScriptCore from 'gi://JavaScriptCore';
-import { createMethodsProxy } from '@/utils/proxy';
+import { createMethodsProxy } from '@/utils/methodsProxy';
 import { methodsRendererImpl } from './implementations/renderer';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from './types';
 import type WebKit from 'gi://WebKit';
