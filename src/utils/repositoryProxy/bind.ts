@@ -1,6 +1,6 @@
 import { bind } from 'astal';
 import { isObject } from '@/utils/type/isObject';
-import { applyDescriptorItem } from './operations';
+import { applyDescriptorItem, bindDescriptorItem } from './operations';
 import { getRepositoryProxyDescriptor } from './repositoryProxy';
 import type { RepositoryProxy, RepositoryProxyDescriptor } from './repositoryProxy';
 import type { Connectable, Subscribable } from 'astal/binding';
@@ -29,15 +29,17 @@ export const bindRepositoryProxy = <T>(
     }
 
     const currentValue = applyDescriptorItem(obj, descriptorItem);
-    if (typeof descriptorItem !== 'string' || !isConnectable(obj)) {
-      return doBind(currentValue, callback, next);
-    }
-
     let cleanupChild = doBind(currentValue, callback, next);
-    const cleanupSelf = bind(obj, descriptorItem).subscribe((nextValue: unknown) => {
-      callback();
-      cleanupChild?.();
-      cleanupChild = doBind(nextValue, callback, next);
+    const cleanupSelf = bindDescriptorItem(obj, descriptorItem, (object, key) => {
+      if (!isConnectable(object)) {
+        return () => {};
+      }
+
+      return bind(object, key).subscribe((nextValue: unknown) => {
+        callback();
+        cleanupChild?.();
+        cleanupChild = doBind(nextValue, callback, next);
+      });
     });
 
     return () => {

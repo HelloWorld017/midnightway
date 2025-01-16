@@ -9,7 +9,9 @@ export type RepositoryProxyFilter = {
 };
 
 export type RepositoryProxyMethods<T> = {
-  $pick: (...key: (keyof T & string)[]) => RepositoryProxySelectable<T>;
+  $pick: <TKey extends keyof T & string>(
+    ...key: TKey[]
+  ) => RepositoryProxySelectable<Pick<T, TKey>>;
   $filter: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
