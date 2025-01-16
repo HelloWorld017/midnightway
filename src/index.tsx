@@ -12,7 +12,7 @@ const { Exclusivity, WindowAnchor } = Astal;
 const WebView = astalify(WebKit.WebView);
 
 const webViewStyle = css`
-  min-height: 100px;
+  min-height: 60px;
   background: transparent;
 `;
 

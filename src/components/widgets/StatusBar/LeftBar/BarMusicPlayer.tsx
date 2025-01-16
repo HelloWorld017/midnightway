@@ -1,3 +1,4 @@
+import { IconMusic } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { Collapsible } from '@/components/common/Collapsible';
 import { useRepo } from '@/hooks/useRepo';
@@ -19,18 +20,27 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
   );
 
   return (
-    <div css={styles.musicStyle(!!player)}>
-      <div css={styles.musicHeaderStyle}>
-        <h1 css={styles.musicHeaderTitleStyle(surface)}>{player?.title}</h1>
-        <Collapsible orientation="horizontal" isVisible={!isIdle}>
-          <div css={styles.musicHeaderArtistContainerStyle(surface)}>
-            <span css={styles.musicHeaderArtistStyle(surface, !isIdle)}>{player?.artist}</span>
+    <Collapsible
+      css={styles.musicCollapsibleStyle(!!player)}
+      orientation="horizontal"
+      isVisible={!!player}
+    >
+      <div css={styles.musicStyle}>
+        <IconMusic css={styles.musicIconStyle(surface)} />
+        <div css={styles.musicColumnsStyle}>
+          <div css={styles.musicHeaderStyle}>
+            <h1 css={styles.musicHeaderTitleStyle(surface)}>{player?.title}</h1>
+            <Collapsible orientation="horizontal" isVisible={!isIdle}>
+              <div css={styles.musicHeaderArtistContainerStyle(surface)}>
+                <span css={styles.musicHeaderArtistStyle(surface, !isIdle)}>{player?.artist}</span>
+              </div>
+            </Collapsible>
           </div>
-        </Collapsible>
+          <Collapsible orientation="vertical" isVisible={isIdle}>
+            <span css={styles.musicArtistStyle(surface, isIdle)}>{player?.artist}</span>
+          </Collapsible>
+        </div>
       </div>
-      <Collapsible orientation="vertical" isVisible={isIdle}>
-        <span css={styles.musicArtistStyle(surface, isIdle)}>{player?.artist}</span>
-      </Collapsible>
-    </div>
+    </Collapsible>
   );
 };

@@ -2,13 +2,30 @@ import { css } from '@emotion/react';
 import type { SurfaceKind } from '@/constants/theme';
 import type { Theme } from '@emotion/react';
 
-export const musicStyle = (isVisible: boolean) => css`
-  display: flex;
-  flex-direction: column;
-  max-width: 30rem;
+export const musicCollapsibleStyle = (isVisible: boolean) => css`
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
+  margin-left: ${isVisible ? 0 : -2.4}rem;
   transition: all 0.4s ease;
+`;
+
+export const musicStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 30rem;
+`;
+
+export const musicIconStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+  flex: 0 0 auto;
+  color: ${theme.colors[surface].fillPrimary};
+  font-size: 1.8rem;
+`;
+
+export const musicColumnsStyle = css`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
 `;
 
 export const musicHeaderStyle = css`
@@ -23,6 +40,7 @@ export const musicHeaderTitleStyle = (surface: SurfaceKind) => (theme: Theme) =>
   font-size: 1.2rem;
   line-height: 1.3rem;
   letter-spacing: -0.04em;
+  white-space: nowrap;
 `;
 
 export const musicHeaderArtistContainerStyle = (surface: SurfaceKind) => (theme: Theme) => css`
@@ -51,15 +69,16 @@ export const musicHeaderArtistStyle =
     letter-spacing: -0.04em;
     opacity: ${+isVisible};
     visibility: ${isVisible ? 'visibile' : 'hidden'};
-    transform: translateX(${isVisible ? '0' : '100%'});
+    transform: translateX(${isVisible ? '0' : '-2rem'});
     transition: all 0.4s ease;
+    transition-delay: ${isVisible ? '0.4s' : '0'};
     white-space: nowrap;
   `;
 
 export const musicArtistStyle = (surface: SurfaceKind, isVisible: boolean) => (theme: Theme) => css`
   color: ${theme.colors[surface].fillSecondary};
   font-family: ${theme.fonts.content};
-  font-weight: 400;
+  font-weight: 500;
   font-size: 0.9rem;
   line-height: 1.1rem;
   letter-spacing: -0.02em;

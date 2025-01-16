@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { IconSetWorkspace } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
+import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { useRepo } from '@/hooks/useRepo';
 import * as styles from './BarWorkspace.css';
 import type { SurfaceKind } from '@/constants/theme';
@@ -32,9 +33,13 @@ export const BarWorkspace = ({ activeWorkspace, isIdle }: BarWorkspaceProps) => 
           fallback={<span css={styles.iconFallbackStyle(surface)}>{activeWorkspace?.name}</span>}
         />
       )}
-      <span css={styles.clientLabelStyle(surface)}>
-        {(!isIdle && (focusedClient?.title || focusedClient?.class)) || 'Idle'}
-      </span>
+      <SizeAnimated css={styles.clientAnimateContainerStyle}>
+        <div css={styles.clientContainerStyle(surface)}>
+          <span css={styles.clientLabelStyle}>
+            {(!isIdle && (focusedClient?.title || focusedClient?.class)) || 'Idle'}
+          </span>
+        </div>
+      </SizeAnimated>
     </div>
   );
 };

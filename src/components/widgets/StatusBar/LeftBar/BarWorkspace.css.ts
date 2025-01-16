@@ -29,15 +29,22 @@ export const iconFallbackStyle = (surface: SurfaceKind) => (theme: Theme) => css
   border-radius: 0.5rem;
 `;
 
-export const clientLabelStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillPrimary};
+export const clientAnimateContainerStyle = css`
   flex: 1 1 0;
+`;
+
+export const clientContainerStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+  color: ${theme.colors[surface].fillPrimary};
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const clientLabelStyle = (theme: Theme) => css`
   font-family: ${theme.fonts.title};
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.6rem;
   letter-spacing: -0.04em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;

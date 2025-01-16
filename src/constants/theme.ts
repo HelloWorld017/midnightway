@@ -9,7 +9,7 @@ export const DEFAULT_THEME = {
       fillElevated: '#2589BB',
     },
     glass: {
-      bgBase: 'rgba(0, 0, 0, .15)',
+      bgBase: 'rgba(0, 0, 0, .6)',
       bgElevated: '#ffffff',
       fillPrimary: '#ffffff',
       fillSecondary: 'rgba(255, 255, 255, .5)',
