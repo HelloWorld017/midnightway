@@ -1,27 +1,14 @@
-import { cx } from '@/utils/css';
+import { BarLauncher } from './BarLauncher';
 import { BarWorkspace } from './BarWorkspace';
 import * as styles from './LeftBar.css';
-import type { Subscribable } from 'astal/binding';
-import type Hyprland from 'gi://AstalHyprland';
+import type { ComponentProps } from 'react';
 
-type LeftBarProps = {
-  $monitor: Subscribable<Hyprland.Monitor>;
-  $isIdle: Subscribable<boolean>;
-};
+type LeftBarProps = { isIdle: boolean } & ComponentProps<typeof BarLauncher> &
+  ComponentProps<typeof BarWorkspace>;
 
-export const LeftBar = ({ $monitor, $isIdle }: LeftBarProps) => {
-  const context = { isIdle: $isIdle };
-
-  return (
-    <box
-      cssClasses={cx(context, [
-        styles.leftBarStyle,
-        { isIdle: styles.leftBarIdleStyle },
-      ])}
-    >
-      <box>
-        <BarWorkspace $monitor={$monitor} $isIdle={$isIdle} />
-      </box>
-    </box>
-  );
-};
+export const LeftBar = (props: LeftBarProps) => (
+  <div css={styles.leftBarStyle(props.isIdle)}>
+    <BarLauncher {...props} />
+    <BarWorkspace {...props} />
+  </div>
+);

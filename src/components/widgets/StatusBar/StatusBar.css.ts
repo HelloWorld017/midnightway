@@ -1,13 +1,11 @@
-import { css, theme } from '@/utils/css';
+import { css } from '@emotion/react';
+import type { Theme } from '@emotion/react';
 
-export const statusBarStyle = css`
-  background: ${theme.colors.glass.bgBase};
-  border-radius: 20px;
-  margin: 5px 15px;
-  transition: background 0.4s ease;
-`;
-
-export const statusBarIdleStyle = css`
-  background: transparent;
-  margin: 0;
+export const statusBarStyle = (isIdle: boolean) => (theme: Theme) => css`
+  position: relative;
+  display: flex;
+  background: ${isIdle ? 'transparent' : theme.colors.glass.bgBase};
+  border-radius: 2rem;
+  margin: ${isIdle ? '5px 15px' : '0'};
+  transition: all 0.4s ease;
 `;

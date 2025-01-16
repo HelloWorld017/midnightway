@@ -1,35 +1,40 @@
-import { derive } from 'astal';
-import { bindHigher } from '@/utils/binding';
-import { cx } from '@/utils/css';
+import { useMemo } from 'react';
+import { IconSetWorkspace } from '@/assets/icons';
+import { repo } from '@/bridge/repository';
+import { useRepo } from '@/hooks/useRepo';
 import * as styles from './BarWorkspace.css';
-import type { Subscribable } from 'astal/binding';
-import type Hyprland from 'gi://AstalHyprland';
+import type { SurfaceKind } from '@/constants/theme';
 
 type BarWorkspaceProps = {
-  $monitor: Subscribable<Hyprland.Monitor>;
-  $isIdle: Subscribable<boolean>;
+  activeWorkspace: { id: number; name: string } | null;
+  isIdle: boolean;
 };
 
-export const BarWorkspace = ({ $monitor, $isIdle }: BarWorkspaceProps) => {
-  const $workspace = bindHigher($monitor, 'activeWorkspace');
-  const $workspaceId = $workspace(workspace => workspace.name);
-  const $lastClient = bindHigher($workspace, 'lastClient');
-  const $lastClientTitle = $lastClient(client => client.title || client.class);
-  const $surface = derive([$isIdle], isIdle => (isIdle ? 'floating' : 'glass'));
-  const context = { isIdle: $isIdle, surface: $surface };
+export const BarWorkspace = ({ activeWorkspace, isIdle }: BarWorkspaceProps) => {
+  const surface: SurfaceKind = isIdle ? 'floating' : 'glass';
+  const focusedClient = useRepo(repo.hyprland.focusedClient.$pick('class', 'title', 'workspace'));
+  const activeWorkspaceNumber = useMemo(() => {
+    const name = activeWorkspace?.name;
+    const number = name && parseInt(name, 10);
+    if (Number.isInteger(number)) {
+      return number as number;
+    }
+
+    return null;
+  }, [activeWorkspace?.name]);
 
   return (
-    <box cssClasses={cx(context, styles.workspaceStyle)}>
-      <box cssClasses={cx(context, styles.iconStyle)}>
-        <label cssClasses={cx(context, styles.iconLabelStyle)}>
-          {$workspaceId}
-        </label>
-      </box>
-      <box>
-        <label cssClasses={cx(context, styles.clientLabelStyle)}>
-          {$lastClientTitle}
-        </label>
-      </box>
-    </box>
+    <div css={styles.workspaceStyle}>
+      {activeWorkspace && (
+        <IconSetWorkspace
+          css={styles.iconStyle(surface)}
+          kind={activeWorkspaceNumber ?? -1}
+          fallback={<span css={styles.iconFallbackStyle(surface)}>{activeWorkspace?.name}</span>}
+        />
+      )}
+      <span css={styles.clientLabelStyle(surface)}>
+        {(!isIdle && (focusedClient?.title || focusedClient?.class)) || 'Idle'}
+      </span>
+    </div>
   );
 };

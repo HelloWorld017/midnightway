@@ -1,27 +1,43 @@
-import { css, theme } from '@/utils/css';
+import { css } from '@emotion/react';
 import type { SurfaceKind } from '@/constants/theme';
-
-type Context = { isIdle: boolean; surface: SurfaceKind };
+import type { Theme } from '@emotion/react';
 
 export const workspaceStyle = css`
-  max-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 30rem;
 `;
 
-export const iconStyle = ({ surface }: Context) => css`
-  background: ${theme.colors[surface].bgElevated};
-  min-width: 18px;
-  min-height: 18px;
-`;
-
-export const iconLabelStyle = ({ surface }: Context) => css`
-  color: ${theme.colors[surface].fillElevated};
-`;
-
-export const clientLabelStyle = ({ surface }: Context) => css`
+export const iconStyle = (surface: SurfaceKind) => (theme: Theme) => css`
   color: ${theme.colors[surface].fillPrimary};
+  flex: 0 0 auto;
+  font-size: 1.8rem;
+`;
+
+export const iconFallbackStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+  color: ${theme.colors[surface].fillElevated};
+  font-family: ${theme.fonts.number};
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1rem;
+
+  background: ${theme.colors[surface].bgElevated};
+  flex: 0 0 auto;
+  min-width: 1.8rem;
+  min-height: 1.8rem;
+  border-radius: 0.5rem;
+`;
+
+export const clientLabelStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+  color: ${theme.colors[surface].fillPrimary};
+  flex: 1 1 0;
   font-family: ${theme.fonts.title};
   font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
   letter-spacing: -0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
