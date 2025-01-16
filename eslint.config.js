@@ -20,6 +20,7 @@ const importIgnoreList = [
 
 export default ts.config(
   {
+    // prettier-ignore
     files: [
       'src/**/*.ts',
       'src/**/*.tsx',
@@ -47,21 +48,18 @@ export default ts.config(
       '@stylistic/no-confusing-arrow': 'off',
       '@stylistic/no-multi-spaces': ['error', { ignoreEOLComments: true }],
       '@stylistic/no-tabs': 'error',
-      '@stylistic/quotes': [
-        'error',
-        'single',
-        { avoidEscape: true, allowTemplateLiterals: false },
-      ],
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: false }],
       '@stylistic/quote-props': ['error', 'consistent'],
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-empty-interface': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        { argsIgnorePattern: '^_' },
+      '@typescript-eslint/no-empty-object-type': [
+        'error',
+        { allowInterfaces: 'with-single-extends' },
       ],
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'import-x/first': 'error',
       'import-x/newline-after-import': 'error',
       'import-x/no-default-export': 'error',
@@ -70,21 +68,14 @@ export default ts.config(
       'import-x/order': [
         'error',
         {
-          'groups': [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'index',
-            'sibling',
-            'type',
-          ],
+          'groups': ['builtin', 'external', 'internal', 'parent', 'index', 'sibling', 'type'],
           'newlines-between': 'ignore',
           'alphabetize': { order: 'asc', caseInsensitive: false },
         },
       ],
       'import-x/prefer-default-export': 'off',
       'prettier/prettier': 'error',
+      'arrow-body-style': ['error', 'as-needed'],
       'camelcase': ['error', { properties: 'never' }],
       'class-methods-use-this': 'off',
       'curly': ['error', 'all'],
