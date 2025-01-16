@@ -29,6 +29,11 @@
         astalPkgs.gjs
         astalPkgs.hyprland
         astalPkgs.mpris
+        astalPkgs.network
+        astalPkgs.notifd
+        astalPkgs.tray
+        astalPkgs.wireplumber
+        pkgs.libgtop
         pkgs.gjs
         pkgs.webkitgtk_6_0
       ];

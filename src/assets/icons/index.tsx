@@ -10,8 +10,14 @@ import IconWorkspace8 from './workspace-8.svg';
 import IconWorkspace9 from './workspace-9.svg';
 import type { ReactNode, SVGProps } from 'react';
 
+export { default as IconCore } from './core.svg';
 export { default as IconLauncher } from './launcher.svg';
 export { default as IconMusic } from './music.svg';
+export { default as IconNetwork } from './network.svg';
+export { default as IconNotification } from './notification.svg';
+export { default as IconPower } from './power.svg';
+export { default as IconSound } from './sound.svg';
+export { default as IconTray } from './tray.svg';
 
 export const IconSetWorkspace = ({
   kind,

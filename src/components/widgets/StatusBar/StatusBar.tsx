@@ -2,6 +2,7 @@ import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
 import { Clock } from './Clock';
 import { LeftBar } from './LeftBar';
+import { RightBar } from './RightBar/RightBar';
 import * as styles from './StatusBar.css';
 
 type StatusBarProps = {
@@ -22,6 +23,7 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
     <div css={styles.statusBarStyle(isIdle)}>
       <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
       <Clock isIdle={isIdle} />
+      <RightBar isIdle={isIdle} />
     </div>
   );
 };
