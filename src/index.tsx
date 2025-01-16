@@ -35,7 +35,7 @@ App.start({
         }
 
         webView.load_html(
-          '<script src="midnightway://midnightway/renderer.js"></script>',
+          '<main></main><script src="midnightway://midnightway/renderer.js"></script>',
           'about:blank'
         );
 

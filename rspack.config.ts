@@ -33,7 +33,7 @@ export default defineConfig({
             transform: {
               react: {
                 runtime: 'automatic',
-                importSource: 'react',
+                importSource: '@emotion/react',
                 development: false,
                 refresh: false,
               },
