@@ -28,6 +28,7 @@
         astalPkgs.io
         astalPkgs.gjs
         astalPkgs.hyprland
+        astalPkgs.mpris
         pkgs.gjs
         pkgs.webkitgtk_6_0
       ];

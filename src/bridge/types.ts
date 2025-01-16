@@ -1,5 +1,6 @@
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 import type AstalHyprland from 'gi://AstalHyprland';
+import type AstalMpris from 'gi://AstalMpris';
 
 /* Definitions */
 export type InitParams = InitParamsDock | InitParamsStatusBar;
@@ -18,4 +19,5 @@ export type BridgeMethodsRenderer = {
 
 export type BridgeRepository = {
   hyprland: AstalHyprland.Hyprland;
+  musicPlayer: AstalMpris.Mpris;
 };
