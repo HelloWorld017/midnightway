@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import type { SurfaceKind } from '@/constants/theme';
 import type { Theme } from '@emotion/react';
 
 export const clockStyle = (isIdle: boolean) => css`
@@ -15,9 +14,9 @@ export const clockStyle = (isIdle: boolean) => css`
   transform: translate(-50%, -50%);
 `;
 
-export const clockTextStyle = (surface: SurfaceKind, isChanging: boolean) => (theme: Theme) => css`
+export const clockTextStyle = (isChanging: boolean) => (theme: Theme) => css`
   display: flex;
-  color: ${theme.colors[surface].fillPrimary};
+  color: ${theme.surface.fillPrimary};
   font-family: ${theme.fonts.content};
   font-weight: 400;
   font-size: 1.3rem;
@@ -30,8 +29,8 @@ export const clockTextStyle = (surface: SurfaceKind, isChanging: boolean) => (th
   `};
 `;
 
-export const clockDividerStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  background: ${theme.colors[surface].fillSecondary};
+export const clockDividerStyle = (theme: Theme) => css`
+  background: ${theme.surface.fillSecondary};
   width: 0.2rem;
   height: 0.2rem;
   border-radius: 0.2rem;

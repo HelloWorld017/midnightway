@@ -6,6 +6,6 @@ export const statusBarStyle = (isIdle: boolean) => (theme: Theme) => css`
   display: flex;
   justify-content: space-between;
   background: ${isIdle ? 'transparent' : theme.colors.glass.bgBase};
-  padding: ${isIdle ? '5px 15px' : '0'};
+  padding: ${isIdle ? '0.5rem 1.5rem' : '0'};
   transition: all 0.4s ease;
 `;

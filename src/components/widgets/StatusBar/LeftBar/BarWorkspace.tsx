@@ -4,7 +4,6 @@ import { repo } from '@/bridge/repository';
 import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { useRepo } from '@/hooks/useRepo';
 import * as styles from './BarWorkspace.css';
-import type { SurfaceKind } from '@/constants/theme';
 
 type BarWorkspaceProps = {
   activeWorkspace: { id: number; name: string } | null;
@@ -12,7 +11,6 @@ type BarWorkspaceProps = {
 };
 
 export const BarWorkspace = ({ activeWorkspace, isIdle }: BarWorkspaceProps) => {
-  const surface: SurfaceKind = isIdle ? 'floating' : 'glass';
   const focusedClient = useRepo(repo.hyprland.focusedClient.$pick('class', 'title', 'workspace'));
   const activeWorkspaceNumber = useMemo(() => {
     const name = activeWorkspace?.name;
@@ -28,13 +26,13 @@ export const BarWorkspace = ({ activeWorkspace, isIdle }: BarWorkspaceProps) => 
     <div css={styles.workspaceStyle}>
       {activeWorkspace && (
         <IconSetWorkspace
-          css={styles.iconStyle(surface)}
+          css={styles.iconStyle}
           kind={activeWorkspaceNumber ?? -1}
-          fallback={<span css={styles.iconFallbackStyle(surface)}>{activeWorkspace?.name}</span>}
+          fallback={<span css={styles.iconFallbackStyle}>{activeWorkspace?.name}</span>}
         />
       )}
       <SizeAnimated css={styles.clientAnimateContainerStyle}>
-        <div css={styles.clientContainerStyle(surface)}>
+        <div css={styles.clientContainerStyle}>
           <span css={styles.clientLabelStyle}>
             {(!isIdle && (focusedClient?.title || focusedClient?.class)) || 'Idle'}
           </span>

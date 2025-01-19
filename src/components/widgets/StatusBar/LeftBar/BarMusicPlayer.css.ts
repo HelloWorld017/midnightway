@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import type { SurfaceKind } from '@/constants/theme';
 import type { Theme } from '@emotion/react';
 
 export const musicCollapsibleStyle = (isVisible: boolean) => css`
@@ -16,9 +15,9 @@ export const musicStyle = css`
   max-width: 30rem;
 `;
 
-export const musicIconStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+export const musicIconStyle = (theme: Theme) => css`
   flex: 0 0 auto;
-  color: ${theme.colors[surface].fillPrimary};
+  color: ${theme.surface.fillPrimary};
   font-size: 1.8rem;
 `;
 
@@ -33,8 +32,8 @@ export const musicHeaderStyle = css`
   align-items: center;
 `;
 
-export const musicHeaderTitleStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillPrimary};
+export const musicHeaderTitleStyle = (theme: Theme) => css`
+  color: ${theme.surface.fillPrimary};
   font-family: ${theme.fonts.content};
   font-weight: 600;
   font-size: 1.2rem;
@@ -43,7 +42,7 @@ export const musicHeaderTitleStyle = (surface: SurfaceKind) => (theme: Theme) =>
   white-space: nowrap;
 `;
 
-export const musicHeaderArtistContainerStyle = (surface: SurfaceKind) => (theme: Theme) => css`
+export const musicHeaderArtistContainerStyle = (theme: Theme) => css`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -55,28 +54,27 @@ export const musicHeaderArtistContainerStyle = (surface: SurfaceKind) => (theme:
     height: 0.2rem;
     border-radius: 0.2rem;
     margin: 0 0.8rem;
-    background: ${theme.colors[surface].fillSecondary};
+    background: ${theme.surface.fillSecondary};
   }
 `;
 
-export const musicHeaderArtistStyle =
-  (surface: SurfaceKind, isVisible: boolean) => (theme: Theme) => css`
-    color: ${theme.colors[surface].fillSecondary};
-    font-family: ${theme.fonts.content};
-    font-weight: 600;
-    font-size: 1.2rem;
-    line-height: 1.3rem;
-    letter-spacing: -0.04em;
-    opacity: ${+isVisible};
-    visibility: ${isVisible ? 'visibile' : 'hidden'};
-    transform: translateX(${isVisible ? '0' : '-2rem'});
-    transition: all 0.4s ease;
-    transition-delay: ${isVisible ? '0.4s' : '0'};
-    white-space: nowrap;
-  `;
+export const musicHeaderArtistStyle = (isVisible: boolean) => (theme: Theme) => css`
+  color: ${theme.surface.fillSecondary};
+  font-family: ${theme.fonts.content};
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.3rem;
+  letter-spacing: -0.04em;
+  opacity: ${+isVisible};
+  visibility: ${isVisible ? 'visibile' : 'hidden'};
+  transform: translateX(${isVisible ? '0' : '-2rem'});
+  transition: all 0.4s ease;
+  transition-delay: ${isVisible ? '0.4s' : '0'};
+  white-space: nowrap;
+`;
 
-export const musicArtistStyle = (surface: SurfaceKind, isVisible: boolean) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillSecondary};
+export const musicArtistStyle = (isVisible: boolean) => (theme: Theme) => css`
+  color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
   font-weight: 500;
   font-size: 0.9rem;

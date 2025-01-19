@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import type { SurfaceKind } from '@/constants/theme';
 import type { Theme } from '@emotion/react';
 
 export const workspaceStyle = css`
@@ -9,20 +8,20 @@ export const workspaceStyle = css`
   max-width: 30rem;
 `;
 
-export const iconStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillPrimary};
+export const iconStyle = (theme: Theme) => css`
+  color: ${theme.surface.fillPrimary};
   flex: 0 0 auto;
   font-size: 1.8rem;
 `;
 
-export const iconFallbackStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillElevated};
+export const iconFallbackStyle = (theme: Theme) => css`
+  color: ${theme.surface.fillElevated};
   font-family: ${theme.fonts.number};
   font-weight: 500;
   font-size: 1rem;
   line-height: 1rem;
 
-  background: ${theme.colors[surface].bgElevated};
+  background: ${theme.surface.bgElevated};
   flex: 0 0 auto;
   min-width: 1.8rem;
   min-height: 1.8rem;
@@ -33,8 +32,8 @@ export const clientAnimateContainerStyle = css`
   flex: 1 1 0;
 `;
 
-export const clientContainerStyle = (surface: SurfaceKind) => (theme: Theme) => css`
-  color: ${theme.colors[surface].fillPrimary};
+export const clientContainerStyle = (theme: Theme) => css`
+  color: ${theme.surface.fillPrimary};
   max-width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
