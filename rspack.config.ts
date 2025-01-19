@@ -2,10 +2,37 @@ import { join } from 'node:path';
 import { defineConfig } from '@rspack/cli';
 import { type SwcLoaderOptions } from '@rspack/core';
 
+const getSwcLoaderOptions = (meta: Record<string, string>): SwcLoaderOptions => ({
+  jsc: {
+    target: 'es2022',
+    parser: {
+      syntax: 'typescript',
+      tsx: true,
+    },
+    transform: {
+      react: {
+        runtime: 'automatic',
+        importSource: '@emotion/react',
+        development: false,
+        refresh: false,
+      },
+      constModules: {
+        globals: { '#meta': meta },
+      },
+    },
+  },
+});
+
 export default defineConfig({
   entry: {
-    index: './src/index.tsx',
-    renderer: './src/renderer.tsx',
+    index: {
+      import: './src/index.tsx',
+      layer: 'index',
+    },
+    renderer: {
+      import: './src/renderer.tsx',
+      layer: 'renderer',
+    },
   },
 
   output: {
@@ -23,23 +50,16 @@ export default defineConfig({
         exclude: [/node_modules/],
         loader: 'builtin:swc-loader',
         type: 'javascript/auto',
-        options: {
-          jsc: {
-            target: 'es2022',
-            parser: {
-              syntax: 'typescript',
-              tsx: true,
-            },
-            transform: {
-              react: {
-                runtime: 'automatic',
-                importSource: '@emotion/react',
-                development: false,
-                refresh: false,
-              },
-            },
-          },
-        } satisfies SwcLoaderOptions,
+        layer: 'index',
+        options: getSwcLoaderOptions({ IS_RENDERER: 'false' }),
+      },
+      {
+        test: /\.tsx?$/,
+        exclude: [/node_modules/],
+        loader: 'builtin:swc-loader',
+        type: 'javascript/auto',
+        layer: 'renderer',
+        options: getSwcLoaderOptions({ IS_RENDERER: 'true' }),
       },
       {
         test: /\.svg$/i,
@@ -64,6 +84,7 @@ export default defineConfig({
 
   // prettier-ignore
   externals: [
+    '#meta',
     'cairo',
     'console',
     'gettext',
@@ -74,8 +95,9 @@ export default defineConfig({
   ],
 
   externalsType: 'module-import',
-
   experiments: {
+    layers: true,
     outputModule: true,
+    topLevelAwait: true,
   },
 });

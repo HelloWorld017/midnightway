@@ -5,12 +5,14 @@ import { App, Astal, astalify, Gdk } from 'astal/gtk4';
 import Gio from 'gi://Gio';
 import WebKit from 'gi://WebKit';
 import { createMainBridge } from './bridge/main';
+import { config } from './config';
 import { cssAstal as css } from './utils/css';
 import type { InitParams } from './bridge/types';
 
 const { Exclusivity, WindowAnchor } = Astal;
 const WebView = astalify(WebKit.WebView);
 
+const html = String.raw;
 const webViewStyle = css`
   min-height: 60px;
   background: transparent;
@@ -20,7 +22,7 @@ const schemeEnabledContext = new WeakSet<WebKit.WebContext>();
 
 App.start({
   main() {
-    const setupWebView = (initParams: InitParams) => (webView: WebKit.WebView) =>
+    const setupWebView = (initParams: Omit<InitParams, 'config'>) => (webView: WebKit.WebView) =>
       setTimeout(() => {
         webView.set_background_color(new Gdk.RGBA());
 
@@ -34,21 +36,26 @@ App.start({
           schemeEnabledContext.add(webView.webContext);
         }
 
-        webView.load_html(
-          '<main></main><script src="midnightway://midnightway/renderer.js"></script>',
-          'about:blank'
-        );
-
         const shouldInspect = ARGV.includes('--inspect');
         if (shouldInspect) {
           webView.get_settings().set_enable_developer_extras(true);
           webView.get_inspector().show();
         }
 
-        createMainBridge(webView, { initParams: () => initParams });
+        webView.load_html(
+          html`<!DOCTYPE html>
+            <html>
+              <body>
+                <main></main>
+                <script src="midnightway://midnightway/renderer.js"></script>
+              </body>
+            </html>`,
+          'midnightway://midnightway/'
+        );
+
+        createMainBridge(webView, { initParams: () => ({ ...initParams, config: config() }) });
       });
 
-    App.add_icons('./icons');
     App.get_monitors().map(monitor => (
       <window
         visible

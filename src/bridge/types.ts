@@ -1,3 +1,4 @@
+import type { Config } from '@/config/schema';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 import type AstalHyprland from 'gi://AstalHyprland';
 import type AstalMpris from 'gi://AstalMpris';
@@ -8,7 +9,7 @@ import type AstalWp from 'gi://AstalWp';
 import type GTop from 'gi://GTop';
 
 /* Definitions */
-export type InitParams = InitParamsDock | InitParamsStatusBar;
+export type InitParams = (InitParamsDock | InitParamsStatusBar) & { config: Config };
 export type InitParamsDock = { kind: 'dock'; params: { monitor: string } };
 export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: string } };
 

@@ -9,6 +9,7 @@ import prettier from 'eslint-plugin-prettier/recommended';
 import * as ts from 'typescript-eslint';
 
 const importIgnoreList = [
+  '#meta',
   'cairo',
   'console',
   'gettext',
