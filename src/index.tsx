@@ -1,5 +1,7 @@
 /** @jsxImportSource astal/gtk4 */
 
+import '@/config/init';
+
 import { join } from 'path';
 import { App, Astal, astalify, Gdk } from 'astal/gtk4';
 import Gio from 'gi://Gio';
@@ -47,7 +49,7 @@ App.start({
             <html>
               <body>
                 <main></main>
-                <script src="midnightway://midnightway/renderer.js"></script>
+                <script src="midnightway://midnightway/renderer.js" type="module"></script>
               </body>
             </html>`,
           'midnightway://midnightway/'

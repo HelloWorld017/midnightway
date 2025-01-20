@@ -35,8 +35,11 @@ export default defineConfig({
     },
   },
 
+  target: false,
   output: {
     clean: true,
+    module: true,
+    chunkFormat: 'module',
     filename: '[name].js',
     library: {
       type: 'module',
@@ -50,7 +53,7 @@ export default defineConfig({
         exclude: [/node_modules/],
         loader: 'builtin:swc-loader',
         type: 'javascript/auto',
-        layer: 'index',
+        issuerLayer: 'index',
         options: getSwcLoaderOptions({ IS_RENDERER: 'false' }),
       },
       {
@@ -58,7 +61,7 @@ export default defineConfig({
         exclude: [/node_modules/],
         loader: 'builtin:swc-loader',
         type: 'javascript/auto',
-        layer: 'renderer',
+        issuerLayer: 'renderer',
         options: getSwcLoaderOptions({ IS_RENDERER: 'true' }),
       },
       {
