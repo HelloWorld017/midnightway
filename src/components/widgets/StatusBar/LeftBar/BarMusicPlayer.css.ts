@@ -21,10 +21,11 @@ export const musicIconStyle = (theme: Theme) => css`
   font-size: 1.8rem;
 `;
 
-export const musicColumnsStyle = css`
+export const musicColumnStyle = css`
   display: flex;
   flex-direction: column;
   flex: 1 1 0;
+  gap: 0.2rem;
 `;
 
 export const musicHeaderStyle = css`
@@ -74,6 +75,7 @@ export const musicHeaderArtistStyle = (isVisible: boolean) => (theme: Theme) => 
 `;
 
 export const musicArtistStyle = (isVisible: boolean) => (theme: Theme) => css`
+  display: flex;
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
   font-weight: 500;
@@ -83,6 +85,7 @@ export const musicArtistStyle = (isVisible: boolean) => (theme: Theme) => css`
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   transform: translateY(${isVisible ? '0' : '-100%'});
-  transition: all 1s ease;
+  transition: all 0.4s ease;
+  transition-delay: 0.2s;
   white-space: nowrap;
 `;

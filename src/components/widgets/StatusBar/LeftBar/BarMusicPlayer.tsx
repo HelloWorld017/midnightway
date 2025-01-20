@@ -27,7 +27,7 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
     >
       <div css={styles.musicStyle}>
         <IconMusic css={styles.musicIconStyle} />
-        <div css={styles.musicColumnsStyle}>
+        <div css={styles.musicColumnStyle}>
           <div css={styles.musicHeaderStyle}>
             <h1 css={styles.musicHeaderTitleStyle}>{player?.title}</h1>
             <Collapsible orientation="horizontal" isVisible={!isIdle && hasArtist}>
