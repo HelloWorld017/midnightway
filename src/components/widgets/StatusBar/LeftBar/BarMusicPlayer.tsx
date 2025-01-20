@@ -17,6 +17,8 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
       .$pick('artist', 'title')
   );
 
+  const hasArtist = !!player?.artist;
+
   return (
     <Collapsible
       css={styles.musicCollapsibleStyle(!!player)}
@@ -28,14 +30,16 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
         <div css={styles.musicColumnsStyle}>
           <div css={styles.musicHeaderStyle}>
             <h1 css={styles.musicHeaderTitleStyle}>{player?.title}</h1>
-            <Collapsible orientation="horizontal" isVisible={!isIdle}>
+            <Collapsible orientation="horizontal" isVisible={!isIdle && hasArtist}>
               <div css={styles.musicHeaderArtistContainerStyle}>
-                <span css={styles.musicHeaderArtistStyle(!isIdle)}>{player?.artist}</span>
+                <span css={styles.musicHeaderArtistStyle(!isIdle && hasArtist)}>
+                  {player?.artist}
+                </span>
               </div>
             </Collapsible>
           </div>
-          <Collapsible orientation="vertical" isVisible={isIdle}>
-            <span css={styles.musicArtistStyle(isIdle)}>{player?.artist}</span>
+          <Collapsible orientation="vertical" isVisible={isIdle && hasArtist}>
+            <span css={styles.musicArtistStyle(isIdle && hasArtist)}>{player?.artist}</span>
           </Collapsible>
         </div>
       </div>
