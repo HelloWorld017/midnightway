@@ -21,6 +21,7 @@ export const ConfigSchema = z
       .object({
         location: z.string(),
         apiToken: z.string(),
+        updateInterval: z.number().default(3 * 60 * 1000),
       })
       .nullable()
       .default(null),

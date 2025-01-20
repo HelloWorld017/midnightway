@@ -6,6 +6,7 @@ import AstalWp from 'gi://AstalWp';
 import { networkRepository } from './network';
 import { performanceRepository } from './performance';
 import { temperatureRepository } from './temperature';
+import { weatherRepository } from './weather';
 
 const hyprlandRepository = AstalHyprland.get_default();
 const musicPlayerRepository = AstalMpris.get_default();
@@ -44,5 +45,9 @@ export const repositoryImpl = {
 
   get tray() {
     return trayRepository;
+  },
+
+  get weather() {
+    return weatherRepository;
   },
 };
