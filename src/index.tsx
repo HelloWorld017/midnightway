@@ -16,7 +16,7 @@ const WebView = astalify(WebKit.WebView);
 
 const html = String.raw;
 const webViewStyle = css`
-  min-height: 60px;
+  min-height: 64px;
   background: transparent;
 `;
 

@@ -19,11 +19,6 @@ const networkUsage = Variable<IpOutput>([]).poll(
 );
 
 export const networkRepository = asConnectable({
-  get networkManager() {
-    return network;
-  },
-
-  get usage() {
-    return networkUsage;
-  },
+  networkManager: network,
+  usage: networkUsage,
 });
