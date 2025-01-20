@@ -1,5 +1,6 @@
 import { BarLauncher } from './BarLauncher';
 import { BarMusicPlayer } from './BarMusicPlayer';
+import { BarWeather } from './BarWeather';
 import { BarWorkspace } from './BarWorkspace';
 import * as styles from './LeftBar.css';
 import type { ComponentProps } from 'react';
@@ -12,5 +13,6 @@ export const LeftBar = (props: LeftBarProps) => (
     <BarLauncher />
     <BarWorkspace {...props} />
     <BarMusicPlayer {...props} />
+    <BarWeather {...props} />
   </div>
 );
