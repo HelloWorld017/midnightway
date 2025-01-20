@@ -10,18 +10,6 @@ import IconWorkspace8 from './workspace-8.svg';
 import IconWorkspace9 from './workspace-9.svg';
 import type { ReactNode, SVGProps } from 'react';
 
-export { default as IconCore } from './core.svg';
-export { default as IconLauncher } from './launcher.svg';
-export { default as IconMusic } from './music.svg';
-export { default as IconNetworkOff } from './network-off.svg';
-export { default as IconNetworkWired } from './network-wired.svg';
-export { default as IconNetworkWireless } from './network-wireless.svg';
-export { default as IconNotification } from './notification.svg';
-export { default as IconPower } from './power.svg';
-export { default as IconSound } from './sound.svg';
-export { default as IconTemperature } from './temperature.svg';
-export { default as IconTray } from './tray.svg';
-
 export const IconSetWorkspace = ({
   kind,
   fallback,
