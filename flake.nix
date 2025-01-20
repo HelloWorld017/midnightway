@@ -64,6 +64,7 @@
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";
+          export MIDNIGHTWAY_CONFIG_FILE="./config.json";
           export VIRTUAL_ENV="midnightway";
         '';
       };
