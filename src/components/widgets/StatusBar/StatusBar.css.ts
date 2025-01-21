@@ -2,7 +2,11 @@ import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const statusBarStyle = (isIdle: boolean) => (theme: Theme) => css`
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+
   display: flex;
   justify-content: space-between;
   background: ${isIdle ? 'transparent' : theme.colors.glass.bgBase};

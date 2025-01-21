@@ -8,7 +8,9 @@ export const rightBarStyle = (isIdle: boolean) => (theme: Theme) => css`
 
   padding: 0 2.4rem;
   min-height: 3.2rem;
-  transition: all 0.4s ease;
+  transition:
+    all 0.4s ease,
+    background 1s ease;
 
   ${isIdle &&
   css`
