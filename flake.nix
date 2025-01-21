@@ -24,7 +24,15 @@
       pkgs = nixpkgs.legacyPackages.${system};
       astalPkgs = astal.packages.${system};
       deps = [
-        astalPkgs.astal4
+        (astalPkgs.astal4.overrideAttrs(oldAttrs: {
+          propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ [
+            pkgs.cairo
+          ];
+          patches = [
+            ./patches/astal4-fixed-exclusivity.patch
+            ./patches/astal4-utils.patch
+          ];
+        }))
         astalPkgs.io
         astalPkgs.gjs
         astalPkgs.hyprland

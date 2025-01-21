@@ -1,0 +1,33 @@
+diff --git a/src/meson.build b/src/meson.build
+index 58408a6..7cd857f 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -20,6 +20,7 @@ config = configure_file(
+ 
+ deps = [
+   dependency('astal-io-0.1'),
++  dependency('cairo'),
+   dependency('glib-2.0'),
+   dependency('gtk4'),
+   dependency('gtk4-layer-shell-0'),
+@@ -30,6 +31,7 @@ sources = [config] + files(
+   'widget/slider.vala',
+   'widget/window.vala',
+   'application.vala',
++  'utils.vala',
+ )
+ 
+ lib = library(
+diff --git a/src/utils.vala b/src/utils.vala
+new file mode 100644
+index 0000000..3f45ecf
+--- /dev/null
++++ b/src/utils.vala
+@@ -0,0 +1,7 @@
++using Cairo;
++
++public class Astal.Utils {
++	public static Region create_region_by_rectangles(RectangleInt rectangle) {
++		return new Region.rectangle(rectangle);
++	}
++}

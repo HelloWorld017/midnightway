@@ -1,0 +1,45 @@
+diff --git a/src/widget/window.vala b/src/widget/window.vala
+index 0cf3d11..f5626c3 100644
+--- a/src/widget/window.vala
++++ b/src/widget/window.vala
+@@ -19,6 +19,7 @@ public enum Astal.Exclusivity {
+      * Request the compositor to stack layers on top of each other.
+      */
+     IGNORE,
++    FIXED,
+ }
+ 
+ public enum Astal.Layer {
+@@ -112,6 +113,15 @@ public class Astal.Window : Gtk.Window {
+     /**
+      * Exclusivity of this window.
+      */
++    public new int exclusivity_size {
++        set {
++            set_exclusive_zone(this, value);
++        }
++        get {
++            return get_exclusive_zone(this);
++        }
++    }
++
+     public Exclusivity exclusivity {
+         set {
+             if (check("set exclusivity"))
+@@ -133,10 +143,14 @@ public class Astal.Window : Gtk.Window {
+             if (auto_exclusive_zone_is_enabled(this))
+                 return Exclusivity.EXCLUSIVE;
+ 
+-            if (get_exclusive_zone(this) == -1)
++            var exclusive_zone = get_exclusive_zone(this);
++            if (exclusive_zone == -1)
+                 return Exclusivity.IGNORE;
+ 
+-            return Exclusivity.NORMAL;
++            if (exclusive_zone == 0)
++                return Exclusivity.NORMAL;
++
++            return Exclusivity.FIXED;
+         }
+     }
+ 
