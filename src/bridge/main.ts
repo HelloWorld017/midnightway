@@ -10,7 +10,7 @@ const js = (template: TemplateStringsArray, ...values: unknown[]) =>
 type MissingMethods = Omit<BridgeMethodsRenderer, keyof ReturnType<typeof methodsRendererImpl>>;
 type Message = { id: string; name: string; params: unknown };
 
-export const createMainBridge = (webView: WebKit.WebView, methodsImpl: MissingMethods) => {
+export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<MissingMethods>) => {
   /* Create Bridge */
   const bridge = createMethodsProxy<BridgeMethodsMain>((name: string, params: unknown) => {
     const id = `${Date.now()}+${Math.random().toString(36).slice(2, 7)}`;
