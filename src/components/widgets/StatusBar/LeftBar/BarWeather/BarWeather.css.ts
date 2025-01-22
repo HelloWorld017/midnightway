@@ -1,11 +1,12 @@
 import { css } from '@emotion/react';
+import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
-export const weatherCollapsibleStyle = (isVisible: boolean) => css`
+export const weatherCollapsibleStyle = (isVisible: boolean) => (theme: Theme) => css`
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   margin-left: ${isVisible ? 0 : -2.4}rem;
-  transition: all 0.4s ease;
+  transition: ${transition(theme, ['opacity', 'visibility', 'margin'])};
 `;
 
 export const weatherStyle = css`
@@ -53,8 +54,7 @@ export const weatherConditionStyle = (isVisible: boolean) => (theme: Theme) => c
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   transform: translateY(${isVisible ? '0' : '-100%'});
-  transition: all 0.4s ease;
-  transition-delay: 0.4s;
+  transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.4)};
   white-space: nowrap;
 `;
 

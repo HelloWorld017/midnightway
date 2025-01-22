@@ -1,11 +1,12 @@
 import { css } from '@emotion/react';
+import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
-export const musicCollapsibleStyle = (isVisible: boolean) => css`
+export const musicCollapsibleStyle = (isVisible: boolean) => (theme: Theme) => css`
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   margin-left: ${isVisible ? 0 : -2.4}rem;
-  transition: all 0.4s ease;
+  transition: ${transition(theme, ['opacity', 'visibility', 'margin'])};
 `;
 
 export const musicStyle = css`
@@ -69,8 +70,11 @@ export const musicHeaderArtistStyle = (isVisible: boolean) => (theme: Theme) => 
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   transform: translateX(${isVisible ? '0' : '-2rem'});
-  transition: all 0.4s ease;
-  transition-delay: ${isVisible ? '0.4s' : '0'};
+  transition: ${transition(
+    theme,
+    ['color', 'opacity', 'visibility', 'transform'],
+    isVisible ? 0.4 : 0
+  )};
   white-space: nowrap;
 `;
 
@@ -85,7 +89,6 @@ export const musicArtistStyle = (isVisible: boolean) => (theme: Theme) => css`
   opacity: ${+isVisible};
   visibility: ${isVisible ? 'visibile' : 'hidden'};
   transform: translateY(${isVisible ? '0' : '-100%'});
-  transition: all 0.4s ease;
-  transition-delay: 0.2s;
+  transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.2)};
   white-space: nowrap;
 `;

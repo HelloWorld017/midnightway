@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
+import { transition } from '@/utils/css/transition';
+import type { Theme } from '@emotion/react';
 
-export const sizeAnimatedStyle = css`
+export const sizeAnimatedStyle = (theme: Theme) => css`
   position: relative;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: ${transition(theme, ['width', 'height'])};
 `;
 
 export const sizeAnimatedChildrenStyle = css`

@@ -8,9 +8,8 @@ export const clockStyle = (isIdle: boolean) => css`
 
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.8rem;
   text-shadow: 0 1px 4px rgba(0, 0, 0, ${isIdle ? 0.5 : 0});
-  transition: text-shadow-color 0.4s ease;
   transform: translate(-50%, -50%);
 `;
 
@@ -31,7 +30,7 @@ export const clockTextStyle = (isChanging: boolean) => (theme: Theme) => css`
 
 export const clockDividerStyle = (theme: Theme) => css`
   background: ${theme.surface.fillSecondary};
-  width: 0.2rem;
-  height: 0.2rem;
-  border-radius: 0.2rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 0.3rem;
 `;
