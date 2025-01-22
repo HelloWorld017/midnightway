@@ -30,7 +30,7 @@ export const useRepo = <T>(repo: RepositoryProxy<T>, deps: unknown[] = []) => {
 };
 
 registerImplementations({
-  update({ id, value }) {
+  onUpdate({ id, value }) {
     subscriptions.get(id)?.(value);
   },
 });

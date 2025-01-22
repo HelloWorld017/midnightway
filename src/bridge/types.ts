@@ -2,15 +2,19 @@ import type { repositoryImpl } from './implementations/repository';
 import type { Config } from '@/config/schema';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 
-type Otherwise<T> = T & Record<never, never>;
-
 /* Definitions */
-export type InitParams = (InitParamsDock | InitParamsStatusBar) & { config: Config };
+export type InitParams = (InitParamsCalendar | InitParamsDock | InitParamsStatusBar) & {
+  config: Config;
+};
+
+export type InitParamsCalendar = { kind: 'calendar'; params: Record<string, never> };
 export type InitParamsDock = { kind: 'dock'; params: { monitor: string } };
 export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: string } };
 
+/* Bridge */
 export type BridgeMethodsMain = {
-  update: (params: { id: string; value: unknown }) => void;
+  onUpdate: (params: { id: string; value: unknown }) => void;
+  onToolkitCloseRequest: (params: void) => void;
 };
 
 export type BridgeMethodsRenderer = {
@@ -18,8 +22,7 @@ export type BridgeMethodsRenderer = {
   debug: (params: unknown) => void;
   subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;
-  setFloating: (params: { state: boolean }) => void;
-  setSize: (params: { width: -1 | Otherwise<number>; height: -1 | Otherwise<number> }) => void;
+  closeToolkit: (params: void) => void;
 };
 
 export type BridgeRepository = typeof repositoryImpl;

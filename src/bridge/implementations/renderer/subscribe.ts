@@ -15,7 +15,7 @@ export const subscribeImpl =
     subscriptions.set(
       id,
       bindable.subscribe(() => {
-        void bridge.update({
+        void bridge.onUpdate({
           id,
           value: bindable.get(),
         });

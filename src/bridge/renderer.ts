@@ -10,7 +10,7 @@ export const bridgeRenderer = createMethodsProxy<BridgeMethodsRenderer>((name, p
 );
 
 export const registerImplementations = (impl: Partial<BridgeMethodsMain>) => {
-  window.addEventListener('bridge', ({ detail: { id, name, params } }) => {
+  const handler = ({ detail: { id, name, params } }: WindowEventMap['bridge']) => {
     if (!(name in impl)) {
       return;
     }
@@ -20,7 +20,10 @@ export const registerImplementations = (impl: Partial<BridgeMethodsMain>) => {
       name: `reply/${id}`,
       params: output,
     });
-  });
+  };
+
+  window.addEventListener('bridge', handler);
+  return () => window.removeEventListener('bridge', handler);
 };
 
 registerImplementations(methodsMainImpl(bridgeRenderer));
