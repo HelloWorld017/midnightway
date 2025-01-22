@@ -22,6 +22,7 @@ export type BridgeMethodsRenderer = {
   debug: (params: unknown) => void;
   subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;
+  prepareOpenToolkit: (params: void) => void;
   closeToolkit: (params: void) => void;
 };
 

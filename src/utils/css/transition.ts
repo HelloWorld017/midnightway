@@ -4,6 +4,7 @@ import type CSS from 'csstype';
 const TRANSITION_KEY = {
   'visibility': 'opacity',
   'opacity': 'opacity',
+  'left': 'size',
   'width': 'size',
   'height': 'size',
   'padding': 'size',

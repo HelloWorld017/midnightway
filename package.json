@@ -51,8 +51,10 @@
     "astal": "extern:astal"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
     "@emotion/hash": "^0.9.2",
     "@emotion/react": "^11.14.0",
+    "@react-spring/web": "^9.7.5",
     "date-fns": "^4.1.0",
     "path-browserify": "^1.0.1",
     "react": "^19.0.0",

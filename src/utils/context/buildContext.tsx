@@ -12,7 +12,7 @@ export const buildContext = <T,>(useContextValue: () => T) => {
     return <Context.Provider value={contextSignal}>{children}</Context.Provider>;
   };
 
-  Provider.name = `${useContextValue.name.slice(4)}Provider`;
+  Provider.displayName = `${useContextValue.name?.slice(4) ?? ''}Provider`;
 
   const useSelectedContext = <TSelected,>(selector: (value: T) => TSelected) => {
     const contextSignal = useContext(Context);

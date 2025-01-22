@@ -5,6 +5,7 @@ import { Clock } from './Clock';
 import { LeftBar } from './LeftBar';
 import { RightBar } from './RightBar/RightBar';
 import * as styles from './StatusBar.css';
+import { Toolkit, ToolkitProvider } from './Toolkit';
 import type { SurfaceKind } from '@/constants/theme';
 
 type StatusBarProps = {
@@ -23,12 +24,15 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   const surface: SurfaceKind = isIdle ? 'floating' : 'glass';
 
   return (
-    <SurfaceProvider surface={surface}>
-      <div css={styles.statusBarStyle(isIdle)}>
-        <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
-        <Clock isIdle={isIdle} />
-        <RightBar isIdle={isIdle} />
-      </div>
-    </SurfaceProvider>
+    <ToolkitProvider>
+      <SurfaceProvider surface={surface}>
+        <div css={styles.statusBarStyle(isIdle)}>
+          <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
+          <Clock isIdle={isIdle} />
+          <RightBar isIdle={isIdle} />
+        </div>
+      </SurfaceProvider>
+      <Toolkit />
+    </ToolkitProvider>
   );
 };
