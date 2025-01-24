@@ -1,4 +1,4 @@
-import * as commonStyles from '../StatusBar.css';
+import * as commonStyles from '../index.css';
 import { BarNotification } from './BarNotification';
 import { BarPower } from './BarPower';
 import { BarStatus } from './BarStatus';

@@ -4,25 +4,46 @@ const DEFAULT_EASING =
 const SNAPPY_EASING =
   'linear(0, 0.0017, 0.0065 1.13%, 0.0241 2.25%, 0.053 3.46%, 0.0952 4.83%, 0.1857 7.24%, 0.4155 12.71%, 0.5239 15.44%, 0.6238, 0.7098, 0.7815 23.88%, 0.8131 25.33%, 0.8428, 0.8689 28.39%, 0.8928, 0.9134 31.61%, 0.9318, 0.9473, 0.9602 36.67%, 0.9713 38.44%, 0.9809 40.37%, 0.9887 42.38%, 0.9949 44.55%, 1.0031 49.46%, 1.0056 53.32%, 1.0063 58.14%, 1.0014 80.74%, 1.0001 99.96%)';
 
+export type SurfaceColors = {
+  bgBase: string;
+  bgOverlay?: string;
+  bgElevated?: string;
+  bgSection?: string;
+  fillPrimary: string;
+  fillSecondary: string;
+  fillHighlight: string;
+  fillHighlightText: string;
+  fillLine?: string;
+};
+
 export const DEFAULT_THEME = {
   colors: {
-    floating: {
+    overlay: {
       bgBase: '#101010',
-      bgElevated: '#ffffff',
       fillPrimary: '#ffffff',
       fillSecondary: 'rgba(255, 255, 255, .5)',
       fillHighlight: '#ffffff',
-      fillElevated: '#2589BB',
+      fillHighlightText: '#1179f8',
     },
     glass: {
       bgBase: 'rgba(0, 0, 0, .1)',
-      bgElevated: '#ffffff',
       fillPrimary: '#ffffff',
       fillSecondary: 'rgba(255, 255, 255, .5)',
       fillHighlight: '#ffffff',
-      fillElevated: 'rgba(0, 0, 0, .5)',
+      fillHighlightText: 'rgba(0, 0, 0, .5)',
     },
-  },
+    floating: {
+      bgBase: 'rgba(45, 45, 45, .9)',
+      bgOverlay: '#202020',
+      bgElevated: 'rgba(255, 255, 255, .1)',
+      bgSection: 'rgba(0, 0, 0, .1)',
+      fillPrimary: '#ffffff',
+      fillSecondary: 'rgba(255, 255, 255, .5)',
+      fillHighlight: '#1179f8',
+      fillHighlightText: '#ffffff',
+      fillLine: 'rgba(255, 255, 255, .1)',
+    },
+  } satisfies Record<string, SurfaceColors>,
 
   fonts: {
     title: 'Metropolis',

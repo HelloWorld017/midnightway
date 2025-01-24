@@ -15,13 +15,13 @@ export const iconStyle = (theme: Theme) => css`
 `;
 
 export const iconFallbackStyle = (theme: Theme) => css`
-  color: ${theme.surface.fillElevated};
+  color: ${theme.surface.fillHighlightText};
   font-family: ${theme.fonts.number};
   font-weight: 500;
   font-size: 1rem;
   line-height: 1rem;
 
-  background: ${theme.surface.bgElevated};
+  background: ${theme.surface.fillHighlight};
   flex: 0 0 auto;
   min-width: 1.8rem;
   min-height: 1.8rem;

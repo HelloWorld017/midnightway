@@ -21,7 +21,7 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   );
 
   const isIdle = activeWorkspace?.id !== focusedWorkspaceId || !focusedWorkspaceClients;
-  const surface: SurfaceKind = isIdle ? 'floating' : 'glass';
+  const surface: SurfaceKind = isIdle ? 'overlay' : 'glass';
 
   return (
     <ToolkitProvider>

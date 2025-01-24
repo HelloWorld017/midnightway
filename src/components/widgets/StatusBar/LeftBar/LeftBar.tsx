@@ -1,4 +1,4 @@
-import * as commonStyles from '../StatusBar.css';
+import * as commonStyles from '../index.css';
 import { BarLauncher } from './BarLauncher';
 import { BarMusicPlayer } from './BarMusicPlayer';
 import { BarWeather } from './BarWeather';
