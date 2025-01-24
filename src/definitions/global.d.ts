@@ -1,5 +1,6 @@
 declare global {
   interface Window {
+    $debug: (...args: unknown[]) => void;
     webkit: {
       messageHandlers: {
         bridge: {

@@ -2,6 +2,7 @@ import * as z from 'zod';
 
 export const ConfigSchema = z
   .object({
+    locale: z.enum(['en-US', 'ko-KR']).default('en-US'),
     system: z
       .object({
         networkInterface: z.string().default('enp4s0'),

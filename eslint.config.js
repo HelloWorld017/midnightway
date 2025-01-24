@@ -65,6 +65,7 @@ export default ts.config(
       'import-x/newline-after-import': 'error',
       'import-x/no-default-export': 'error',
       'import-x/no-duplicates': 'error',
+      'import-x/no-named-as-default-member': 'off',
       'import-x/no-unresolved': ['error', { ignore: importIgnoreList }],
       'import-x/order': [
         'error',
