@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { buildContext } from '@/utils/context/buildContext';
-import type { ReactNode } from 'react';
 
-type ToolkitPosition = { x: number; width: number };
+type ToolkitPosition = { x: number };
+export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'preference';
 const useToolkitContext = () => {
-  const [toolkitKind, setToolkitKind] = useState<string | null>(null);
+  const [toolkitKind, setToolkitKind] = useState<ToolkitKind | null>(null);
   const [toolkitWindow, setToolkitWindow] = useState<WindowProxy | null>(null);
-  const [toolkitPosition, setToolkitPosition] = useState<ToolkitPosition>({ x: 0, width: 300 });
-  const [toolkitElement, setToolkitElement] = useState<ReactNode | null>(null);
+  const [toolkitPosition, setToolkitPosition] = useState<ToolkitPosition>({ x: 0 });
+
   const requestToolkitWindow = useLatestCallback(async () => {
     if (toolkitWindow !== null) {
       return toolkitWindow;
@@ -21,35 +21,29 @@ const useToolkitContext = () => {
     }, 100);
   });
 
-  const openToolkit = useLatestCallback(
-    async (kind: string, element: ReactNode, position: ToolkitPosition) => {
-      if (!toolkitWindow) {
-        await requestToolkitWindow();
-      }
-
-      setToolkitKind(kind);
-      setToolkitPosition(position);
-      setToolkitElement(element);
+  const openToolkit = useLatestCallback(async (kind: ToolkitKind, position: ToolkitPosition) => {
+    if (!toolkitWindow) {
+      await requestToolkitWindow();
     }
-  );
+
+    setToolkitKind(kind);
+    setToolkitPosition(position);
+  });
 
   const closeToolkit = useLatestCallback(() => {
     setToolkitKind(null);
-    setToolkitElement(null);
   });
 
-  const toggleToolkit = useLatestCallback(
-    (kind: string, element: ReactNode, position: ToolkitPosition) => {
-      if (toolkitKind === kind) {
-        return closeToolkit();
-      }
-
-      return openToolkit(kind, element, position);
+  const toggleToolkit = useLatestCallback((kind: ToolkitKind, position: ToolkitPosition) => {
+    if (toolkitKind === kind) {
+      return closeToolkit();
     }
-  );
+
+    return openToolkit(kind, position);
+  });
 
   useEffect(() => {
-    if (toolkitElement === null && toolkitWindow !== null) {
+    if (toolkitKind === null && toolkitWindow !== null) {
       const timeoutId = setTimeout(() => {
         void bridgeRenderer.closeToolkit();
         setToolkitWindow(null);
@@ -57,7 +51,7 @@ const useToolkitContext = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [toolkitElement, toolkitWindow]);
+  }, [toolkitKind, toolkitWindow]);
 
   useEffect(
     () =>
@@ -70,9 +64,9 @@ const useToolkitContext = () => {
   );
 
   return {
-    toolkitWindow,
-    toolkitElement,
+    toolkitKind,
     toolkitPosition,
+    toolkitWindow,
     openToolkit,
     closeToolkit,
     toggleToolkit,

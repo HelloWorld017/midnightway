@@ -8,7 +8,7 @@ import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
 import type { BridgeMethodsMain } from '@/bridge/types';
 
-const { Layer, WindowAnchor } = Astal;
+const { Keymode, Layer, WindowAnchor } = Astal;
 
 const transparentStyle = css`
   background: transparent;
@@ -79,11 +79,12 @@ export const MdStatusBar = ({ monitor }: { monitor: Gdk.Monitor }) => {
         visible={false}
         gdkmonitor={monitor}
         layer={Layer.OVERLAY}
+        keymode={Keymode.ON_DEMAND}
         anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP}
         application={App}
         cssClasses={[transparentStyle]}
         setup={setupToolkitWindow}
-        defaultHeight={400}
+        defaultHeight={520}
       />
     </>
   );
