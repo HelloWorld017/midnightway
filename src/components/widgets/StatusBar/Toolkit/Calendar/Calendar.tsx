@@ -18,12 +18,12 @@ const CalendarDate = ({ calendarDate, calendarMonth, today }: CalendarDateProps)
       return 'inactive' as const;
     }
 
-    if (calendarDate.getDay() % 6 === 0) {
-      return 'holiday' as const;
-    }
-
     if (calendarDate.getTime() === today.getTime()) {
       return 'today' as const;
+    }
+
+    if (calendarDate.getDay() % 6 === 0) {
+      return 'holiday' as const;
     }
 
     return 'active' as const;
@@ -124,13 +124,13 @@ export const Calendar = () => {
           </label>
           <div css={styles.calendarButtonsStyle}>
             <button css={styles.calendarButtonStyle} onClick={onReset}>
-              <IconFocus />
+              <IconFocus width="1em" height="1em" />
             </button>
             <button css={styles.calendarButtonStyle} onClick={onClickPrevMonth}>
-              <IconChevronUp />
+              <IconChevronUp width="1em" height="1em" />
             </button>
             <button css={styles.calendarButtonStyle} onClick={onClickNextMonth}>
-              <IconChevronDown />
+              <IconChevronDown width="1em" height="1em" />
             </button>
           </div>
         </div>

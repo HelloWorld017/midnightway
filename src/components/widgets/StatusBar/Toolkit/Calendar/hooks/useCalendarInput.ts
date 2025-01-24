@@ -107,7 +107,7 @@ export const useCalendarInput = (now: number) => {
     setCalendarKeyDraft(calendarKey);
   });
 
-  const onReset = useLatestCallback((e: MouseEvent<HTMLInputElement>) => {
+  const onReset = useLatestCallback((e: MouseEvent<HTMLElement>) => {
     const date = new Date(now);
     setYear(date.getFullYear());
     setMonth(date.getMonth() + 1);
