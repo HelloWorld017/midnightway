@@ -8,6 +8,8 @@ export type SurfaceColors = {
   bgBase: string;
   bgOverlay?: string;
   bgElevated?: string;
+  bgElevatedHover?: string;
+  bgElevatedActive?: string;
   bgSection?: string;
   fillPrimary: string;
   fillSecondary: string;
@@ -36,6 +38,8 @@ export const DEFAULT_THEME = {
       bgBase: 'rgba(45, 45, 45, .9)',
       bgOverlay: '#202020',
       bgElevated: 'rgba(255, 255, 255, .1)',
+      bgElevatedHover: 'rgba(255, 255, 255, .15)',
+      bgElevatedActive: 'rgba(255, 255, 255, .05)',
       bgSection: 'rgba(0, 0, 0, .1)',
       fillPrimary: '#ffffff',
       fillSecondary: 'rgba(255, 255, 255, .5)',

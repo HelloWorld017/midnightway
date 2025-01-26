@@ -4,7 +4,7 @@ import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { buildContext } from '@/utils/context/buildContext';
 
 type ToolkitPosition = { x: number };
-export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'preference';
+export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'performance';
 const useToolkitContext = () => {
   const [toolkitKind, setToolkitKind] = useState<ToolkitKind | null>(null);
   const [toolkitWindow, setToolkitWindow] = useState<WindowProxy | null>(null);
@@ -70,6 +70,7 @@ const useToolkitContext = () => {
     openToolkit,
     closeToolkit,
     toggleToolkit,
+    setToolkitKind,
   };
 };
 

@@ -1,4 +1,5 @@
 export { default as IconCore } from './core.svg';
+export { default as IconExit } from './exit.svg';
 export { default as IconLauncher } from './launcher.svg';
 export { default as IconMusic } from './music.svg';
 export { default as IconNetworkOff } from './network-off.svg';

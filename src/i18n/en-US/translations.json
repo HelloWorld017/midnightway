@@ -2,6 +2,9 @@
   "translation": {
     "calendar": {
       "input": "{{year}} / {{month}}"
+    },
+    "controlCenter": {
+      "sessionDuration": "Session {{hours}}h {{minutes}}m {{seconds}}s"
     }
   }
 }

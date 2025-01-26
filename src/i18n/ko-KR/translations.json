@@ -2,6 +2,9 @@
   "translation": {
     "calendar": {
       "input": "{{year}}년 {{month}}월"
+    },
+    "controlCenter": {
+      "sessionDuration": "세션 {{hours}}시간 {{minutes}}분 {{seconds}}초"
     }
   }
 }

@@ -43,6 +43,13 @@ export const asideItemStyle = (isActive: boolean) => (theme: Theme) => css`
   border-radius: 0.8rem;
 
   transition: ${transition(theme, ['background', 'color'])};
+
+  ${!isActive &&
+  css`
+    &:hover {
+      background: ${theme.surface.bgElevated};
+    }
+  `};
 `;
 
 export const contentStyle = css`
