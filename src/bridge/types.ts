@@ -1,5 +1,5 @@
-import type { repositoryImpl } from './implementations/repository';
 import type { Config } from '@/config/schema';
+import type { repositoryImpl } from '@/repository';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 
 /* Definitions */

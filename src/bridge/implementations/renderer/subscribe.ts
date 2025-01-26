@@ -1,6 +1,6 @@
+import { repositoryImpl } from '@/repository';
 import { createRepositoryProxy } from '@/utils/repositoryProxy';
 import { bindRepositoryProxy } from '@/utils/repositoryProxy/bind';
-import { repositoryImpl } from '../repository';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 
