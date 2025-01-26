@@ -1,4 +1,6 @@
 declare const SymbolType: unique symbol;
+declare const SymbolRootType: unique symbol;
+declare const SymbolInvokeType: unique symbol;
 const SymbolProxyDescriptor = Symbol.for('RepositoryProxy::descriptor');
 
 export type RepositoryProxyFilterPredicate = 'is';
@@ -8,24 +10,36 @@ export type RepositoryProxyFilter = {
   value: unknown;
 };
 
-export type RepositoryProxyMethods<T> = {
+export type RepositoryProxyMethods<T, TRoot = unknown> = {
   $pick: <TKey extends keyof T & string>(
     ...key: TKey[]
-  ) => RepositoryProxySelectable<Pick<T, TKey>>;
+  ) => RepositoryProxySelectable<Pick<T, TKey>, TRoot>;
   $filter: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
     value: unknown
-  ) => RepositoryProxySelectable<T>;
+  ) => RepositoryProxySelectable<T, TRoot>;
   $find: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
     value: unknown
-  ) => RepositoryProxySelectable<(T & unknown[])[number]>;
+  ) => RepositoryProxySelectable<(T & unknown[])[number], TRoot>;
+  $invoke: T extends (...args: infer TArgs) => infer TReturnValue
+    ? (...args: TArgs) => RepositoryInvocation<TReturnValue, TRoot>
+    : unknown;
 };
 
-export type RepositoryProxy<T> = {
+export type RepositoryInvocation<T, TRoot = unknown> = Omit<
+  RepositoryProxy<T, TRoot>,
+  typeof SymbolType
+> & {
+  [SymbolInvokeType]?: T;
+  returnValue: RepositoryProxySelectable<T, T>;
+};
+
+export type RepositoryProxy<T, TRoot = unknown> = {
   [SymbolType]?: T;
+  [SymbolRootType]?: TRoot;
   [SymbolProxyDescriptor]: RepositoryProxyDescriptor;
   toString(): string;
 };
@@ -35,20 +49,21 @@ export type RepositoryProxyDescriptorItem =
   | string
   | { pick: string[] }
   | { filter: RepositoryProxyFilter }
-  | { find: RepositoryProxyFilter };
+  | { find: RepositoryProxyFilter }
+  | { invoke: unknown[] };
 
-export type RepositoryProxyFinalized<T> = RepositoryProxy<T> & {
-  [K in keyof RepositoryProxyMethods<T>]: never;
+export type RepositoryProxyFinalized<T, TRoot = unknown> = RepositoryProxy<T, TRoot> & {
+  [K in keyof RepositoryProxyMethods<T, TRoot>]: never;
 };
 
-export type RepositoryProxySelectable<T> = RepositoryProxy<T> &
-  RepositoryProxyMethods<T> &
+export type RepositoryProxySelectable<T, TRoot = unknown> = RepositoryProxy<T, TRoot> &
+  RepositoryProxyMethods<T, TRoot> &
   (T extends object
-    ? { [K in keyof T & string]: RepositoryProxySelectable<T[K]> }
-    : RepositoryProxyFinalized<T>);
+    ? { [K in keyof T & string]: RepositoryProxySelectable<T[K], TRoot> }
+    : RepositoryProxyFinalized<T, TRoot>);
 
-export const createRepositoryProxy = <T>(descriptor: RepositoryProxyDescriptor) =>
-  new Proxy<RepositoryProxySelectable<T>>(
+export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: RepositoryProxyDescriptor) =>
+  new Proxy<RepositoryProxySelectable<T, TRoot>>(
     {
       [SymbolProxyDescriptor]: descriptor,
       $pick: (...pick) => createRepositoryProxy([...descriptor, { pick }]),
@@ -56,9 +71,14 @@ export const createRepositoryProxy = <T>(descriptor: RepositoryProxyDescriptor) 
         createRepositoryProxy([...descriptor, { filter: { key, predicate, value } }]),
       $find: (key, predicate, value) =>
         createRepositoryProxy([...descriptor, { find: { key, predicate, value } }]),
+      $invoke: (...invoke: unknown[]) =>
+        ({
+          [SymbolProxyDescriptor]: [...descriptor, { invoke }],
+          returnValue: createRepositoryProxy([]),
+        }) satisfies RepositoryInvocation<unknown, unknown>,
       toString: () =>
         descriptor.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join('/'),
-    } as RepositoryProxySelectable<T>,
+    } as RepositoryProxySelectable<T, TRoot>,
     {
       get(target, key, receiver) {
         if (key in target) {
@@ -74,5 +94,6 @@ export const createRepositoryProxy = <T>(descriptor: RepositoryProxyDescriptor) 
     }
   );
 
-export const getRepositoryProxyDescriptor = (proxy: RepositoryProxy<unknown>) =>
-  proxy[SymbolProxyDescriptor];
+export const getRepositoryProxyDescriptor = (proxy: {
+  [SymbolProxyDescriptor]: RepositoryProxyDescriptor;
+}) => proxy[SymbolProxyDescriptor];

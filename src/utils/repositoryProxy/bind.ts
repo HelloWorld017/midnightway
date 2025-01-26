@@ -8,9 +8,9 @@ import type { Connectable, Subscribable } from 'astal/binding';
 const isConnectable = (value: unknown): value is Connectable =>
   isObject(value) && 'connect' in value && typeof value.connect === 'function';
 
-export const bindRepositoryProxy = <T>(
-  proxy: RepositoryProxy<T>,
-  repositoryImpl: Record<string, unknown>
+export const bindRepositoryProxy = <T, TRoot = Record<string, unknown>>(
+  proxy: RepositoryProxy<T, TRoot>,
+  repositoryImpl: TRoot
 ) => {
   const [, ...descriptor] = getRepositoryProxyDescriptor(proxy);
   const get = (): T =>

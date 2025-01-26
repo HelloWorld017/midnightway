@@ -24,6 +24,10 @@ export type BridgeMethodsRenderer = {
   unsubscribe: (params: { id: string }) => void;
   prepareOpenToolkit: (params: void) => void;
   closeToolkit: (params: void) => void;
+  invoke: (params: {
+    descriptor: RepositoryProxyDescriptor;
+    returnValue: RepositoryProxyDescriptor | null;
+  }) => unknown;
 };
 
 export type BridgeRepository = typeof repositoryImpl;
