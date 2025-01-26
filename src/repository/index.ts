@@ -3,6 +3,7 @@ import AstalMpris from 'gi://AstalMpris';
 import AstalNotifd from 'gi://AstalNotifd';
 import AstalTray from 'gi://AstalTray';
 import AstalWp from 'gi://AstalWp';
+import { controlCenterRepository } from './controlCenter';
 import { networkRepository } from './network';
 import { performanceRepository } from './performance';
 import { temperatureRepository } from './temperature';
@@ -15,6 +16,10 @@ const soundRepository = AstalWp.get_default()!;
 const trayRepository = AstalTray.get_default();
 
 export const repositoryImpl = {
+  get controlCenter() {
+    return controlCenterRepository;
+  },
+
   get hyprland() {
     return hyprlandRepository;
   },
