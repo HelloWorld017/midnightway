@@ -11,11 +11,34 @@ type IpOutput = {
   };
 }[];
 
+type Usage = {
+  initialRx: number | null;
+  initialTx: number | null;
+  totalRx: number;
+  totalTx: number;
+};
+
 const network = AstalNetwork.get_default();
-const networkUsage = Variable<IpOutput>([]).poll(
-  1000,
+const networkUsage = Variable<Usage>({
+  initialRx: null,
+  initialTx: null,
+  totalRx: 0,
+  totalTx: 0,
+}).poll(
+  config().system.updateInterval,
   ['ip', '-s', '-j', 'link', 'show', config().system.networkInterface],
-  out => JSON.parse(out) as IpOutput
+  (out, prev) => {
+    const ipOutput = JSON.parse(out) as IpOutput;
+    const totalRx = ipOutput?.reduce((prev, item) => prev + item.stats64.rx.bytes, 0);
+    const totalTx = ipOutput?.reduce((prev, item) => prev + item.stats64.tx.bytes, 0);
+
+    return {
+      initialRx: prev.initialRx ?? totalRx,
+      initialTx: prev.initialTx ?? totalTx,
+      totalTx,
+      totalRx,
+    };
+  }
 );
 
 export const networkRepository = asConnectable({
