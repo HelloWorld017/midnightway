@@ -14,7 +14,8 @@
     "generate:gir": "ts-for-gir generate --outdir src/definitions/girs --ignoreVersionConflicts '*'",
     "lint": "eslint",
     "postinstall": "pnpm run generate",
-    "watch": "nodemon --exec 'pnpm dev' --watch src -e ts,tsx"
+    "watch": "nodemon --exec 'pnpm dev' --watch src -e ts,tsx",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "astal",
