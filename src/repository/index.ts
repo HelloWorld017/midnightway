@@ -7,6 +7,7 @@ import { controlCenterRepository } from './controlCenter';
 import { networkRepository } from './network';
 import { performanceRepository } from './performance';
 import { temperatureRepository } from './temperature';
+import { userRepository } from './user';
 import { weatherRepository } from './weather';
 
 const hyprlandRepository = AstalHyprland.get_default();
@@ -54,5 +55,9 @@ export const repositoryImpl = {
 
   get weather() {
     return weatherRepository;
+  },
+
+  get user() {
+    return userRepository;
   },
 };
