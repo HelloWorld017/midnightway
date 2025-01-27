@@ -4,8 +4,8 @@ import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { useRepo } from '@/hooks/useRepo';
 import { formatNumberByDigits } from '@/utils/format';
 import { isFiniteNumber } from '@/utils/type';
+import { useNetworkState } from '../../hooks/useNetworkState';
 import * as styles from './BarStatus.css';
-import { useNetworkIcon } from './hooks/useNetworkIcon';
 import { useNetworkUsage } from './hooks/useNetworkUsage';
 import { usePerformanceValue } from './hooks/usePerformanceValue';
 import { useTemperature } from './hooks/useTemperature';
@@ -15,7 +15,7 @@ export const BarStatus = () => {
   const networkUsage = useNetworkUsage();
   const temperature = useTemperature();
   const volume = useRepo(repo.sound.defaultSpeaker.volume);
-  const IconNetwork = useNetworkIcon();
+  const { icon: networkIcon } = useNetworkState();
 
   return (
     <SizeAnimated>
@@ -29,7 +29,7 @@ export const BarStatus = () => {
 
         {networkUsage !== null && (
           <div css={styles.statusItemStyle}>
-            <IconNetwork css={styles.statusIconStyle} />
+            <span css={styles.statusIconStyle}>{networkIcon}</span>
             {networkUsage}
           </div>
         )}

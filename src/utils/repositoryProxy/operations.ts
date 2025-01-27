@@ -39,6 +39,11 @@ const bindFindOperator = (array: unknown, filter: RepositoryProxyFilter, binder:
 const invokeOperator = (fn: unknown, invoke: unknown[]) =>
   typeof fn === 'function' ? (fn as (...args: unknown[]) => unknown)(...invoke) : fn;
 
+const invokeMethodOperator = (value: unknown, invokeMethod: { key: string; params: unknown[] }) =>
+  isObject(value) && typeof value[invokeMethod.key] === 'function'
+    ? (value[invokeMethod.key] as (...args: unknown[]) => unknown)(...invokeMethod.params)
+    : value;
+
 /* Apply */
 export const applyDescriptorItem = (
   value: unknown,
@@ -50,6 +55,7 @@ export const applyDescriptorItem = (
     .with({ find: P.select() }, find => findOperator(value, find))
     .with({ pick: P.select() }, pick => pickOperator(value, pick))
     .with({ invoke: P.select() }, invoke => invokeOperator(value, invoke))
+    .with({ invokeMethod: P.select() }, invokeMethod => invokeMethodOperator(value, invokeMethod))
     .exhaustive();
 
 export const bindDescriptorItem = (
@@ -63,4 +69,5 @@ export const bindDescriptorItem = (
     .with({ find: P.select() }, find => bindFindOperator(value, find, binder))
     .with({ pick: P.select() }, pick => bindPickOperator(value, pick, binder))
     .with({ invoke: P.select() }, () => () => {})
+    .with({ invokeMethod: P.select() }, () => () => {})
     .exhaustive();

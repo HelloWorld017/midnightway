@@ -6,6 +6,7 @@ const SNAPPY_EASING =
 
 export type SurfaceColors = {
   bgBase: string;
+  bgBackdrop?: string;
   bgOverlay?: string;
   bgElevated?: string;
   bgElevatedHover?: string;
@@ -14,8 +15,12 @@ export type SurfaceColors = {
   fillPrimary: string;
   fillSecondary: string;
   fillHighlight: string;
+  fillHighlightHover?: string;
+  fillHighlightActive?: string;
   fillHighlightText: string;
   fillLine?: string;
+  gradientRange?: string;
+  gradientProgress?: string;
 };
 
 export const DEFAULT_THEME = {
@@ -36,6 +41,7 @@ export const DEFAULT_THEME = {
     },
     floating: {
       bgBase: 'rgba(45, 45, 45, .9)',
+      bgBackdrop: 'rgba(45, 45, 45, .6)',
       bgOverlay: '#202020',
       bgElevated: 'rgba(255, 255, 255, .1)',
       bgElevatedHover: 'rgba(255, 255, 255, .15)',
@@ -45,7 +51,11 @@ export const DEFAULT_THEME = {
       fillSecondary: 'rgba(255, 255, 255, .5)',
       fillHighlight: '#1179f8',
       fillHighlightText: '#ffffff',
+      fillHighlightHover: '#2986f9',
+      fillHighlightActive: '#0772f5',
       fillLine: 'rgba(255, 255, 255, .1)',
+      gradientRange: 'linear-gradient(to right, rgba(199, 199, 199, .5), rgba(124, 126, 134, .5))',
+      gradientProgress: 'linear-gradient(to right, #585858, #c7c7c7)',
     },
   } satisfies Record<string, SurfaceColors>,
 

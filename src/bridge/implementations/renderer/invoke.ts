@@ -9,6 +9,7 @@ export const invokeImpl =
   ({ descriptor, returnValue }) => {
     const bindable = bindRepositoryProxy(createRepositoryProxy(descriptor), repositoryImpl);
     if (!returnValue) {
+      bindable.get();
       return null;
     }
 

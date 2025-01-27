@@ -12,6 +12,7 @@ type RemoveSubscribable<T> = T extends Subscribable<infer TInner> ? TInner : T;
 
 type ConnectablizedController<T extends object> = Pick<Connectable, 'connect' | 'disconnect'> & {
   set(key: keyof T, value: RemoveSubscribable<T[keyof T]>): void;
+  refresh(key: keyof T): void;
 };
 
 type Connectablized<T extends object> = ConnectablizedController<T> & {

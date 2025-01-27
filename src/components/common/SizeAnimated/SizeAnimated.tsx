@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useMeasure } from '@/hooks/useMeasure';
 import * as styles from './SizeAnimated.css';
 import type { ReactNode } from 'react';
 
@@ -8,25 +8,7 @@ type SizeAnimatedProps = {
 };
 
 export const SizeAnimated = ({ className, children }: SizeAnimatedProps) => {
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [size, setSize] = useState<[number, number] | null>(null);
-  const [observer] = useState(
-    () =>
-      new ResizeObserver(([state]) => {
-        const size = state?.contentBoxSize[0];
-        if (!size) {
-          return;
-        }
-
-        setSize([size.inlineSize, size.blockSize]);
-      })
-  );
-
-  useLayoutEffect(() => {
-    const child = innerRef.current!;
-    observer.observe(child);
-    return () => observer.unobserve(child);
-  }, []);
+  const [innerRef, size] = useMeasure();
 
   return (
     <div

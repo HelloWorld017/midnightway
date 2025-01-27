@@ -21,5 +21,6 @@ export const statusItemStyle = (theme: Theme) => css`
 `;
 
 export const statusIconStyle = css`
+  display: flex;
   font-size: 1.6rem;
 `;

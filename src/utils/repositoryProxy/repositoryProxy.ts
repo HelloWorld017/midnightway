@@ -27,6 +27,12 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
   $invoke: T extends (...args: infer TArgs) => infer TReturnValue
     ? (...args: TArgs) => RepositoryInvocation<TReturnValue, TRoot>
     : unknown;
+  $invokeMethod: <TKey extends keyof T>(
+    key: TKey,
+    ...args: T[TKey] extends (...args: infer TArgs) => unknown ? TArgs : [never]
+  ) => T[TKey] extends (...args: never[]) => infer TReturnValue
+    ? RepositoryInvocation<TReturnValue, TRoot>
+    : never;
 };
 
 export type RepositoryInvocation<T, TRoot = unknown> = Omit<
@@ -50,7 +56,8 @@ export type RepositoryProxyDescriptorItem =
   | { pick: string[] }
   | { filter: RepositoryProxyFilter }
   | { find: RepositoryProxyFilter }
-  | { invoke: unknown[] };
+  | { invoke: unknown[] }
+  | { invokeMethod: { key: string; params: unknown[] } };
 
 export type RepositoryProxyFinalized<T, TRoot = unknown> = RepositoryProxy<T, TRoot> & {
   [K in keyof RepositoryProxyMethods<T, TRoot>]: never;
@@ -74,6 +81,14 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
       $invoke: (...invoke: unknown[]) =>
         ({
           [SymbolProxyDescriptor]: [...descriptor, { invoke }],
+          returnValue: createRepositoryProxy([]),
+        }) satisfies RepositoryInvocation<unknown, unknown>,
+      $invokeMethod: (key, ...params: unknown[]) =>
+        ({
+          [SymbolProxyDescriptor]: [
+            ...descriptor,
+            { invokeMethod: { key: key as string, params } },
+          ],
           returnValue: createRepositoryProxy([]),
         }) satisfies RepositoryInvocation<unknown, unknown>,
       toString: () =>

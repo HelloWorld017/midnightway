@@ -9,7 +9,9 @@ export const buttonStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
   background: ${theme.surface.bgElevated};
   font-size: 1.2rem;
-  padding: 1rem;
+  width: calc((100% - 0.8rem) / 3);
+  height: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 1.2rem;
 
   &:hover {

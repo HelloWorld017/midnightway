@@ -4,6 +4,7 @@ import { Calendar as IconCalendar, SlidersHorizontal as IconSlidersHorizontal } 
 import { useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
+import { Transition } from '@/components/common/Transition';
 import { globalStyle } from '@/utils/css/global';
 import { Calendar } from './Calendar';
 import { ControlCenter } from './ControlCenter';
@@ -49,6 +50,7 @@ export const Toolkit = () => {
   const toolkitWindow = useToolkit(state => state.toolkitWindow);
   const toolkitPosition = useToolkit(state => state.toolkitPosition);
   const toolkitKind = useToolkit(state => state.toolkitKind);
+  const toolkitInnerPortalRef = useToolkit(state => state.toolkitInnerPortalRef);
   const cache = useMemo(
     () =>
       toolkitWindow &&
@@ -69,7 +71,12 @@ export const Toolkit = () => {
       <SurfaceProvider surface="floating">
         <div css={styles.toolkitStyle} style={{ left: `${toolkitPosition.x}px` }}>
           <ToolkitMenu />
-          <main css={styles.contentStyle}>{toolkitKind && TOOLKIT_MAP[toolkitKind].element}</main>
+          <main css={styles.contentStyle}>
+            <Transition kind={toolkitKind ?? ''}>
+              {toolkitKind && TOOLKIT_MAP[toolkitKind].element}
+            </Transition>
+          </main>
+          <div css={styles.innerPortalStyle} ref={toolkitInnerPortalRef} />
         </div>
       </SurfaceProvider>
     </CacheProvider>,

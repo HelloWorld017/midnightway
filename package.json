@@ -58,6 +58,7 @@
     "@emotion/react": "^11.14.0",
     "@react-spring/web": "^9.7.5",
     "date-fns": "^4.1.0",
+    "es-toolkit": "^1.31.0",
     "i18next": "^24.2.1",
     "lucide-react": "^0.474.0",
     "path-browserify": "^1.0.1",

@@ -15,7 +15,7 @@ export const headerContentStyle = css`
 export const headerTitleStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
   font-family: ${theme.fonts.content};
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.4rem;
   line-height: 1.7rem;
   letter-spacing: -0.02em;
@@ -24,6 +24,7 @@ export const headerTitleStyle = (theme: Theme) => css`
 export const headerDescriptionStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
+  font-weight: 500;
   font-size: 0.8rem;
   line-height: 1rem;
   letter-spacing: -0.02em;

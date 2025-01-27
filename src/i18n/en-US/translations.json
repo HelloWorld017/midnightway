@@ -3,8 +3,21 @@
     "calendar": {
       "input": "{{year}} / {{month}}"
     },
-    "controlCenter": {
-      "sessionDuration": "Session {{hours}}h {{minutes}}m {{seconds}}s"
+    "control-center": {
+      "session-duration": "Session {{hours}}h {{minutes}}m {{seconds}}s",
+      "network": "Network",
+      "network-connected": "Connected",
+      "network-connected-without-global": "Local Only",
+      "network-connecting": "Connecting",
+      "network-disconnecting": "Disconnecting",
+      "network-disconnected": "Not Connected",
+      "silent-mode": "Silent Mode",
+      "power-shutdown": "Shutdown",
+      "power-reboot": "Reboot",
+      "power-suspend": "Suspend",
+      "session-logoff": "Log Off",
+      "session-lock": "Lock",
+      "slide-to": "Slide to {{action}}"
     }
   }
 }

@@ -13,6 +13,7 @@ const TRANSITION_KEY = {
   'transform': 'size',
   'grid-template-rows': 'size',
   'grid-template-columns': 'size',
+  'flex-basis': 'size',
   'background': 'background',
   'color': 'color',
   'border-color': 'color',

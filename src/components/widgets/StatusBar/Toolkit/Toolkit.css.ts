@@ -13,6 +13,7 @@ export const toolkitStyle = (theme: Theme) => css`
   top: 0;
   width: 32rem;
   height: 32rem;
+  overflow: hidden;
 
   display: flex;
   gap: 1.6rem;
@@ -53,6 +54,21 @@ export const asideItemStyle = (isActive: boolean) => (theme: Theme) => css`
 `;
 
 export const contentStyle = css`
+  position: relative;
   flex: 1 1 0;
+  min-width: 0;
   overflow: auto;
+`;
+
+export const innerPortalStyle = css`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
 `;

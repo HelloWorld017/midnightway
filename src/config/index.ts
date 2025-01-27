@@ -1,4 +1,4 @@
-import { ConfigSchema, type Config } from './schema';
+import { zConfig, type Config } from './schema';
 
 let configValue: Config | null = null;
 
@@ -11,6 +11,6 @@ export const config = (): Config => {
 };
 
 export const initConfigByValue = (nextConfig: unknown) => {
-  const parsedConfig = ConfigSchema.parse(nextConfig);
+  const parsedConfig = zConfig.parse(nextConfig);
   configValue = parsedConfig;
 };

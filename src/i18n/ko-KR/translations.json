@@ -3,8 +3,21 @@
     "calendar": {
       "input": "{{year}}년 {{month}}월"
     },
-    "controlCenter": {
-      "sessionDuration": "세션 {{hours}}시간 {{minutes}}분 {{seconds}}초"
+    "control-center": {
+      "session-duration": "세션 {{hours}}시간 {{minutes}}분 {{seconds}}초",
+      "network": "네트워크",
+      "network-connected": "연결됨",
+      "network-connected-without-global": "내부망 연결됨",
+      "network-connecting": "연결 중",
+      "network-disconnecting": "연결 해제 중",
+      "network-disconnected": "연결 없음",
+      "silent-mode": "알림 정지",
+      "power-shutdown": "시스템 종료",
+      "power-reboot": "재시작",
+      "power-suspend": "절전",
+      "session-logoff": "로그오프",
+      "session-lock": "잠금",
+      "slide-to": "밀어서 {{action}}"
     }
   }
 }

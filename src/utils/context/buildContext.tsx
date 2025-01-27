@@ -9,7 +9,7 @@ export const buildContext = <T,>(useContextValue: () => T) => {
   const Provider = ({ children }: { children: ReactNode }) => {
     const contextValue = useContextValue();
     const contextSignal = useCreateSignal(contextValue);
-    return <Context.Provider value={contextSignal}>{children}</Context.Provider>;
+    return <Context value={contextSignal}>{children}</Context>;
   };
 
   Provider.displayName = `${useContextValue.name?.slice(4) ?? ''}Provider`;

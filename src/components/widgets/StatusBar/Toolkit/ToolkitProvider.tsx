@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { buildContext } from '@/utils/context/buildContext';
@@ -9,6 +9,7 @@ const useToolkitContext = () => {
   const [toolkitKind, setToolkitKind] = useState<ToolkitKind | null>(null);
   const [toolkitWindow, setToolkitWindow] = useState<WindowProxy | null>(null);
   const [toolkitPosition, setToolkitPosition] = useState<ToolkitPosition>({ x: 0 });
+  const toolkitInnerPortalRef = useRef<HTMLDivElement | null>(null);
 
   const requestToolkitWindow = useLatestCallback(async () => {
     if (toolkitWindow !== null) {
@@ -67,6 +68,7 @@ const useToolkitContext = () => {
     toolkitKind,
     toolkitPosition,
     toolkitWindow,
+    toolkitInnerPortalRef,
     openToolkit,
     closeToolkit,
     toggleToolkit,

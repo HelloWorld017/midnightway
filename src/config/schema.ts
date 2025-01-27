@@ -1,12 +1,12 @@
 import * as z from 'zod';
 
-const GeneratedIdSchema = z
+const zGeneratedId = z
   .string()
   .default('')
-  .transform(() => Math.random().toString(36).slice(2))
+  .transform(id => id || Math.random().toString(36).slice(2))
   .brand('Id');
 
-const ControlCenterStateSchema = <T>(type: z.ZodSchema<T>) =>
+const zControlCenterState = <T>(type: z.ZodSchema<T>) =>
   z.discriminatedUnion('kind', [
     z.object({
       kind: z.literal('poll'),
@@ -23,14 +23,14 @@ const ControlCenterStateSchema = <T>(type: z.ZodSchema<T>) =>
     }),
   ]);
 
-const ControlCenterItemSchema = z
+const zControlCenterItem = z
   .discriminatedUnion('kind', [
     z.object({
       icon: z.string(),
       title: z.union([z.string(), z.object({ active: z.string(), inactive: z.string() })]),
       description: z.union([z.string(), z.object({ active: z.string(), inactive: z.string() })]),
       kind: z.literal('toggle'),
-      state: ControlCenterStateSchema(z.boolean()),
+      state: zControlCenterState(z.boolean()),
       activateCommand: z.string(),
       deactivateCommand: z.string(),
     }),
@@ -43,26 +43,24 @@ const ControlCenterItemSchema = z
       icon: z.string(),
       kind: z.literal('slider'),
       command: z.string().describe('use {{percent}} or {{frac}} to interpolate the slider value'),
-      state: ControlCenterStateSchema(z.number()),
+      state: zControlCenterState(z.number()),
     }),
     z.object({
-      kind: z.enum(['network', 'bluetooth', 'silent', 'volume-slider']),
+      kind: z.enum(['network', 'silent', 'volume-slider']),
     }),
   ])
-  .and(z.object({ id: GeneratedIdSchema }));
+  .and(z.object({ id: zGeneratedId }));
 
-export const ConfigSchema = z
+export const zConfig = z
   .object({
     locale: z.enum(['en-US', 'ko-KR']).default('en-US'),
 
     controlCenter: z
       .object({
-        items: z
-          .tuple([z.array(ControlCenterItemSchema), z.array(ControlCenterItemSchema)])
-          .default([
-            [{ kind: 'network' }, { kind: 'silent' }],
-            [{ kind: 'bluetooth' }, { kind: 'volume-slider' }],
-          ]),
+        items: z.tuple([z.array(zControlCenterItem), z.array(zControlCenterItem)]).default([
+          [{ kind: 'network' }, { kind: 'silent' }],
+          [{ kind: 'bluetooth' }, { kind: 'volume-slider' }],
+        ]),
       })
       .default({}),
 
@@ -92,7 +90,7 @@ export const ConfigSchema = z
   })
   .default({});
 
-export type GeneratedId = z.TypeOf<typeof GeneratedIdSchema>;
-export type Config = z.TypeOf<typeof ConfigSchema>;
-export type ControlCenterItem = z.TypeOf<typeof ControlCenterItemSchema>;
-export type ControlCenterState<T> = z.TypeOf<ReturnType<typeof ControlCenterStateSchema<T>>>;
+export type GeneratedId = z.TypeOf<typeof zGeneratedId>;
+export type Config = z.TypeOf<typeof zConfig>;
+export type ControlCenterItem = z.TypeOf<typeof zControlCenterItem>;
+export type ControlCenterState<T> = z.TypeOf<ReturnType<typeof zControlCenterState<T>>>;

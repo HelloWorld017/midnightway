@@ -32,7 +32,7 @@ export const ControlCenterHeader = () => {
       <div css={styles.headerContentStyle}>
         <h1 css={styles.headerTitleStyle}>{user?.userName}</h1>
         <span css={styles.headerDescriptionStyle}>
-          {t('controlCenter.sessionDuration', duration)}
+          {t('control-center.session-duration', duration)}
         </span>
       </div>
 
