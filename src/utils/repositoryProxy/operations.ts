@@ -24,6 +24,12 @@ const pickOperator = (value: unknown, pick: string[]) =>
 const bindPickOperator = (value: unknown, pick: string[], binder: Binder) =>
   bindArray(pick, value, (key, item) => binder(item, key as string));
 
+const pickArrayOperator = (array: unknown, pick: string[]) =>
+  Array.isArray(array) ? array.map(item => pickOperator(item, pick)) : array;
+
+const bindPickArrayOperator = (array: unknown, pick: string[], binder: Binder) =>
+  bindArray(array, pick, (item, pick) => bindPickOperator(item, pick, binder));
+
 const filterOperator = (array: unknown, filter: RepositoryProxyFilter) =>
   Array.isArray(array) ? array.filter(filterPredicate(filter)) : array;
 
@@ -54,6 +60,7 @@ export const applyDescriptorItem = (
     .with({ filter: P.select() }, filter => filterOperator(value, filter))
     .with({ find: P.select() }, find => findOperator(value, find))
     .with({ pick: P.select() }, pick => pickOperator(value, pick))
+    .with({ pickArray: P.select() }, pickArray => pickArrayOperator(value, pickArray))
     .with({ invoke: P.select() }, invoke => invokeOperator(value, invoke))
     .with({ invokeMethod: P.select() }, invokeMethod => invokeMethodOperator(value, invokeMethod))
     .exhaustive();
@@ -68,6 +75,7 @@ export const bindDescriptorItem = (
     .with({ filter: P.select() }, filter => bindFilterOperator(value, filter, binder))
     .with({ find: P.select() }, find => bindFindOperator(value, find, binder))
     .with({ pick: P.select() }, pick => bindPickOperator(value, pick, binder))
+    .with({ pickArray: P.select() }, pickArray => bindPickArrayOperator(value, pickArray, binder))
     .with({ invoke: P.select() }, () => () => {})
     .with({ invokeMethod: P.select() }, () => () => {})
     .exhaustive();
