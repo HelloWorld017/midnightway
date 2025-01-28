@@ -48,7 +48,7 @@ export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
 
   const onClickItem = (item: PowerMenuItem) => {
     if (!item.shouldConfirm) {
-      void bridgeRenderer.debug({ command: item.command });
+      void bridgeRenderer.exec({ command: item.command });
       return;
     }
 

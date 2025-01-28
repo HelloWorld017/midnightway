@@ -18,7 +18,7 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
 
   useEffect(() => {
     if (!hasConfirmedRef.current && state === 100) {
-      void bridgeRenderer.debug({ command: item.command });
+      void bridgeRenderer.exec({ command: item.command });
       hasConfirmedRef.current = true;
       onClose();
     }
