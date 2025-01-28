@@ -48,6 +48,7 @@ export const MdWebView = ({
       webView.get_settings().set_javascript_can_open_windows_automatically(true);
 
       if (!schemeEnabledContext.has(webView.webContext)) {
+        webView.webContext.get_security_manager().register_uri_scheme_as_secure('midnightway');
         webView.webContext.register_uri_scheme('midnightway', request => {
           if (request.get_path() === '/') {
             return index;

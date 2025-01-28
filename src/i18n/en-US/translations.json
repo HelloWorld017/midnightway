@@ -18,6 +18,13 @@
       "session-logoff": "Log Off",
       "session-lock": "Lock",
       "slide-to": "Slide to {{action}}"
+    },
+    "notification": {
+      "tray": "System Tray",
+      "media": "Playing Media",
+      "notification": "Notification",
+      "no-notification": "No notifications.",
+      "clear-all": "Clear All"
     }
   }
 }

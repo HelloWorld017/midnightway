@@ -1,9 +1,10 @@
 import {
+  ArrowRightIcon,
+  AudioLinesIcon,
+  BellIcon,
+  CalendarIcon,
   ChevronDownIcon,
-  PowerIcon,
-  SpeakerIcon,
-  Disc3Icon,
-  CpuIcon,
+  ChevronUpIcon,
   CloudDrizzleIcon,
   CloudFogIcon,
   CloudHailIcon,
@@ -17,25 +18,27 @@ import {
   CloudSunIcon,
   CloudIcon,
   CloudyIcon,
+  CpuIcon,
+  Disc3Icon,
   DropletIcon,
   DropletsIcon,
-  HazeIcon,
-  MoonStarIcon,
-  SnowflakeIcon,
-  SunIcon,
-  RouteOffIcon,
-  TornadoIcon,
-  BellIcon,
-  NetworkIcon,
-  WifiIcon,
-  ArrowRightIcon,
-  ChevronUpIcon,
+  FastForwardIcon,
   FocusIcon,
-  RotateCcwIcon,
-  LogOutIcon,
+  HazeIcon,
   LockIcon,
-  CalendarIcon,
+  LogOutIcon,
+  MoonStarIcon,
+  NetworkIcon,
+  PowerIcon,
+  RewindIcon,
+  RotateCcwIcon,
+  RouteOffIcon,
   SlidersHorizontalIcon,
+  SnowflakeIcon,
+  SpeakerIcon,
+  SunIcon,
+  TornadoIcon,
+  WifiIcon,
 } from 'lucide-react';
 
 import type { ComponentProps, ComponentType } from 'react';
@@ -48,6 +51,7 @@ const wrapLucideComponent =
   };
 
 export const IconArrowRight = wrapLucideComponent(ArrowRightIcon);
+export const IconAudioLines = wrapLucideComponent(AudioLinesIcon);
 export const IconBell = wrapLucideComponent(BellIcon);
 export const IconCalendar = wrapLucideComponent(CalendarIcon);
 export const IconChevronDown = wrapLucideComponent(ChevronDownIcon);
@@ -69,6 +73,7 @@ export const IconCpu = wrapLucideComponent(CpuIcon);
 export const IconDisc3 = wrapLucideComponent(Disc3Icon);
 export const IconDroplet = wrapLucideComponent(DropletIcon);
 export const IconDroplets = wrapLucideComponent(DropletsIcon);
+export const IconFastForward = wrapLucideComponent(FastForwardIcon);
 export const IconFocus = wrapLucideComponent(FocusIcon);
 export const IconHaze = wrapLucideComponent(HazeIcon);
 export const IconLock = wrapLucideComponent(LockIcon);
@@ -76,6 +81,7 @@ export const IconLogOut = wrapLucideComponent(LogOutIcon);
 export const IconMoonStar = wrapLucideComponent(MoonStarIcon);
 export const IconNetwork = wrapLucideComponent(NetworkIcon);
 export const IconPower = wrapLucideComponent(PowerIcon);
+export const IconRewind = wrapLucideComponent(RewindIcon);
 export const IconRotateCcw = wrapLucideComponent(RotateCcwIcon);
 export const IconRouteOff = wrapLucideComponent(RouteOffIcon);
 export const IconSlidersHorizontal = wrapLucideComponent(SlidersHorizontalIcon);

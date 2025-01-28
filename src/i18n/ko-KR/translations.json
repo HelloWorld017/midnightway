@@ -18,6 +18,13 @@
       "session-logoff": "로그오프",
       "session-lock": "잠금",
       "slide-to": "밀어서 {{action}}"
+    },
+    "notification": {
+      "tray": "시스템 트레이",
+      "media": "재생중인 미디어",
+      "notification": "알림",
+      "no-notification": "알림이 없습니다.",
+      "clear-all": "전체 지우기"
     }
   }
 }

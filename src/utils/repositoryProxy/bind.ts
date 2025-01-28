@@ -1,4 +1,5 @@
 import { bind } from 'astal';
+import { throttle } from 'es-toolkit';
 import { isObject } from '@/utils/type';
 import { applyDescriptorItem, bindDescriptorItem } from './operations';
 import { getRepositoryProxyDescriptor } from './repositoryProxy';
@@ -50,6 +51,10 @@ export const bindRepositoryProxy = <T, TRoot = Record<string, unknown>>(
   return {
     get,
     subscribe: (callback: (value: T) => void) =>
-      doBind(repositoryImpl, () => callback(get()), descriptor),
+      doBind(
+        repositoryImpl,
+        throttle(() => callback(get()), 100, { edges: ['trailing'] }),
+        descriptor
+      ),
   } satisfies Subscribable<T>;
 };

@@ -50,7 +50,7 @@ export const ControlCenterItemToggle = ({
     void bridgeRenderer.exec({ command });
 
     if (item.state.kind !== 'poll') {
-      void invoke(repo.controlCenter.items.set.$invoke(item.id, nextState));
+      void invoke(repo.controlCenter.items.$invokeMethod('set', item.id, nextState));
     }
   });
 

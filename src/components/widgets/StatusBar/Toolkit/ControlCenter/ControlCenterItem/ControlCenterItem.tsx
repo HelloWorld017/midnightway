@@ -45,7 +45,7 @@ const ControlCenterItemSilent = ({ item }: ControlCenterItemSilentProps) => {
 
   const invoke = useInvokeRepo();
   const setSilentMode = useLatestCallback((nextValue: boolean) => {
-    void invoke(repo.notification.set.$invoke('isSilentMode', nextValue));
+    void invoke(repo.notification.$invokeMethod('set', 'isSilentMode', nextValue));
   });
 
   const toggleItem = useMemo(

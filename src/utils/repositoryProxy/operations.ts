@@ -10,6 +10,7 @@ const filterPredicate =
   (item: unknown) =>
     match(predicate)
       .with('is', () => isObject(item) && item[key] === value)
+      .with('in', () => isObject(item) && Array.isArray(value) && value.includes(item[key]))
       .exhaustive();
 
 const bindArray = <T>(array: unknown, target: T, binder: Binder<T>) => {
@@ -42,9 +43,6 @@ const findOperator = (array: unknown, filter: RepositoryProxyFilter) =>
 const bindFindOperator = (array: unknown, filter: RepositoryProxyFilter, binder: Binder) =>
   bindArray(array, filter.key, binder);
 
-const invokeOperator = (fn: unknown, invoke: unknown[]) =>
-  typeof fn === 'function' ? (fn as (...args: unknown[]) => unknown)(...invoke) : fn;
-
 const invokeMethodOperator = (value: unknown, invokeMethod: { key: string; params: unknown[] }) =>
   isObject(value) && typeof value[invokeMethod.key] === 'function'
     ? (value[invokeMethod.key] as (...args: unknown[]) => unknown)(...invokeMethod.params)
@@ -61,7 +59,6 @@ export const applyDescriptorItem = (
     .with({ find: P.select() }, find => findOperator(value, find))
     .with({ pick: P.select() }, pick => pickOperator(value, pick))
     .with({ pickArray: P.select() }, pickArray => pickArrayOperator(value, pickArray))
-    .with({ invoke: P.select() }, invoke => invokeOperator(value, invoke))
     .with({ invokeMethod: P.select() }, invokeMethod => invokeMethodOperator(value, invokeMethod))
     .exhaustive();
 
@@ -76,6 +73,5 @@ export const bindDescriptorItem = (
     .with({ find: P.select() }, find => bindFindOperator(value, find, binder))
     .with({ pick: P.select() }, pick => bindPickOperator(value, pick, binder))
     .with({ pickArray: P.select() }, pickArray => bindPickArrayOperator(value, pickArray, binder))
-    .with({ invoke: P.select() }, () => () => {})
     .with({ invokeMethod: P.select() }, () => () => {})
     .exhaustive();

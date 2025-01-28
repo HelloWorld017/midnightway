@@ -58,7 +58,7 @@ export const ControlCenterItemSlider = ({
     void bridgeRenderer.exec({ command });
 
     if (item.state.kind !== 'poll') {
-      void invoke(repo.controlCenter.items.set.$invoke(item.id, nextValue));
+      void invoke(repo.controlCenter.items.$invokeMethod('set', item.id, nextValue));
     }
   });
 

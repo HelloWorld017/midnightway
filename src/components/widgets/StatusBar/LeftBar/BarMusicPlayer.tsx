@@ -1,14 +1,9 @@
 import { IconDisc3 } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { Collapsible } from '@/components/common/Collapsible';
+import { PlaybackStatus } from '@/constants/gir';
 import { useRepo } from '@/hooks/useRepo';
 import * as styles from './BarMusicPlayer.css';
-
-const enum PlaybackStatus {
-  PLAYING = 0,
-  PAUSED = 1,
-  STOPPED = 2,
-}
 
 export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
   const player = useRepo(

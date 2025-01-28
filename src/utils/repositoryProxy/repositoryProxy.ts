@@ -1,9 +1,8 @@
 declare const SymbolType: unique symbol;
 declare const SymbolRootType: unique symbol;
-declare const SymbolInvokeType: unique symbol;
 const SymbolProxyDescriptor = Symbol.for('RepositoryProxy::descriptor');
 
-export type RepositoryProxyFilterPredicate = 'is';
+export type RepositoryProxyFilterPredicate = 'is' | 'in';
 export type RepositoryProxyFilter = {
   key: string;
   predicate: RepositoryProxyFilterPredicate;
@@ -27,23 +26,12 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
     predicate: RepositoryProxyFilterPredicate,
     value: unknown
   ) => RepositoryProxySelectable<(T & unknown[])[number], TRoot>;
-  $invoke: T extends (...args: infer TArgs) => infer TReturnValue
-    ? (...args: TArgs) => RepositoryInvocation<TReturnValue, TRoot>
-    : unknown;
   $invokeMethod: <TKey extends keyof T>(
     key: TKey,
     ...args: T[TKey] extends (...args: infer TArgs) => unknown ? TArgs : [never]
   ) => T[TKey] extends (...args: never[]) => infer TReturnValue
-    ? RepositoryInvocation<TReturnValue, TRoot>
+    ? RepositoryProxySelectable<TReturnValue, TRoot>
     : never;
-};
-
-export type RepositoryInvocation<T, TRoot = unknown> = Omit<
-  RepositoryProxy<T, TRoot>,
-  typeof SymbolType
-> & {
-  [SymbolInvokeType]?: T;
-  returnValue: RepositoryProxySelectable<T, T>;
 };
 
 export type RepositoryProxy<T, TRoot = unknown> = {
@@ -60,7 +48,6 @@ export type RepositoryProxyDescriptorItem =
   | { pickArray: string[] }
   | { filter: RepositoryProxyFilter }
   | { find: RepositoryProxyFilter }
-  | { invoke: unknown[] }
   | { invokeMethod: { key: string; params: unknown[] } };
 
 export type RepositoryProxyFinalized<T, TRoot = unknown> = RepositoryProxy<T, TRoot> & {
@@ -83,19 +70,8 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
         createRepositoryProxy([...descriptor, { filter: { key, predicate, value } }]),
       $find: (key, predicate, value) =>
         createRepositoryProxy([...descriptor, { find: { key, predicate, value } }]),
-      $invoke: (...invoke: unknown[]) =>
-        ({
-          [SymbolProxyDescriptor]: [...descriptor, { invoke }],
-          returnValue: createRepositoryProxy([]),
-        }) satisfies RepositoryInvocation<unknown, unknown>,
       $invokeMethod: (key, ...params: unknown[]) =>
-        ({
-          [SymbolProxyDescriptor]: [
-            ...descriptor,
-            { invokeMethod: { key: key as string, params } },
-          ],
-          returnValue: createRepositoryProxy([]),
-        }) satisfies RepositoryInvocation<unknown, unknown>,
+        createRepositoryProxy([...descriptor, { invokeMethod: { key: key as string, params } }]),
       toString: () =>
         descriptor.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join('/'),
     } as RepositoryProxySelectable<T, TRoot>,

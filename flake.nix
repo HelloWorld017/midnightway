@@ -42,12 +42,13 @@
         astalPkgs.tray
         astalPkgs.wireplumber
         pkgs.libgtop
+        pkgs.glib
+        pkgs.glib-networking
         pkgs.gjs
         pkgs.webkitgtk_6_0
       ];
       devDeps = [
         astalPkgs.astal3
-        pkgs.glib
         pkgs.gobject-introspection
         pkgs.nodejs_23
         pkgs.nodePackages.pnpm
@@ -72,6 +73,7 @@
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";
+          export GIO_MODULE_DIR="${pkgs.glib-networking}/lib/gio/modules";
           export MIDNIGHTWAY_CONFIG_FILE="./config.json";
           export VIRTUAL_ENV="midnightway";
         '';

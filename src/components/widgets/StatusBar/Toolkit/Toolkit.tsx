@@ -2,12 +2,13 @@ import createCache from '@emotion/cache';
 import { CacheProvider, Global } from '@emotion/react';
 import { useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
+import { IconBell, IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { Transition } from '@/components/common/Transition';
 import { globalStyle } from '@/utils/css/global';
 import { Calendar } from './Calendar';
 import { ControlCenter } from './ControlCenter';
+import { Notification } from './Notification';
 import * as styles from './Toolkit.css';
 import { useToolkit } from './ToolkitProvider';
 import type { ToolkitKind } from './ToolkitProvider';
@@ -22,7 +23,10 @@ const TOOLKIT_MAP: Record<ToolkitKind, { icon: ReactNode; element: ReactNode }> 
     icon: <IconSlidersHorizontal strokeWidth={2.5} />,
     element: <ControlCenter />,
   },
-  'notification': { icon: null, element: null },
+  'notification': {
+    icon: <IconBell strokeWidth={2.5} />,
+    element: <Notification />,
+  },
   'performance': { icon: null, element: null },
 };
 

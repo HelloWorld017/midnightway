@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
 import { getRepositoryProxyDescriptor } from '@/utils/repositoryProxy';
-import type { RepositoryInvocation, RepositoryProxy } from '@/utils/repositoryProxy';
+import type { RepositoryProxy } from '@/utils/repositoryProxy';
 
 const subscriptions = new Map<string, (nextValue: unknown) => void>();
 
@@ -29,13 +29,32 @@ export const useRepo = <T>(repo: RepositoryProxy<T>, deps: unknown[] = []) => {
   return value;
 };
 
-export const useInvokeRepo = <T, TReturnValue>() => {
+export const usePollRepo = <T>(repo: RepositoryProxy<T>, interval: number) => {
+  const [value, setValue] = useState<T | null>(null);
+  const descriptor = getRepositoryProxyDescriptor(repo);
+  useEffect(() => {
+    const onPoll = () => {
+      bridgeRenderer
+        .invoke({ descriptor, returning: true })
+        .then(result => setValue(result as T))
+        .catch(() => {});
+    };
+
+    onPoll();
+    const intervalId = setInterval(onPoll, interval);
+    return () => clearInterval(intervalId);
+  }, [interval]);
+
+  return value;
+};
+
+export const useInvokeRepo = () => {
   const invokeRepo = useCallback(
-    (invocation: RepositoryInvocation<T>, returnValue?: RepositoryProxy<TReturnValue, T>) =>
+    <T>(invocation: RepositoryProxy<T>, returning: boolean = false) =>
       bridgeRenderer.invoke({
         descriptor: getRepositoryProxyDescriptor(invocation),
-        returnValue: returnValue ? getRepositoryProxyDescriptor(returnValue) : null,
-      }),
+        returning,
+      }) as Promise<T | null>,
     []
   );
 

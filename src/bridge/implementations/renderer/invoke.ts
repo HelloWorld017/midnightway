@@ -6,17 +6,8 @@ import type { MethodsProxy } from '@/utils/methodsProxy';
 
 export const invokeImpl =
   (_: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['invoke'] =>
-  ({ descriptor, returnValue }) => {
+  ({ descriptor, returning }) => {
     const bindable = bindRepositoryProxy(createRepositoryProxy(descriptor), repositoryImpl);
-    if (!returnValue) {
-      bindable.get();
-      return null;
-    }
-
-    const returnValueBindable = bindRepositoryProxy(
-      createRepositoryProxy(returnValue),
-      bindable.get() as Record<string, unknown>
-    );
-
-    return returnValueBindable.get();
+    const result = bindable.get();
+    return returning ? result : null;
   };
