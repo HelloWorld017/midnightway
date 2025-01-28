@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { match, P } from 'ts-pattern';
-import { IconNetworkOff, IconNetworkWired, IconNetworkWireless } from '@/assets/icons';
+import { IconNetwork, IconRouteOff, IconWifi } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
 
@@ -28,11 +28,11 @@ export const useNetworkState = () => {
 
   const isConnected = networkStatus?.state === NetworkState.CONNECTED_GLOBAL;
 
-  const IconNetwork = isConnected
+  const Icon = isConnected
     ? networkStatus.primary === NetworkPrimary.WIFI
-      ? IconNetworkWireless
-      : IconNetworkWired
-    : IconNetworkOff;
+      ? IconWifi
+      : IconNetwork
+    : IconRouteOff;
 
   const { t } = useTranslation();
   const stateText = match(networkStatus?.state)
@@ -44,5 +44,5 @@ export const useNetworkState = () => {
     .with(NetworkState.DISCONNECTING, () => t('control-center.network-disconnecting'))
     .otherwise(() => t('control-center.network-disconnected'));
 
-  return { isConnected, icon: <IconNetwork />, text: stateText };
+  return { isConnected, icon: <Icon />, text: stateText };
 };

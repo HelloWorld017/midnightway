@@ -1,4 +1,4 @@
-import { IconMusic } from '@/assets/icons';
+import { IconDisc3 } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { Collapsible } from '@/components/common/Collapsible';
 import { useRepo } from '@/hooks/useRepo';
@@ -26,7 +26,7 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
       isVisible={!!player}
     >
       <div css={styles.musicStyle}>
-        <IconMusic css={styles.musicIconStyle} />
+        <IconDisc3 css={styles.musicIconStyle} />
         <div css={styles.musicColumnStyle}>
           <div css={styles.musicHeaderStyle}>
             <h1 css={styles.musicHeaderTitleStyle}>{player?.title}</h1>

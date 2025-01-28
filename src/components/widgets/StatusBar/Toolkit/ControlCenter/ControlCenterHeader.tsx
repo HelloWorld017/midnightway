@@ -1,6 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { IconExit } from '@/assets/icons';
-import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import { useNow } from '@/hooks/useNow';
 import { useRepo } from '@/hooks/useRepo';
@@ -25,7 +23,6 @@ export const ControlCenterHeader = () => {
   const { t } = useTranslation();
   const user = useRepo(repo.user.$pick('userName', 'sessionStartedAt'));
   const duration = useDuration(user?.sessionStartedAt);
-  const onClickExit = () => void bridgeRenderer.exec({ command: ['hyprctl', 'dispatch', 'exit'] });
 
   return (
     <header css={styles.headerStyle}>
@@ -35,10 +32,6 @@ export const ControlCenterHeader = () => {
           {t('control-center.session-duration', duration)}
         </span>
       </div>
-
-      <button css={styles.headerButtonStyle} type="button" onClick={onClickExit}>
-        <IconExit />
-      </button>
     </header>
   );
 };

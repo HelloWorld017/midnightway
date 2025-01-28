@@ -1,5 +1,4 @@
 import { css, type Theme } from '@emotion/react';
-import { transition } from '@/utils/css/transition';
 
 export const headerStyle = css`
   display: flex;
@@ -28,16 +27,4 @@ export const headerDescriptionStyle = (theme: Theme) => css`
   font-size: 0.8rem;
   line-height: 1rem;
   letter-spacing: -0.02em;
-`;
-
-export const headerButtonStyle = (theme: Theme) => css`
-  color: ${theme.surface.fillPrimary};
-  font-size: 1.2rem;
-  padding: 0.6rem;
-  border-radius: 0.6rem;
-  transition: ${transition(theme, ['background'])};
-
-  &:hover {
-    background: ${theme.surface.bgElevated};
-  }
 `;

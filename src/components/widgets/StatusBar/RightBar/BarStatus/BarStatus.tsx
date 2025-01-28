@@ -1,4 +1,4 @@
-import { IconCore, IconSound, IconTemperature } from '@/assets/icons';
+import { IconCpu, IconSpeaker, IconStatusTemperature } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { useRepo } from '@/hooks/useRepo';
@@ -22,7 +22,7 @@ export const BarStatus = () => {
       <div css={styles.statusListStyle}>
         {isFiniteNumber(volume) && (
           <div css={styles.statusItemStyle}>
-            <IconSound css={styles.statusIconStyle} />
+            <IconSpeaker css={styles.statusIconStyle} />
             {formatNumberByDigits(volume * 100)}
           </div>
         )}
@@ -36,14 +36,14 @@ export const BarStatus = () => {
 
         {isFiniteNumber(performanceValue) && (
           <div css={styles.statusItemStyle}>
-            <IconCore css={styles.statusIconStyle} />
+            <IconCpu css={styles.statusIconStyle} />
             {`${formatNumberByDigits(performanceValue)}%`}
           </div>
         )}
 
         {isFiniteNumber(temperature) && (
           <div css={styles.statusItemStyle}>
-            <IconTemperature css={styles.statusIconStyle} />
+            <IconStatusTemperature css={styles.statusIconStyle} />
             {`${formatNumberByDigits(temperature)}°`}
           </div>
         )}

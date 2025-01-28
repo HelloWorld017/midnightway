@@ -1,12 +1,6 @@
-import {
-  LogOut as IconLogOut,
-  Lock as IconLock,
-  Power as IconPower,
-  RotateCcw as IconRotateCcw,
-  MoonStar as IconMoonStart,
-} from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IconLock, IconLogOut, IconMoonStar, IconPower, IconRotateCcw } from '@/assets/icons';
 import { bridgeRenderer } from '@/bridge/renderer';
 import * as styles from './PowerMenuDropdown.css';
 import type { PowerMenuItem } from './types';
@@ -20,31 +14,31 @@ export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
   const items = useMemo<(PowerMenuItem | null)[]>(
     () => [
       {
-        icon: <IconPower width="1em" height="1em" />,
+        icon: <IconPower />,
         name: t('control-center.power-shutdown'),
         command: ['systemctl', 'poweroff'],
         shouldConfirm: true,
       },
       {
-        icon: <IconRotateCcw width="1em" height="1em" />,
+        icon: <IconRotateCcw />,
         name: t('control-center.power-reboot'),
         command: ['systemctl', 'reboot'],
         shouldConfirm: true,
       },
       {
-        icon: <IconMoonStart width="1em" height="1em" />,
+        icon: <IconMoonStar />,
         name: t('control-center.power-suspend'),
         command: ['systemctl', 'suspend'],
       },
       null,
       {
-        icon: <IconLogOut width="1em" height="1em" />,
+        icon: <IconLogOut />,
         name: t('control-center.session-logoff'),
         command: ['hyprctl', 'dispatch', 'exit'],
         shouldConfirm: true,
       },
       {
-        icon: <IconLock width="1em" height="1em" />,
+        icon: <IconLock />,
         name: t('control-center.session-lock'),
         command: ['loginctl', 'lock-session'],
       },

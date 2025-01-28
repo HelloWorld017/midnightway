@@ -1,11 +1,7 @@
 import { add, format, startOfDay, startOfWeek } from 'date-fns';
-import {
-  ChevronDown as IconChevronDown,
-  ChevronUp as IconChevronUp,
-  Focus as IconFocus,
-} from 'lucide-react';
 import { useMemo } from 'react';
 import { match } from 'ts-pattern';
+import { IconChevronDown, IconChevronUp, IconFocus } from '@/assets/icons';
 import { useNow } from '@/hooks/useNow';
 import { locale } from '@/i18n';
 import * as styles from './Calendar.css';
@@ -124,13 +120,13 @@ export const Calendar = () => {
           </label>
           <div css={styles.calendarButtonsStyle}>
             <button css={styles.calendarButtonStyle} onClick={onReset}>
-              <IconFocus width="1em" height="1em" />
+              <IconFocus />
             </button>
             <button css={styles.calendarButtonStyle} onClick={onClickPrevMonth}>
-              <IconChevronUp width="1em" height="1em" />
+              <IconChevronUp />
             </button>
             <button css={styles.calendarButtonStyle} onClick={onClickNextMonth}>
-              <IconChevronDown width="1em" height="1em" />
+              <IconChevronDown />
             </button>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { ArrowRight as IconArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IconArrowRight } from '@/assets/icons';
 import { bridgeRenderer } from '@/bridge/renderer';
 import * as styles from './PowerMenuConfirm.css';
 import type { PowerMenuItem } from './types';
@@ -31,7 +31,7 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
         <span css={styles.iconStyle}>{item.icon}</span>
       </div>
       <div css={styles.guideStyle(state === 0)}>
-        <IconArrowRight css={styles.guideArrowStyle} width="1em" height="1em" />
+        <IconArrowRight css={styles.guideArrowStyle} />
         <span css={styles.guideTextStyle}>
           {t('control-center.slide-to', { action: item.name })}
         </span>

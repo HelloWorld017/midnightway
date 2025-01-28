@@ -1,8 +1,8 @@
 import createCache from '@emotion/cache';
 import { CacheProvider, Global } from '@emotion/react';
-import { Calendar as IconCalendar, SlidersHorizontal as IconSlidersHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { Transition } from '@/components/common/Transition';
 import { globalStyle } from '@/utils/css/global';
@@ -15,11 +15,11 @@ import type { ReactNode } from 'react';
 
 const TOOLKIT_MAP: Record<ToolkitKind, { icon: ReactNode; element: ReactNode }> = {
   'calendar': {
-    icon: <IconCalendar width="1em" height="1em" strokeWidth={2.5} />,
+    icon: <IconCalendar strokeWidth={2.5} />,
     element: <Calendar />,
   },
   'control-center': {
-    icon: <IconSlidersHorizontal width="1em" height="1em" strokeWidth={2.5} />,
+    icon: <IconSlidersHorizontal strokeWidth={2.5} />,
     element: <ControlCenter />,
   },
   'notification': { icon: null, element: null },

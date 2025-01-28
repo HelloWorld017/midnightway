@@ -1,6 +1,6 @@
-import { ChevronDown as IconChevronDown, Power as IconPower } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { IconChevronDown, IconPower } from '@/assets/icons';
 import { Transition } from '@/components/common/Transition';
 import { useToolkit } from '@/components/widgets/StatusBar/Toolkit/ToolkitProvider';
 import * as styles from './PowerMenu.css';
@@ -21,8 +21,8 @@ export const PowerMenu = () => {
         type="button"
         onClick={() => setUIState(value => (value ? null : { kind: 'dropdown' }))}
       >
-        <IconPower width="1em" height="1em" />
-        <IconChevronDown width="1em" height="1em" />
+        <IconPower />
+        <IconChevronDown />
       </button>
 
       {createPortal(

@@ -52,7 +52,7 @@ const ControlCenterItemSilent = ({ item }: ControlCenterItemSilentProps) => {
     (): ControlCenterItemType & { kind: 'toggle' } => ({
       id: item.id,
       kind: 'toggle',
-      icon: 'bell',
+      icon: 'circle-slash',
       title: t('control-center.silent-mode'),
       description: '',
       activateCommand: '',
