@@ -33,9 +33,10 @@
             ./patches/astal4-utils.patch
           ];
         }))
-        astalPkgs.io
+        astalPkgs.battery
         astalPkgs.gjs
         astalPkgs.hyprland
+        astalPkgs.io
         astalPkgs.mpris
         astalPkgs.network
         astalPkgs.notifd
@@ -50,7 +51,7 @@
       devDeps = [
         astalPkgs.astal3
         pkgs.gobject-introspection
-        pkgs.nodejs_23
+        pkgs.nodejs_24
         pkgs.nodePackages.pnpm
       ];
     in {

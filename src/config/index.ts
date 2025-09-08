@@ -1,4 +1,5 @@
-import { zConfig, type Config } from './schema';
+import { zConfig } from './schema';
+import type { Config } from './schema';
 
 let configValue: Config | null = null;
 

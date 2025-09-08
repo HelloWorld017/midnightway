@@ -107,4 +107,5 @@ export const ControlCenterItem = ({ item }: { item: ControlCenterItemType }) =>
     .with({ kind: 'network' }, network => <ControlCenterItemNetwork item={network} />)
     .with({ kind: 'silent' }, silent => <ControlCenterItemSilent item={silent} />)
     .with({ kind: 'volume-slider' }, volume => <ControlCenterItemVolumeSlider item={volume} />)
+    .with({ kind: 'bluetooth' }, _ => <>{/* TODO */}</>)
     .exhaustive();

@@ -26,27 +26,54 @@ const zControlCenterState = <T>(type: z.ZodSchema<T>) =>
 const zControlCenterItem = z
   .discriminatedUnion('kind', [
     z.object({
+      kind: z.literal('toggle'),
       icon: z.string(),
       title: z.union([z.string(), z.object({ active: z.string(), inactive: z.string() })]),
       description: z.union([z.string(), z.object({ active: z.string(), inactive: z.string() })]),
-      kind: z.literal('toggle'),
       state: zControlCenterState(z.boolean()),
       activateCommand: z.string(),
       deactivateCommand: z.string(),
     }),
     z.object({
-      icon: z.string(),
       kind: z.literal('button'),
+      icon: z.string(),
       command: z.string(),
     }),
     z.object({
-      icon: z.string(),
       kind: z.literal('slider'),
+      icon: z.string(),
       command: z.string().describe('use {{percent}} or {{frac}} to interpolate the slider value'),
       state: zControlCenterState(z.number()),
     }),
     z.object({
-      kind: z.enum(['network', 'silent', 'volume-slider']),
+      kind: z.enum(['network', 'silent', 'volume-slider', 'bluetooth']),
+    }),
+  ])
+  .and(z.object({ id: zGeneratedId }));
+
+const zBarStatusItem = z
+  .discriminatedUnion('kind', [
+    z.object({
+      kind: z.literal('performance'),
+      visibility: z.enum(['minimized', 'default', 'full']),
+      threshold: z.number().default(50),
+    }),
+    z.object({
+      kind: z.literal('temperature'),
+      visibility: z.enum(['minimized', 'default', 'full']),
+      threshold: z.number().default(60),
+    }),
+    z.object({
+      kind: z.literal('network'),
+      visibility: z.enum(['default', 'full']),
+    }),
+    z.object({
+      kind: z.literal('sound'),
+      visibility: z.enum(['default', 'full']),
+    }),
+    z.object({
+      kind: z.literal('battery'),
+      visibility: z.enum(['default', 'full']),
     }),
   ])
   .and(z.object({ id: zGeneratedId }));
@@ -54,6 +81,22 @@ const zControlCenterItem = z
 export const zConfig = z
   .object({
     locale: z.enum(['en-US', 'ko-KR']).default('en-US'),
+
+    bar: z
+      .object({
+        status: z
+          .object({
+            items: z.array(zBarStatusItem).default([
+              { kind: 'temperature', visibility: 'default' },
+              { kind: 'performance', visibility: 'default' },
+              { kind: 'network', visibility: 'default' },
+              { kind: 'sound', visibility: 'default' },
+              { kind: 'battery', visibility: 'full' },
+            ]),
+          })
+          .default({}),
+      })
+      .default({}),
 
     controlCenter: z
       .object({
@@ -90,7 +133,9 @@ export const zConfig = z
   })
   .default({});
 
-export type GeneratedId = z.TypeOf<typeof zGeneratedId>;
 export type Config = z.TypeOf<typeof zConfig>;
+
+export type BarStatusItem = z.TypeOf<typeof zBarStatusItem>;
 export type ControlCenterItem = z.TypeOf<typeof zControlCenterItem>;
 export type ControlCenterState<T> = z.TypeOf<ReturnType<typeof zControlCenterState<T>>>;
+export type GeneratedId = z.TypeOf<typeof zGeneratedId>;

@@ -7,7 +7,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "NODE_OPTIONS=--experimental-transform-types rspack build",
-    "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" gjs -m dist/index.js",
+    "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=gl gjs -m dist/index.js",
     "dev:inspect": "WEBKIT_DISABLE_DMABUF_RENDERER=1 pnpm dev --inspect",
     "generate": "pnpm run generate:clean && pnpm run generate:gir",
     "generate:clean": "rm -rf src/definitions/girs",

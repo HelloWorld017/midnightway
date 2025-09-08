@@ -28,6 +28,7 @@ module.exports = {
       return {
         ...pkg,
         peerDependencies: patchDeps(pkg.peerDependencies),
+        devDependencies: patchDeps(pkg.devDependencies),
       };
     },
   }

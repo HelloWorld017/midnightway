@@ -1,3 +1,4 @@
+import AstalBattery from 'gi://AstalBattery';
 import AstalHyprland from 'gi://AstalHyprland';
 import AstalMpris from 'gi://AstalMpris';
 import AstalTray from 'gi://AstalTray';
@@ -10,12 +11,17 @@ import { temperatureRepository } from './temperature';
 import { userRepository } from './user';
 import { weatherRepository } from './weather';
 
+const batteryRepository = AstalBattery.get_default();
 const hyprlandRepository = AstalHyprland.get_default();
 const musicPlayerRepository = AstalMpris.get_default();
 const soundRepository = AstalWp.get_default()!;
 const trayRepository = AstalTray.get_default();
 
 export const repositoryImpl = {
+  get battery() {
+    return batteryRepository;
+  },
+
   get controlCenter() {
     return controlCenterRepository;
   },

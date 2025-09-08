@@ -1,6 +1,12 @@
 import {
   ArrowRightIcon,
   AudioLinesIcon,
+  BatteryIcon,
+  BatteryChargingIcon,
+  BatteryFullIcon,
+  BatteryLowIcon,
+  BatteryMediumIcon,
+  BatteryWarningIcon,
   BellIcon,
   CalendarIcon,
   ChevronDownIcon,
@@ -39,6 +45,9 @@ import {
   SunIcon,
   TornadoIcon,
   WifiIcon,
+  Volume1Icon,
+  Volume2Icon,
+  VolumeXIcon,
 } from 'lucide-react';
 
 import type { ComponentProps, ComponentType } from 'react';
@@ -52,6 +61,12 @@ const wrapLucideComponent =
 
 export const IconArrowRight = wrapLucideComponent(ArrowRightIcon);
 export const IconAudioLines = wrapLucideComponent(AudioLinesIcon);
+export const IconBattery = wrapLucideComponent(BatteryIcon);
+export const IconBatteryCharging = wrapLucideComponent(BatteryChargingIcon);
+export const IconBatteryFull = wrapLucideComponent(BatteryFullIcon);
+export const IconBatteryLow = wrapLucideComponent(BatteryLowIcon);
+export const IconBatteryMedium = wrapLucideComponent(BatteryMediumIcon);
+export const IconBatteryWarning = wrapLucideComponent(BatteryWarningIcon);
 export const IconBell = wrapLucideComponent(BellIcon);
 export const IconCalendar = wrapLucideComponent(CalendarIcon);
 export const IconChevronDown = wrapLucideComponent(ChevronDownIcon);
@@ -89,4 +104,7 @@ export const IconSnowflake = wrapLucideComponent(SnowflakeIcon);
 export const IconSpeaker = wrapLucideComponent(SpeakerIcon);
 export const IconSun = wrapLucideComponent(SunIcon);
 export const IconTornado = wrapLucideComponent(TornadoIcon);
+export const IconVolume1 = wrapLucideComponent(Volume1Icon);
+export const IconVolume2 = wrapLucideComponent(Volume2Icon);
+export const IconVolumeX = wrapLucideComponent(VolumeXIcon);
 export const IconWifi = wrapLucideComponent(WifiIcon);
