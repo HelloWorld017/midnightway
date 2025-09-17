@@ -14,7 +14,7 @@ export const Clock = ({ isIdle }: { isIdle: boolean }) => {
   const toggleToolkit = useToolkit(state => state.toggleToolkit);
   const openCalendar = () => {
     const rect = buttonRef.current!.getBoundingClientRect();
-    void toggleToolkit('calendar', { x: rect.x + rect.width / 2 });
+    void toggleToolkit('calendar', { x: rect.x + rect.width / 2, anchor: 'center' });
   };
 
   return (

@@ -14,6 +14,7 @@ const TRANSITION_KEY = {
   'grid-template-rows': 'size',
   'grid-template-columns': 'size',
   'flex-basis': 'size',
+  'gap': 'size',
   'background': 'background',
   'color': 'color',
   'border-color': 'color',

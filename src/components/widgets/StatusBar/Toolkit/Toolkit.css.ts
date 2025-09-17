@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { match } from 'ts-pattern';
 import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
@@ -8,9 +9,15 @@ export const toolkitGlobalStyle = css`
   }
 `;
 
-export const toolkitStyle = (theme: Theme) => css`
+export const backdropStyle = (theme: Theme) => css`
   position: absolute;
-  top: 0;
+  inset: 0;
+  background: ${theme.colors.glass.bgBase};
+`;
+
+export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: Theme) => css`
+  position: absolute;
+  top: 3rem;
   width: 32rem;
   height: 32rem;
   overflow: hidden;
@@ -21,6 +28,12 @@ export const toolkitStyle = (theme: Theme) => css`
   border-radius: 2.4rem;
   background: ${theme.surface.bgBase};
   transition: ${transition(theme, ['left', 'width'])};
+
+  transform: ${match(anchor)
+    .with('left', () => 'translate(0)')
+    .with('center', () => 'translate(-50%)')
+    .with('right', () => 'translate(-100%)')
+    .exhaustive()};
 `;
 
 export const asideStyle = (theme: Theme) => css`

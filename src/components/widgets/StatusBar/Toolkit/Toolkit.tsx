@@ -65,6 +65,8 @@ export const Toolkit = () => {
     [toolkitWindow]
   );
 
+  const onClose = useToolkit(state => state.closeToolkit);
+
   if (!toolkitWindow) {
     return null;
   }
@@ -73,7 +75,11 @@ export const Toolkit = () => {
     <CacheProvider value={cache}>
       <Global styles={[globalStyle, styles.toolkitGlobalStyle]} />
       <SurfaceProvider surface="floating">
-        <div css={styles.toolkitStyle} style={{ left: `${toolkitPosition.x}px` }}>
+        <div css={styles.backdropStyle} onClick={onClose}></div>
+        <div
+          css={styles.toolkitStyle(toolkitPosition.anchor)}
+          style={{ left: `${toolkitPosition.x}px` }}
+        >
           <ToolkitMenu />
           <main css={styles.contentStyle}>
             <Transition kind={toolkitKind ?? ''}>

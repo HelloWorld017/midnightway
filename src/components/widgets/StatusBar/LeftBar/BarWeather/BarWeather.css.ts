@@ -12,7 +12,7 @@ export const weatherCollapsibleStyle = (isVisible: boolean) => (theme: Theme) =>
 export const weatherStyle = css`
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   max-width: 15rem;
 `;
 

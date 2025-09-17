@@ -3,12 +3,12 @@ import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { buildContext } from '@/utils/context/buildContext';
 
-type ToolkitPosition = { x: number };
+type ToolkitPosition = { x: number; anchor: 'left' | 'center' | 'right' };
 export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'performance';
 const useToolkitContext = () => {
   const [toolkitKind, setToolkitKind] = useState<ToolkitKind | null>(null);
   const [toolkitWindow, setToolkitWindow] = useState<WindowProxy | null>(null);
-  const [toolkitPosition, setToolkitPosition] = useState<ToolkitPosition>({ x: 0 });
+  const [toolkitPosition, setToolkitPosition] = useState<ToolkitPosition>({ x: 0, anchor: 'left' });
   const toolkitInnerPortalRef = useRef<HTMLDivElement | null>(null);
 
   const requestToolkitWindow = useLatestCallback(async () => {
@@ -45,12 +45,8 @@ const useToolkitContext = () => {
 
   useEffect(() => {
     if (toolkitKind === null && toolkitWindow !== null) {
-      const timeoutId = setTimeout(() => {
-        void bridgeRenderer.closeToolkit();
-        setToolkitWindow(null);
-      }, 1000);
-
-      return () => clearTimeout(timeoutId);
+      void bridgeRenderer.closeToolkit();
+      setToolkitWindow(null);
     }
   }, [toolkitKind, toolkitWindow]);
 

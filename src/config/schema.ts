@@ -84,6 +84,13 @@ export const zConfig = z
 
     bar: z
       .object({
+        autohide: z.boolean().default(false),
+        maxSizes: z
+          .object({
+            workspace: z.number().default(220),
+            music: z.number().default(160),
+          })
+          .default({}),
         status: z
           .object({
             items: z.array(zBarStatusItem).default([

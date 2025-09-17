@@ -14,6 +14,7 @@ export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: strin
 /* Bridge */
 export type BridgeMethodsMain = {
   onUpdate: (params: { id: string; value: unknown }) => void;
+  onHiddenChange: (isHidden: boolean) => void;
   onToolkitCloseRequest: (params: void) => void;
 };
 

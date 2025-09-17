@@ -1,11 +1,12 @@
 import { css } from '@emotion/react';
+import { config } from '@/config';
 import type { Theme } from '@emotion/react';
 
-export const workspaceStyle = css`
+export const workspaceStyle = () => css`
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  max-width: 30rem;
+  gap: 0.6rem;
+  max-width: ${config().bar.maxSizes.workspace}px;
 `;
 
 export const iconStyle = (theme: Theme) => css`
@@ -34,9 +35,9 @@ export const clientAnimateContainerStyle = css`
 
 export const clientContainerStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
-  max-width: 20rem;
-  overflow: hidden;
+  max-width: calc(${config().bar.maxSizes.workspace}px - 3rem);
   text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 export const clientLabelStyle = (theme: Theme) => css`
