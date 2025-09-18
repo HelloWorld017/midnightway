@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { match } from 'ts-pattern';
 import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
@@ -7,6 +7,11 @@ export const toolkitGlobalStyle = css`
   :root {
     font-size: 16px;
   }
+`;
+
+const enterKeyframe = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 export const backdropStyle = (theme: Theme) => css`
@@ -34,6 +39,12 @@ export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: The
     .with('center', () => 'translate(-50%)')
     .with('right', () => 'translate(-100%)')
     .exhaustive()};
+
+  animation-name: ${enterKeyframe};
+  animation-duration: ${theme.easings.opacity.duration}s;
+  animation-timing-function: ${theme.easings.opacity.easing};
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 `;
 
 export const asideStyle = (theme: Theme) => css`
