@@ -1,7 +1,9 @@
+const packageJSON = require('./package.json');
+
 module.exports = {
   hooks: {
     readPackage: pkg => {
-      if (pkg.name !== 'midnightway') {
+      if (pkg.name !== packageJSON.name) {
         return pkg;
       }
 
@@ -29,6 +31,7 @@ module.exports = {
         ...pkg,
         peerDependencies: patchDeps(pkg.peerDependencies),
         devDependencies: patchDeps(pkg.devDependencies),
+        dependencies: patchDeps(pkg.dependencies),
       };
     },
   }

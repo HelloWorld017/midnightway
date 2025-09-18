@@ -4,10 +4,10 @@
   "description": "Yet another astal-based wayland bar, dock, and panels",
   "main": "src/index.ts",
   "type": "module",
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
     "build": "NODE_OPTIONS=--experimental-transform-types rspack build",
-    "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=gl gjs -m dist/index.js",
+    "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=ngl gjs -m dist/index.js",
     "dev:inspect": "pnpm dev --inspect",
     "generate": "pnpm run generate:clean && pnpm run generate:gir",
     "generate:clean": "rm -rf src/definitions/girs",
@@ -49,14 +49,12 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1"
   },
-  "peerDependencies": {
-    "astal": "extern:astal"
-  },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
     "@emotion/hash": "^0.9.2",
     "@emotion/react": "^11.14.0",
     "@react-spring/web": "^9.7.5",
+    "astal": "extern:astal",
     "date-fns": "^4.1.0",
     "es-toolkit": "^1.31.0",
     "i18next": "^24.2.1",
