@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { defineConfig } from '@rspack/cli';
-import { type SwcLoaderOptions } from '@rspack/core';
+import type { SwcLoaderOptions } from '@rspack/core';
 
 const getSwcLoaderOptions = (meta: Record<string, string>): SwcLoaderOptions => ({
   jsc: {
@@ -55,6 +55,9 @@ export default defineConfig({
         type: 'javascript/auto',
         issuerLayer: 'index',
         options: getSwcLoaderOptions({ IS_RENDERER: 'false' }),
+        parser: {
+          importMeta: false,
+        },
       },
       {
         test: /\.tsx?$/,

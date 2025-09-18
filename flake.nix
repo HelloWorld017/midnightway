@@ -76,9 +76,10 @@
         '';
 
         installPhase = ''
-          mkdir -p $out/bin
-          echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/bin/${pname}
-          chmod a+x $out/bin/${pname}
+          mkdir -p $out/bin $out/libexec
+          cp dist/*.js $out/libexec
+          echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/libexec/${pname}
+          chmod a+x $out/libexec/${pname}
         '';
 
         preFixup = ''
@@ -99,7 +100,7 @@
     in {
       packages.default = package;
       devShells.default = pkgs.mkShell {
-        packages = deps ++ devDeps ++ [package];
+        packages = deps ++ devDeps ++ [ package ];
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";

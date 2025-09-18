@@ -1,7 +1,7 @@
 /** @jsxImportSource astal/gtk4 */
 
 import { join } from 'path';
-import { Gio } from 'astal';
+import { Gio, GLib } from 'astal';
 import { astalify, Gdk } from 'astal/gtk4';
 import WebKit from 'gi://WebKit';
 import { createMainBridge } from '@/bridge/main';
@@ -54,7 +54,9 @@ export const MdWebView = ({
             return index;
           }
 
-          const file = Gio.file_new_for_path(join('./dist', request.get_path()));
+          const [filename] = GLib.filename_from_uri(import.meta.url);
+          const dirname = GLib.path_get_dirname(filename);
+          const file = Gio.file_new_for_path(join(dirname, request.get_path()));
           const stream = file.read(null);
           request.finish(stream, -1, null);
         });
