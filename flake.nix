@@ -80,6 +80,7 @@
           cp dist/*.js $out/libexec
           echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/libexec/${pname}
           chmod a+x $out/libexec/${pname}
+          ln -s $out/libexec/${pname} $out/bin/${pname}
         '';
 
         preFixup = ''
