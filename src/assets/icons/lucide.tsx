@@ -44,10 +44,11 @@ import {
   SpeakerIcon,
   SunIcon,
   TornadoIcon,
-  WifiIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
+  WifiIcon,
+  XIcon,
 } from 'lucide-react';
 
 import type { ComponentProps, ComponentType } from 'react';
@@ -108,3 +109,4 @@ export const IconVolume1 = wrapLucideComponent(Volume1Icon);
 export const IconVolume2 = wrapLucideComponent(Volume2Icon);
 export const IconVolumeX = wrapLucideComponent(VolumeXIcon);
 export const IconWifi = wrapLucideComponent(WifiIcon);
+export const IconX = wrapLucideComponent(XIcon);

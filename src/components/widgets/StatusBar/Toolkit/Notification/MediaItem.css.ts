@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
 export const containerStyle = (theme: Theme) => css`
@@ -37,6 +38,7 @@ export const contentsStyle = css`
 `;
 
 export const playPauseStyle = (theme: Theme) => css`
+  position: relative;
   display: flex;
   flex: 0 0 auto;
   padding: 0.8rem;
@@ -46,6 +48,21 @@ export const playPauseStyle = (theme: Theme) => css`
   border-radius: 0.8rem;
   cursor: pointer;
   backdrop-filter: blur(12px);
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: ${transition(theme, ['opacity'])};
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 `;
 
 export const iconStyle = (theme: Theme) => css`
@@ -87,8 +104,54 @@ export const controllerStyle = css`
   gap: 1.2rem;
 `;
 
-export const inputStyle = css`
+export const rangeStyle = (theme: Theme) => css`
+  position: relative;
+  display: flex;
+  align-items: center;
   flex: 1 1 0;
+
+  &::after {
+    content: '';
+    display: flex;
+
+    position: absolute;
+    left: var(--progress);
+    transform: translateX(-50%);
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 0.2rem;
+    background: ${theme.surface.fillPrimary};
+    transform: rotate(45deg);
+  }
+`;
+
+export const rangeTrackStyle = (theme: Theme) => css`
+  position: relative;
+  width: 100%;
+  height: 0.2rem;
+  border-radius: 0.2rem;
+  background: ${theme.surface.bgElevated};
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    display: flex;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--progress);
+    background: ${theme.surface.fillPrimary};
+    border-radius: 0.2rem;
+  }
+`;
+
+export const rangeInputStyle = css`
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  opacity: 0;
 `;
 
 export const prevNextIconStyle = (isActive: boolean) => (theme: Theme) => css`
@@ -96,4 +159,11 @@ export const prevNextIconStyle = (isActive: boolean) => (theme: Theme) => css`
   display: flex;
   font-size: 1.2rem;
   color: ${isActive ? theme.surface.fillPrimary : theme.surface.fillSecondary};
+  opacity: 1;
+  transition: ${transition(theme, ['color', 'opacity'])};
+  transform: translateZ(0);
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;

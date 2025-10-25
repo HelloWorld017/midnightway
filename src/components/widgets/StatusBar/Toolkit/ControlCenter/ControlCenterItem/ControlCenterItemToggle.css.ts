@@ -3,6 +3,7 @@ import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
 export const toggleStyle = (isActive: boolean) => (theme: Theme) => css`
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.8rem;

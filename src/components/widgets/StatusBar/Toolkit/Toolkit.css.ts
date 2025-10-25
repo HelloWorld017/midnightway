@@ -28,8 +28,8 @@ export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: The
   overflow: hidden;
 
   display: flex;
-  gap: 1.6rem;
-  padding: 1.6rem;
+  gap: 0.8rem;
+  padding: 0.8rem;
   border-radius: 2.4rem;
   background: ${theme.surface.bgBase};
   transition: ${transition(theme, ['left', 'width'])};
@@ -53,11 +53,14 @@ export const asideStyle = (theme: Theme) => css`
   flex: 0 0 auto;
   gap: 0.6rem;
   padding: 0.6rem;
+  margin: 0.8rem;
+  margin-right: 0;
   border-radius: 1.2rem;
   background: ${theme.surface.bgOverlay};
 `;
 
 export const asideItemStyle = (isActive: boolean) => (theme: Theme) => css`
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;

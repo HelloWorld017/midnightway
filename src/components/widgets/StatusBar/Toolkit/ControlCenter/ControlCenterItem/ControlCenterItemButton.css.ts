@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const buttonStyle = (theme: Theme) => css`
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;

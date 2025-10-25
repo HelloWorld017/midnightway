@@ -50,13 +50,16 @@ export const MdWebView = ({
       if (!schemeEnabledContext.has(webView.webContext)) {
         webView.webContext.get_security_manager().register_uri_scheme_as_secure('midnightway');
         webView.webContext.register_uri_scheme('midnightway', request => {
-          if (request.get_path() === '/') {
+          const path = request.get_path();
+          if (path === '/') {
             return index;
           }
 
           const [filename] = GLib.filename_from_uri(import.meta.url);
           const dirname = GLib.path_get_dirname(filename);
-          const file = Gio.file_new_for_path(join(dirname, request.get_path()));
+
+          const filePath = path.startsWith('/@fs') ? path.slice(4) : join(dirname, path);
+          const file = Gio.file_new_for_path(filePath);
           const stream = file.read(null);
           request.finish(stream, -1, null);
         });

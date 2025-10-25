@@ -7,6 +7,7 @@ export const containerStyle = css`
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  padding: 0.8rem;
   min-height: 100%;
 `;
 

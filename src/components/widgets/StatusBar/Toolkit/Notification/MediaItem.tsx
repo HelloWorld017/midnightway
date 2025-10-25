@@ -85,11 +85,15 @@ export const MediaItem = ({ player }: MediaItemProps) => {
   const [onClickPrevious, onClickNext, onClickPlayPause] = useMemo(
     () =>
       (['previous', 'next', 'play_pause'] as const).map(action =>
-        debounce(() => {
-          invoke(
-            repo.musicPlayer.players.$find('busName', 'is', player.busName).$invokeMethod(action)
-          ).catch(() => {});
-        }, 750)
+        debounce(
+          () => {
+            invoke(
+              repo.musicPlayer.players.$find('busName', 'is', player.busName).$invokeMethod(action)
+            ).catch(() => {});
+          },
+          750,
+          { edges: ['leading'] }
+        )
       ),
     [player.busName]
   );
@@ -114,14 +118,20 @@ export const MediaItem = ({ player }: MediaItemProps) => {
       </div>
       <div css={styles.controllerStyle}>
         {player.canSeek && (
-          <input
-            css={styles.inputStyle}
-            type="range"
-            min={0}
-            max={player.length}
-            value={progress}
-            onChange={e => onProgressChange(e.currentTarget.valueAsNumber)}
-          />
+          <label
+            css={styles.rangeStyle}
+            style={{ '--progress': `${((progress / player.length) * 100).toFixed(2)}%` }}
+          >
+            <span css={styles.rangeTrackStyle} />
+            <input
+              css={styles.rangeInputStyle}
+              type="range"
+              min={0}
+              max={player.length}
+              value={progress}
+              onChange={e => onProgressChange(e.currentTarget.valueAsNumber)}
+            />
+          </label>
         )}
         <button
           css={styles.prevNextIconStyle(player.canGoPrevious)}

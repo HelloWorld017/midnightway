@@ -40,7 +40,11 @@
         astalPkgs.io
         astalPkgs.mpris
         astalPkgs.network
-        astalPkgs.notifd
+        (astalPkgs.notifd.overrideAttrs(oldAttrs: {
+          patches = [
+            ./patches/astal-notifd-images.patch
+          ];
+        }))
         astalPkgs.tray
         astalPkgs.wireplumber
         pkgs.libgtop
@@ -76,17 +80,19 @@
         '';
 
         installPhase = ''
-          mkdir -p $out/bin $out/libexec
-          cp dist/*.js $out/libexec
-          echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/libexec/${pname}
-          chmod a+x $out/libexec/${pname}
-          ln -s $out/libexec/${pname} $out/bin/${pname}
+          mkdir -p $out/bin $out/libexec/${pname}
+          cp dist/*.js $out/libexec/${pname}
+          echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/libexec/${pname}/${pname}
+          chmod a+x $out/libexec/${pname}/${pname}
+          ln -s $out/libexec/${pname}/${pname} $out/bin/${pname}
+
+          runHook postInstall
         '';
 
         preFixup = ''
           gappsWrapperArgs+=(
             --set GSK_RENDERER "ngl"
-            --set LD_PRELOAD "${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so"
+            --set LD_PRELOAD "${pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ]}"
           )
         '';
 

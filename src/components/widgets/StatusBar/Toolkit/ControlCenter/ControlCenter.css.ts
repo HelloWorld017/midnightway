@@ -5,6 +5,7 @@ export const containerStyle = css`
   flex-direction: column;
   max-width: 100%;
   min-height: 100%;
+  padding: 0.8rem;
 `;
 
 export const columnsContainerStyle = css`

@@ -33,8 +33,8 @@ const networkUsage = Variable<Usage>({
     const totalTx = ipOutput?.reduce((prev, item) => prev + item.stats64.tx.bytes, 0);
 
     return {
-      initialRx: prev.initialRx ?? totalRx,
-      initialTx: prev.initialTx ?? totalTx,
+      initialRx: Math.min(totalRx, prev.initialRx ?? totalRx),
+      initialTx: Math.min(totalTx, prev.initialTx ?? totalTx),
       totalTx,
       totalRx,
     };

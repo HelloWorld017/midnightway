@@ -41,11 +41,11 @@ const ControlCenterItemNetwork = ({ item }: ControlCenterItemNetworkProps) => {
 type ControlCenterItemSilentProps = { item: ControlCenterItemType & { kind: 'silent' } };
 const ControlCenterItemSilent = ({ item }: ControlCenterItemSilentProps) => {
   const { t } = useTranslation();
-  const isSilentMode = useRepo(repo.notification.isSilentMode);
+  const isSilentMode = useRepo(repo.notification.dontDisturb);
 
   const invoke = useInvokeRepo();
   const setSilentMode = useLatestCallback((nextValue: boolean) => {
-    void invoke(repo.notification.$invokeMethod('set', 'isSilentMode', nextValue));
+    void invoke(repo.notification.$invokeMethod('set_dont_disturb', nextValue));
   });
 
   const toggleItem = useMemo(

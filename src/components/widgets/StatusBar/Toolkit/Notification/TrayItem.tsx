@@ -17,6 +17,11 @@ export const TrayItem = ({ id }: { id: string }) => {
     void bridgeRenderer.debug(['secondary-click', id]);
   };
 
+  const trayTitle = trayTooltip?.title || tray?.title || tray?.id || tray?.iconName;
+  if (!trayTitle) {
+    return null;
+  }
+
   return (
     <button
       css={styles.trayStyle}
@@ -25,9 +30,7 @@ export const TrayItem = ({ id }: { id: string }) => {
       onContextMenu={onContextMenu}
       title={trayTooltip?.description}
     >
-      <span css={styles.textStyle}>
-        {trayTooltip?.title || tray?.title || tray?.id || tray?.iconName}
-      </span>
+      <span css={styles.textStyle}>{trayTitle}</span>
     </button>
   );
 };
