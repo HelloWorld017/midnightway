@@ -6,6 +6,7 @@ import { useNetworkState } from '@/components/widgets/StatusBar/hooks/useNetwork
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
 import { ControlCenterItemButton } from './ControlCenterItemButton';
+import { ControlCenterItemIconButton } from './ControlCenterItemIconButton';
 import { ControlCenterItemSlider } from './ControlCenterItemSlider';
 import { ControlCenterItemToggle } from './ControlCenterItemToggle';
 import type { ControlCenterItem as ControlCenterItemType } from '@/config/schema';
@@ -102,6 +103,7 @@ const ControlCenterItemVolumeSlider = ({ item }: ControlCenterItemVolumeSliderPr
 export const ControlCenterItem = ({ item }: { item: ControlCenterItemType }) =>
   match(item)
     .with({ kind: 'button' }, button => <ControlCenterItemButton item={button} />)
+    .with({ kind: 'icon-button' }, iconButton => <ControlCenterItemIconButton item={iconButton} />)
     .with({ kind: 'toggle' }, toggle => <ControlCenterItemToggle item={toggle} />)
     .with({ kind: 'slider' }, slider => <ControlCenterItemSlider item={slider} />)
     .with({ kind: 'network' }, network => <ControlCenterItemNetwork item={network} />)

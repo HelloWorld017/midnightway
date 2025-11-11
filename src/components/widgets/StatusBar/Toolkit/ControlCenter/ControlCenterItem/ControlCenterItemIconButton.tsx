@@ -1,21 +1,21 @@
 import { DynamicIcon } from 'lucide-react/dynamic';
 import { bridgeRenderer } from '@/bridge/renderer';
-import * as styles from './ControlCenterItemButton.css';
+import * as styles from './ControlCenterItemIconButton.css';
 import type { ControlCenterItem } from '@/config/schema';
 import type { IconName } from 'lucide-react/dynamic';
 import type { ReactNode } from 'react';
 
-type ControlCenterItemButtonProps = {
-  item: ControlCenterItem & { kind: 'button' };
+type ControlCenterItemIconButtonProps = {
+  item: ControlCenterItem & { kind: 'icon-button' };
   icon?: ReactNode;
   onClick?: () => void;
 };
 
-export const ControlCenterItemButton = ({
+export const ControlCenterItemIconButton = ({
   item,
   icon,
   onClick: propsOnClick,
-}: ControlCenterItemButtonProps) => {
+}: ControlCenterItemIconButtonProps) => {
   const onClick = () => {
     if (propsOnClick) {
       return propsOnClick();
@@ -26,14 +26,7 @@ export const ControlCenterItemButton = ({
 
   return (
     <button css={styles.buttonStyle} type="button" onClick={onClick}>
-      <span css={styles.buttonIconStyle}>
-        {icon || <DynamicIcon name={item.icon as IconName} width="1em" height="1em" />}
-      </span>
-
-      <div css={styles.buttonContentStyle}>
-        {item.description && <span css={styles.buttonDescriptionStyle}>{item.description}</span>}
-        <span css={styles.buttonTitleStyle}>{item.title}</span>
-      </div>
+      {icon || <DynamicIcon name={item.icon as IconName} width="1em" height="1em" />}
     </button>
   );
 };

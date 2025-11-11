@@ -62,7 +62,7 @@ export const ControlCenterItemSlider = ({
     }
   });
 
-  const onChangeUpdateThrottled = useMemo(() => throttle(onChangeUpdate, 1000), [onChangeUpdate]);
+  const onChangeUpdateThrottled = useMemo(() => throttle(onChangeUpdate, 250), [onChangeUpdate]);
   const onChange = useLatestCallback((nextValue: number) => {
     if (propsOnChange) {
       return propsOnChange(nextValue);

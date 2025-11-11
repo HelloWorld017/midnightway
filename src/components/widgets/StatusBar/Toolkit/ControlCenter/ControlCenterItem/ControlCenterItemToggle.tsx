@@ -82,14 +82,7 @@ export const ControlCenterItemToggle = ({
   return (
     <button css={styles.toggleStyle(state)} type="button" onClick={onToggle}>
       <span css={styles.toggleIconStyle}>
-        {icon || (
-          <DynamicIcon
-            name={item.icon as IconName}
-            css={styles.toggleIconStyle}
-            width="1em"
-            height="1em"
-          />
-        )}
+        {icon || <DynamicIcon name={item.icon as IconName} width="1em" height="1em" />}
       </span>
 
       <div css={styles.toggleContentStyle}>

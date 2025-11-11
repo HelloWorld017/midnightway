@@ -35,9 +35,16 @@ const zControlCenterItem = z
       deactivateCommand: z.string(),
     }),
     z.object({
+      kind: z.literal('icon-button'),
+      icon: z.string(),
+      command: z.string(),
+    }),
+    z.object({
       kind: z.literal('button'),
       icon: z.string(),
       command: z.string(),
+      title: z.string(),
+      description: z.string().nullable().default(null),
     }),
     z.object({
       kind: z.literal('slider'),
