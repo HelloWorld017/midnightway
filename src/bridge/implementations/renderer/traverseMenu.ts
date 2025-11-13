@@ -10,6 +10,10 @@ export const traverseMenuImpl =
   (_bridge: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['traverseMenu'] =>
   ({ descriptor }) => {
     const menuModel = applyDescriptor<Gio.MenuModel>(descriptor, repositoryImpl);
+    if (!menuModel) {
+      return [];
+    }
+
     const traverseDescriptor = (index: number, link: string) => [
       ...descriptor,
       { invokeMethod: { key: 'get_item_link', params: [index, link] } },

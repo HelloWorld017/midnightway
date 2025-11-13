@@ -14,10 +14,10 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
     if (isPromise(output)) {
       return output
         .then(nodes => {
-          if (nodes) {
+          if (nodes && menuModel) {
             setChildMap(childMap => ({
               ...childMap,
-              [menuModel!.key(childMap)]: nodes,
+              [menuModel.key(childMap)]: nodes,
             }));
           }
         })

@@ -10,6 +10,10 @@ export const sectionStyle = css`
   display: flex;
   flex-direction: column;
   padding-bottom: 1.6rem;
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 `;
 
 export const sectionHeaderStyle = css`

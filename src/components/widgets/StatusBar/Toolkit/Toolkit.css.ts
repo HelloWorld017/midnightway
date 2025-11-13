@@ -84,6 +84,11 @@ export const contentStyle = css`
   position: relative;
   flex: 1 1 0;
   min-width: 0;
+`;
+
+export const scrollerStyle = css`
+  height: 100%;
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
 `;

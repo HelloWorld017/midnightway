@@ -1,4 +1,5 @@
 import { animated, useTransition as useSpringTransition } from '@react-spring/web';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { repo } from '@/bridge/repository';
 import { PlaybackStatus } from '@/constants/gir';
@@ -76,9 +77,25 @@ const NotificationSection = () => {
       'summary',
       'body',
       'image',
-      'actions',
       'category'
     )
+  );
+
+  const notificationActions = useRepo(
+    repo.notification.notifications
+      .$pickArray('actions')
+      .$mapArray(action => action.actions.$pickArray('id', 'label'))
+  );
+
+  const notificationEntries = useMemo(
+    () =>
+      notifications &&
+      notificationActions &&
+      notifications.map((notification, index) => ({
+        ...notification,
+        actions: notificationActions?.[index] ?? [],
+      })),
+    [notifications, notificationActions]
   );
 
   const invoke = useInvokeRepo();
@@ -93,13 +110,17 @@ const NotificationSection = () => {
   };
 
   const [refMap, refCallback] = useRefMap<number, HTMLDivElement>();
-  const transitions = useSpringTransition(notifications ?? [], {
+  const transitions = useSpringTransition(notificationEntries ?? [], {
     keys: item => item.id,
     from: { x: -30, opacity: 0, height: 0 },
     enter: item => async next => {
-      await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight ?? 'auto' });
+      await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight });
     },
-    leave: () => async next => {
+    update: item => async next => {
+      await next({ height: refMap.get(item.id)?.offsetHeight });
+    },
+    leave: item => async next => {
+      await next({ height: refMap.get(item.id)?.offsetHeight });
       await Promise.all([next({ x: 30, opacity: 0 }), sleep(150).then(() => next({ height: 0 }))]);
     },
     trail: 50,

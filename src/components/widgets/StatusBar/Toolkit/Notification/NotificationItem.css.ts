@@ -91,15 +91,18 @@ export const actionsStyle = css`
   display: flex;
   flex: 1 1 0;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.4rem;
+  margin-top: 0.4rem;
 `;
 
 export const actionStyle = (theme: Theme) => css`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 1.8rem;
-  border-radius: 0.6rem;
+  height: 1.6rem;
+  padding: 0 0.6rem;
+  border-radius: 0.4rem;
   background: ${theme.surface.bgElevated};
   color: ${theme.surface.fillPrimary};
   font-family: ${theme.fonts.content};

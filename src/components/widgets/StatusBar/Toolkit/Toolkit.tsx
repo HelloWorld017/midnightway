@@ -85,7 +85,9 @@ export const Toolkit = () => {
             <ToolkitMenu />
             <main css={styles.contentStyle}>
               <Transition kind={toolkitKind ?? ''}>
-                {toolkitKind && TOOLKIT_MAP[toolkitKind].element}
+                <div css={styles.scrollerStyle}>
+                  {toolkitKind && TOOLKIT_MAP[toolkitKind].element}
+                </div>
               </Transition>
             </main>
             <div css={styles.innerPortalStyle} ref={toolkitInnerPortalRef} />

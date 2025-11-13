@@ -6,11 +6,12 @@ import { useSanitizeHTML } from '@/hooks/useSanitizeHTML';
 import * as styles from './NotificationItem.css';
 import type { BridgeRepository } from '@/bridge/types';
 
+type Notification = BridgeRepository['notification']['notifications'][number];
 type NotificationItemProps = {
   item: Pick<
-    BridgeRepository['notification']['notifications'][number],
-    'id' | 'appName' | 'time' | 'summary' | 'body' | 'image' | 'actions' | 'category'
-  >;
+    Notification,
+    'id' | 'appName' | 'time' | 'summary' | 'body' | 'image' | 'category'
+  > & { actions: Pick<Notification['actions'][number], 'id' | 'label'>[] };
 };
 
 export const NotificationItem = ({ item }: NotificationItemProps) => {
@@ -50,7 +51,7 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
           <p css={styles.descriptionStyle} {...bodyMarkup} />
         </div>
       </div>
-      {!!item.actions.length && (
+      {!!item.actions?.length && (
         <div css={styles.actionsStyle}>
           {item.actions.map(action => (
             <button

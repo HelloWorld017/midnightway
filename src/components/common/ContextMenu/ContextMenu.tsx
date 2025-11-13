@@ -21,11 +21,11 @@ const ContextMenuSubmenu = ({ submenu }: { submenu: ContextMenuNode }) => {
       onMouseLeave={() => setIsOpened(true)}
     >
       {submenu.children && isOpenedDebounced && (
-        <div css={styles.submenuChildrenStyle}>
+        <ContextMenuFrame>
           <Suspense fallback={<ContextMenuFallback />}>
             <ContextMenuRenderer token={submenu.children} />
           </Suspense>
-        </div>
+        </ContextMenuFrame>
       )}
     </div>
   );
