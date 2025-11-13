@@ -16,9 +16,11 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
   $pickArray: <TKey extends keyof (T & unknown[])[number] & string>(
     ...key: TKey[]
   ) => RepositoryProxySelectable<Pick<(T & unknown[])[number], TKey>[], TRoot>;
-  $mapArray: <TKey extends keyof (T & unknown[])[number] & string>(
-    key: TKey
-  ) => RepositoryProxySelectable<(T & unknown[])[number][TKey][], TRoot>;
+  $mapArray: <TSelected>(
+    map: (
+      proxy: RepositoryProxySelectable<(T & unknown[])[number], TRoot>
+    ) => RepositoryProxy<TSelected, TRoot>
+  ) => RepositoryProxySelectable<TSelected[], TRoot>;
   $filter: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
@@ -49,7 +51,7 @@ export type RepositoryProxyDescriptorItem =
   | string
   | { pick: string[] }
   | { pickArray: string[] }
-  | { mapArray: string }
+  | { mapArray: RepositoryProxyDescriptor }
   | { filter: RepositoryProxyFilter }
   | { find: RepositoryProxyFilter }
   | { invokeMethod: { key: string; params: unknown[] } };
@@ -70,7 +72,11 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
       [SymbolProxyDescriptor]: descriptor,
       $pick: (...pick) => createRepositoryProxy([...descriptor, { pick }]),
       $pickArray: (...pickArray) => createRepositoryProxy([...descriptor, { pickArray }]),
-      $mapArray: key => createRepositoryProxy([...descriptor, { mapArray: key }]),
+      $mapArray: map =>
+        createRepositoryProxy([
+          ...descriptor,
+          { mapArray: getRepositoryProxyDescriptor(map(createRepositoryProxy([]))) },
+        ]),
       $filter: (key, predicate, value) =>
         createRepositoryProxy([...descriptor, { filter: { key, predicate, value } }]),
       $find: (key, predicate, value) =>

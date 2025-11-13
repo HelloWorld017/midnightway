@@ -1,6 +1,7 @@
 import { Gio } from 'astal';
 import { z } from 'zod';
-import { applyDescriptor } from '@/utils/repositoryProxy/bind';
+import { repositoryImpl } from '@/repository';
+import { applyDescriptor } from '@/utils/repositoryProxy/operations';
 import type { BridgeMethodsMain, BridgeMethodsRenderer, MenuNodeKind } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
@@ -8,7 +9,7 @@ import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 export const traverseMenuImpl =
   (_bridge: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['traverseMenu'] =>
   ({ descriptor }) => {
-    const menuModel = applyDescriptor<Gio.MenuModel>(descriptor);
+    const menuModel = applyDescriptor<Gio.MenuModel>(descriptor, repositoryImpl);
     const traverseDescriptor = (index: number, link: string) => [
       ...descriptor,
       { invokeMethod: { key: 'get_item_link', params: [index, link] } },

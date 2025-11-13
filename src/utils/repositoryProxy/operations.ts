@@ -1,6 +1,10 @@
 import { match, P } from 'ts-pattern';
 import { isObject } from '@/utils/type';
-import type { RepositoryProxyDescriptorItem, RepositoryProxyFilter } from './repositoryProxy';
+import type {
+  RepositoryProxyDescriptor,
+  RepositoryProxyDescriptorItem,
+  RepositoryProxyFilter,
+} from './repositoryProxy';
 
 type Binder<T = string> = (object: unknown, target: T) => () => void;
 
@@ -31,10 +35,14 @@ const pickArrayOperator = (array: unknown, pick: string[]) =>
 const bindPickArrayOperator = (array: unknown, pick: string[], binder: Binder) =>
   bindArray(array, pick, (item, pick) => bindPickOperator(item, pick, binder));
 
-const mapArrayOperator = (array: unknown, key: string) =>
-  Array.isArray(array) ? array.map((item: unknown) => (isObject(item) ? item[key] : item)) : array;
+const mapArrayOperator = (array: unknown, descriptor: RepositoryProxyDescriptor) =>
+  Array.isArray(array) ? array.map((item: unknown) => applyDescriptor(descriptor, item)) : array;
 
-const bindMapArrayOperator = bindArray;
+const bindMapArrayOperator = (
+  array: unknown,
+  descriptor: RepositoryProxyDescriptor,
+  bindDescriptor: Binder<RepositoryProxyDescriptor>
+) => bindArray(array, descriptor, bindDescriptor);
 
 const filterOperator = (array: unknown, filter: RepositoryProxyFilter) =>
   Array.isArray(array) ? array.filter(filterPredicate(filter)) : array;
@@ -54,10 +62,16 @@ const invokeMethodOperator = (value: unknown, invokeMethod: { key: string; param
     : value;
 
 /* Apply */
+export const applyDescriptor = <T>(descriptor: RepositoryProxyDescriptor, repository: unknown) =>
+  descriptor.reduce<unknown>(
+    (obj, descriptorItem) => applyDescriptorItem(obj, descriptorItem),
+    repository
+  ) as T;
+
 export const applyDescriptorItem = (
   value: unknown,
   descriptorItem: RepositoryProxyDescriptorItem
-) =>
+): unknown =>
   match(descriptorItem)
     .with(P.string, key => (isObject(value) ? value[key] : undefined))
     .with({ filter: P.select() }, filter => filterOperator(value, filter))
@@ -71,7 +85,8 @@ export const applyDescriptorItem = (
 export const bindDescriptorItem = (
   value: unknown,
   descriptorItem: RepositoryProxyDescriptorItem,
-  binder: Binder
+  binder: Binder,
+  bindDescriptor: Binder<RepositoryProxyDescriptor>
 ) =>
   match(descriptorItem)
     .with(P.string, key => (isObject(value) ? binder(value, key) : () => {}))
@@ -79,6 +94,8 @@ export const bindDescriptorItem = (
     .with({ find: P.select() }, find => bindFindOperator(value, find, binder))
     .with({ pick: P.select() }, pick => bindPickOperator(value, pick, binder))
     .with({ pickArray: P.select() }, pickArray => bindPickArrayOperator(value, pickArray, binder))
-    .with({ mapArray: P.select() }, mapArray => bindMapArrayOperator(value, mapArray, binder))
+    .with({ mapArray: P.select() }, mapArray =>
+      bindMapArrayOperator(value, mapArray, bindDescriptor)
+    )
     .with({ invokeMethod: P.select() }, () => () => {})
     .exhaustive();
