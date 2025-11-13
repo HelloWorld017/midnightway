@@ -84,7 +84,8 @@ export const contentStyle = css`
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const innerPortalStyle = css`

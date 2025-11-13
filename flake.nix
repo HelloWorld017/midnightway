@@ -99,7 +99,7 @@
         pnpmDeps = pnpm.fetchDeps {
           inherit pname version src EXTERN_ASTAL;
           fetcherVersion = 2;
-          hash = "sha256-BJebBVEjM4DtN4xRmPUelegDJQkvYdcSCEbjF6WLcp8=";
+          hash = "sha256-oRPw4jUWrDtme1NjZCVLA9TEr+KU78WlJC/CBc0wE5A=";
         };
 
         EXTERN_ASTAL = "${astalPkgs.gjs}/share/astal/gjs";
@@ -107,7 +107,7 @@
     in {
       packages.default = package;
       devShells.default = pkgs.mkShell {
-        packages = deps ++ devDeps ++ [ package ];
+        packages = deps ++ devDeps; # ++ [ package ];
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";

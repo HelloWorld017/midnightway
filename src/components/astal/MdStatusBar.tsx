@@ -1,10 +1,12 @@
 /** @jsxImportSource astal/gtk4 */
 
 import { App, Astal, Gtk, Gdk } from 'astal/gtk4';
+import AstalTray from 'gi://AstalTray';
 import WebKit from 'gi://WebKit';
 import cairo from 'gi://cairo';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
+import { repositoryImpl } from '@/repository';
 import { ref } from '@/utils/binding';
 import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
@@ -102,6 +104,9 @@ export const MdStatusBar = ({ monitor }: { monitor: Gdk.Monitor }) => {
             closeToolkit() {
               toolkitWindowRef.current?.hide();
               toolkitWindowRef.current?.set_child(null);
+            },
+            showTrayMenu({ id, x, y }) {
+              const menuModel = repositoryImpl.tray.get_item(id).menuModel;
             },
           }}
           setupBridge={bridgeRef}

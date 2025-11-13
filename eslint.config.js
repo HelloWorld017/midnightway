@@ -61,6 +61,7 @@ export default ts.config(
       ],
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/only-throw-error': ['error', { allow: [{ from: 'lib', name: 'Promise' }] }],
       'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
       'import-x/first': 'error',
       'import-x/newline-after-import': 'error',

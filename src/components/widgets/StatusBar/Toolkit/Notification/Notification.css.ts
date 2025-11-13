@@ -28,17 +28,6 @@ export const sectionTitleStyle = (theme: Theme) => css`
   line-height: 1.2rem;
 `;
 
-export const noItemsStyle = (theme: Theme) => css`
-  padding: 4.8rem 1.2rem;
-  color: ${theme.surface.fillSecondary};
-  font-family: ${theme.fonts.content};
-  font-size: 1rem;
-  font-weight: 400;
-  text-align: center;
-  letter-spacing: -0.02em;
-  line-height: 1.2rem;
-`;
-
 export const trayListStyle = css`
   display: flex;
   flex-wrap: wrap;
@@ -70,7 +59,29 @@ export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) 
 `;
 
 export const notificationListStyle = css`
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  min-height: 10.8rem;
+`;
+
+export const notificationItemStyle = css`
+  padding: 0.2rem 0;
+`;
+
+export const noItemsStyle = (isEnabled: boolean) => (theme: Theme) => css`
+  position: absolute;
+  inset: 0;
+  padding: 4.8rem 1.2rem;
+  color: ${theme.surface.fillSecondary};
+  font-family: ${theme.fonts.content};
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: -0.02em;
+  line-height: 1.2rem;
+  opacity: ${+isEnabled};
+  pointer-events: none;
+  user-select: none;
+  transition: ${transition(theme, ['opacity'])};
 `;

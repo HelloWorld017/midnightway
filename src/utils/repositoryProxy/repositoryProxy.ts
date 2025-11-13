@@ -16,6 +16,9 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
   $pickArray: <TKey extends keyof (T & unknown[])[number] & string>(
     ...key: TKey[]
   ) => RepositoryProxySelectable<Pick<(T & unknown[])[number], TKey>[], TRoot>;
+  $mapArray: <TKey extends keyof (T & unknown[])[number] & string>(
+    key: TKey
+  ) => RepositoryProxySelectable<(T & unknown[])[number][TKey][], TRoot>;
   $filter: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
@@ -46,6 +49,7 @@ export type RepositoryProxyDescriptorItem =
   | string
   | { pick: string[] }
   | { pickArray: string[] }
+  | { mapArray: string }
   | { filter: RepositoryProxyFilter }
   | { find: RepositoryProxyFilter }
   | { invokeMethod: { key: string; params: unknown[] } };
@@ -66,14 +70,14 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
       [SymbolProxyDescriptor]: descriptor,
       $pick: (...pick) => createRepositoryProxy([...descriptor, { pick }]),
       $pickArray: (...pickArray) => createRepositoryProxy([...descriptor, { pickArray }]),
+      $mapArray: key => createRepositoryProxy([...descriptor, { mapArray: key }]),
       $filter: (key, predicate, value) =>
         createRepositoryProxy([...descriptor, { filter: { key, predicate, value } }]),
       $find: (key, predicate, value) =>
         createRepositoryProxy([...descriptor, { find: { key, predicate, value } }]),
       $invokeMethod: (key, ...params: unknown[]) =>
         createRepositoryProxy([...descriptor, { invokeMethod: { key: key as string, params } }]),
-      toString: () =>
-        descriptor.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join('/'),
+      toString: () => repositoryProxyDescriptorToString(descriptor),
     } as RepositoryProxySelectable<T, TRoot>,
     {
       get(target, key, receiver) {
@@ -89,6 +93,9 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
       },
     }
   );
+
+export const repositoryProxyDescriptorToString = (descriptor: RepositoryProxyDescriptor) =>
+  descriptor.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join('/');
 
 export const getRepositoryProxyDescriptor = (proxy: {
   [SymbolProxyDescriptor]: RepositoryProxyDescriptor;

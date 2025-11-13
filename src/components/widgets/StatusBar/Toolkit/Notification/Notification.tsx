@@ -1,7 +1,10 @@
+import { animated, useTransition as useSpringTransition } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
 import { repo } from '@/bridge/repository';
 import { PlaybackStatus } from '@/constants/gir';
+import { useRefMap } from '@/hooks/useRefMap';
 import { useInvokeRepo, usePollRepo, useRepo } from '@/hooks/useRepo';
+import { sleep } from '@/utils/promise';
 import { MediaItem } from './MediaItem';
 import * as styles from './Notification.css';
 import { NotificationItem } from './NotificationItem';
@@ -65,7 +68,19 @@ const MediaSection = () => {
 
 const NotificationSection = () => {
   const { t } = useTranslation();
-  const notifications = useRepo(repo.notification.notifications.$pickArray('id'));
+  const notifications = useRepo(
+    repo.notification.notifications.$pickArray(
+      'id',
+      'appName',
+      'time',
+      'summary',
+      'body',
+      'image',
+      'actions',
+      'category'
+    )
+  );
+
   const invoke = useInvokeRepo();
   const onClearAll = () => {
     notifications?.forEach(notification => {
@@ -76,6 +91,19 @@ const NotificationSection = () => {
       ).catch(() => {});
     });
   };
+
+  const [refMap, refCallback] = useRefMap<number, HTMLDivElement>();
+  const transitions = useSpringTransition(notifications ?? [], {
+    keys: item => item.id,
+    from: { x: -30, opacity: 0, height: 0 },
+    enter: item => async next => {
+      await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight ?? 'auto' });
+    },
+    leave: () => async next => {
+      await Promise.all([next({ x: 30, opacity: 0 }), sleep(150).then(() => next({ height: 0 }))]);
+    },
+    trail: 50,
+  });
 
   return (
     <div css={styles.sectionStyle}>
@@ -89,15 +117,18 @@ const NotificationSection = () => {
           {t('notification.clear-all')}
         </button>
       </div>
-      {notifications?.length ? (
-        <div css={styles.notificationListStyle}>
-          {notifications.map(({ id }) => (
-            <NotificationItem id={id} />
-          ))}
+      <div css={styles.notificationListStyle}>
+        <div css={styles.noItemsStyle(!notifications?.length)}>
+          {t('notification.no-notification')}
         </div>
-      ) : (
-        <div css={styles.noItemsStyle}>{t('notification.no-notification')}</div>
-      )}
+        {transitions((style, item) => (
+          <animated.div style={style}>
+            <div css={styles.notificationItemStyle} ref={refCallback(item.id)}>
+              <NotificationItem item={item} />
+            </div>
+          </animated.div>
+        ))}
+      </div>
     </div>
   );
 };

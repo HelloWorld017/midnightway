@@ -3,13 +3,21 @@ import type { repositoryImpl } from '@/repository';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 
 /* Definitions */
-export type InitParams = (InitParamsCalendar | InitParamsDock | InitParamsStatusBar) & {
+export type InitParams = (InitParamsDock | InitParamsStatusBar) & {
   config: Config;
 };
 
-export type InitParamsCalendar = { kind: 'calendar'; params: Record<string, never> };
 export type InitParamsDock = { kind: 'dock'; params: { monitor: string } };
 export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: string } };
+
+export type MenuNodeKind = 'item' | 'section' | 'submenu';
+export type MenuNode = {
+  kind: MenuNodeKind;
+  label: string;
+  action: string | null;
+  actionTarget: string | null;
+  children: RepositoryProxyDescriptor | null;
+};
 
 /* Bridge */
 export type BridgeMethodsMain = {
@@ -27,6 +35,12 @@ export type BridgeMethodsRenderer = {
   closeToolkit: (params: void) => void;
   exec: (params: { command: string | string[] }) => void;
   invoke: (params: { descriptor: RepositoryProxyDescriptor; returning: boolean }) => unknown;
+  invokeGAction: (params: {
+    descriptor: RepositoryProxyDescriptor;
+    action: string;
+    actionTarget: string | null;
+  }) => unknown;
+  traverseMenu: (params: { descriptor: RepositoryProxyDescriptor }) => MenuNode[];
 };
 
 export type BridgeRepository = typeof repositoryImpl;

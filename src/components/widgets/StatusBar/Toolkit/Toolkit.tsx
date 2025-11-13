@@ -3,6 +3,7 @@ import { CacheProvider, Global } from '@emotion/react';
 import { useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { IconBell, IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
+import { ContextMenu } from '@/components/common/ContextMenu';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { Transition } from '@/components/common/Transition';
 import { globalStyle } from '@/utils/css/global';
@@ -75,19 +76,21 @@ export const Toolkit = () => {
     <CacheProvider value={cache}>
       <Global styles={[globalStyle, styles.toolkitGlobalStyle]} />
       <SurfaceProvider surface="floating">
-        <div css={styles.backdropStyle} onClick={onClose}></div>
-        <div
-          css={styles.toolkitStyle(toolkitPosition.anchor)}
-          style={{ left: `${toolkitPosition.x}px` }}
-        >
-          <ToolkitMenu />
-          <main css={styles.contentStyle}>
-            <Transition kind={toolkitKind ?? ''}>
-              {toolkitKind && TOOLKIT_MAP[toolkitKind].element}
-            </Transition>
-          </main>
-          <div css={styles.innerPortalStyle} ref={toolkitInnerPortalRef} />
-        </div>
+        <ContextMenu>
+          <div css={styles.backdropStyle} onClick={onClose}></div>
+          <div
+            css={styles.toolkitStyle(toolkitPosition.anchor)}
+            style={{ left: `${toolkitPosition.x}px` }}
+          >
+            <ToolkitMenu />
+            <main css={styles.contentStyle}>
+              <Transition kind={toolkitKind ?? ''}>
+                {toolkitKind && TOOLKIT_MAP[toolkitKind].element}
+              </Transition>
+            </main>
+            <div css={styles.innerPortalStyle} ref={toolkitInnerPortalRef} />
+          </div>
+        </ContextMenu>
       </SurfaceProvider>
     </CacheProvider>,
     toolkitWindow.document.body

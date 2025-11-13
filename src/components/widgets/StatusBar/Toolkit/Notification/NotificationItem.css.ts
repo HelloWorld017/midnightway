@@ -5,7 +5,8 @@ import type { Theme } from '@emotion/react';
 export const containerStyle = (theme: Theme) => css`
   display: flex;
   flex-direction: column;
-  padding: 1.2rem;
+  padding: 1rem 1.2rem;
+  padding-top: 0.8rem;
   border-radius: 1.2rem;
   background: ${theme.surface.bgSection};
 `;
@@ -52,8 +53,14 @@ export const dismissStyle = (theme: Theme) => css`
   }
 `;
 
+export const contentsStyle = css`
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0.4rem;
+  gap: 0.6rem;
+`;
+
 export const titleStyle = (theme: Theme) => css`
-  margin-top: 0.6rem;
   color: ${theme.surface.fillPrimary};
   font-size: 1.1rem;
   font-weight: 600;
@@ -73,9 +80,10 @@ export const descriptionStyle = (theme: Theme) => css`
 `;
 
 export const imageStyle = css`
-  margin-top: 1.2rem;
+  flex: 0 0 auto;
   border-radius: 1rem;
-  height: 12rem;
+  width: 2.4rem;
+  height: 2.4rem;
   object-fit: cover;
 `;
 

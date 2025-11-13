@@ -1,27 +1,37 @@
 import { formatDistanceToNow } from 'date-fns';
 import { IconX } from '@/assets/icons';
-import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
-import { useRepo } from '@/hooks/useRepo';
+import { useInvokeRepo } from '@/hooks/useRepo';
 import { useSanitizeHTML } from '@/hooks/useSanitizeHTML';
 import * as styles from './NotificationItem.css';
+import type { BridgeRepository } from '@/bridge/types';
 
-export const NotificationItem = ({ id }: { id: number }) => {
-  const item = useRepo(
-    repo.notification
-      .$invokeMethod('get_notification', id)
-      .$pick('appName', 'time', 'summary', 'body', 'image', 'actions', 'category')
-  );
+type NotificationItemProps = {
+  item: Pick<
+    BridgeRepository['notification']['notifications'][number],
+    'id' | 'appName' | 'time' | 'summary' | 'body' | 'image' | 'actions' | 'category'
+  >;
+};
 
+export const NotificationItem = ({ item }: NotificationItemProps) => {
+  const invoke = useInvokeRepo();
   const bodyMarkup = useSanitizeHTML(item?.body ?? '');
 
   const onAction = (actionId: string) => {
-    bridgeRenderer.debug(['notification-action', actionId]).catch(() => {});
+    const action = repo.notification
+      .$invokeMethod('get_notification', item.id)
+      .$invokeMethod('invoke', actionId);
+
+    invoke(action).catch(() => {});
   };
 
-  if (!item) {
-    return null;
-  }
+  const onDismiss = () => {
+    const dismiss = repo.notification
+      .$invokeMethod('get_notification', item.id)
+      .$invokeMethod('dismiss');
+
+    invoke(dismiss).catch(() => {});
+  };
 
   return (
     <div css={styles.containerStyle}>
@@ -29,17 +39,26 @@ export const NotificationItem = ({ id }: { id: number }) => {
         <span css={styles.headerTextStyle}>{item.appName}</span>
         <span css={styles.headerDividerStyle} />
         <span css={styles.headerTextStyle}>{formatDistanceToNow(item.time * 1000)}</span>
-        <button css={styles.dismissStyle}>
+        <button css={styles.dismissStyle} onClick={onDismiss}>
           <IconX />
         </button>
       </div>
-      <h3 css={styles.titleStyle}>{item.summary}</h3>
-      <p css={styles.descriptionStyle} {...bodyMarkup} />
-      {item.image && <img css={styles.imageStyle} src={`/@fs${item.image}`} />}
+      <div css={styles.contentsStyle}>
+        {item.image && <img css={styles.imageStyle} src={`/@fs${item.image}`} />}
+        <div>
+          <h3 css={styles.titleStyle}>{item.summary}</h3>
+          <p css={styles.descriptionStyle} {...bodyMarkup} />
+        </div>
+      </div>
       {!!item.actions.length && (
         <div css={styles.actionsStyle}>
           {item.actions.map(action => (
-            <button css={styles.actionStyle} type="button" onClick={() => onAction(action.id)}>
+            <button
+              key={action.id}
+              css={styles.actionStyle}
+              type="button"
+              onClick={() => onAction(action.id)}
+            >
               {action.label}
             </button>
           ))}
