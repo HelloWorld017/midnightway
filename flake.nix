@@ -92,7 +92,7 @@
         preFixup = ''
           gappsWrapperArgs+=(
             --set GSK_RENDERER "ngl"
-            --set LD_PRELOAD "${pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ]}"
+            --set LD_PRELOAD "${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so"
           )
         '';
 
