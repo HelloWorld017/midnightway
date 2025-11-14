@@ -10,6 +10,7 @@ export const containerStyle = (theme: Theme) => css`
     ),
     var(--cover-art);
   background-color: ${theme.surface.bgSection};
+  background-position: center;
   background-size: cover;
 
   border-radius: 1.2rem;

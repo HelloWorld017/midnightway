@@ -64,9 +64,13 @@ export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) 
 
 export const notificationListStyle = css`
   position: relative;
+  min-height: 10.8rem;
+`;
+
+export const notificationListInnerStyle = css`
   display: flex;
   flex-direction: column;
-  min-height: 10.8rem;
+  margin: -0.2rem 0;
 `;
 
 export const notificationItemStyle = css`

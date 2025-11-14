@@ -78,6 +78,29 @@ export const MdWebView = ({
         (self, navigationAction) => onCreateChild?.(self, navigationAction) ?? null
       );
 
+      webView.connect('decide-policy', (_self, decision, decisionType) => {
+        if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
+          const navigationDecision = decision as WebKit.NavigationPolicyDecision;
+          const navigationAction = navigationDecision.get_navigation_action();
+          const navigationType = navigationAction.get_navigation_type();
+
+          const isWindowOpenRequest =
+            navigationAction.get_frame_name() === '' &&
+            navigationAction.get_request().get_uri() === 'about:blank';
+
+          const isAllowedNavigation =
+            navigationType === WebKit.NavigationType.RELOAD ||
+            navigationType === WebKit.NavigationType.BACK_FORWARD;
+
+          if (!isWindowOpenRequest && !isAllowedNavigation) {
+            navigationDecision.ignore();
+            return true;
+          }
+        }
+
+        return false;
+      });
+
       webView.load_html(index, 'midnightway://midnightway/');
 
       const mainBridge = createMainBridge(webView, {

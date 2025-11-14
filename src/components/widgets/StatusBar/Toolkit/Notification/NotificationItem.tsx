@@ -46,7 +46,7 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
       </div>
       <div css={styles.contentsStyle}>
         {item.image && <img css={styles.imageStyle} src={`/@fs${item.image}`} />}
-        <div>
+        <div css={styles.textContentsStyle}>
           <h3 css={styles.titleStyle}>{item.summary}</h3>
           <p css={styles.descriptionStyle} {...bodyMarkup} />
         </div>
