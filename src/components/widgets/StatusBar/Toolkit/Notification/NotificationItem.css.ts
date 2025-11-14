@@ -60,6 +60,12 @@ export const contentsStyle = css`
   gap: 0.6rem;
 `;
 
+export const textContentsStyle = css`
+  flex: 1 1 0;
+  min-width: 0;
+  gap: 0.2rem;
+`;
+
 export const titleStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
   font-size: 1.1rem;
@@ -70,7 +76,6 @@ export const titleStyle = (theme: Theme) => css`
 `;
 
 export const descriptionStyle = (theme: Theme) => css`
-  margin-top: 0.2rem;
   color: ${theme.surface.fillSecondary};
   font-size: 0.8rem;
   font-family: ${theme.fonts.content};
@@ -89,7 +94,6 @@ export const imageStyle = css`
 
 export const actionsStyle = css`
   display: flex;
-  flex: 1 1 0;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.4rem;
