@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     // Strictness
+    // > `exactOptionalPropertyTypes` cannot be turn true, as it conflicts with astal
     "strict": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
 
     // Module / Resolution
     "module": "preserve",
