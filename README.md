@@ -8,7 +8,7 @@ Yet another webkit-based wayland bar, dock, and panels.
 ```nix
 # 1. Add `midnightway` to the flake input
 midnightway = {
-	url = "github:HelloWorld017/midnightway";
+	url = "github:HelloWorld017/midnightway/v1.1.0";
 	inputs.nixpkgs.follows = "nixpkgs";
 };
 
