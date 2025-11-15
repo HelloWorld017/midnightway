@@ -6,6 +6,7 @@ import AstalTray from 'gi://AstalTray';
 import AstalWp from 'gi://AstalWp';
 import { controlCenterRepository } from './controlCenter';
 import { networkRepository } from './network';
+import { overlayRepository } from './overlay';
 import { performanceRepository } from './performance';
 import { temperatureRepository } from './temperature';
 import { userRepository } from './user';
@@ -41,6 +42,10 @@ export const repositoryImpl = {
 
   get notification() {
     return notificationRepository;
+  },
+
+  get overlay() {
+    return overlayRepository;
   },
 
   get performance() {

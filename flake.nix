@@ -47,10 +47,11 @@
         }))
         astalPkgs.tray
         astalPkgs.wireplumber
-        pkgs.libgtop
         pkgs.glib
         pkgs.glib-networking
         pkgs.gjs
+        pkgs.libadwaita
+        pkgs.libgtop
         pkgs.webkitgtk_6_0
       ];
 

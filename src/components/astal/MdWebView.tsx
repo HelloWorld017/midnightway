@@ -24,7 +24,7 @@ const schemeEnabledContext = new WeakSet<WebKit.WebContext>();
 const WebView = astalify(WebKit.WebView);
 
 type MissingMethods = Omit<Parameters<typeof createMainBridge>[1], 'initParams'>;
-type MdWebViewProps = {
+export type MdWebViewProps = {
   initParams: Omit<InitParams, 'config'>;
   onCreateChild?: (
     self: WebKit.WebView,

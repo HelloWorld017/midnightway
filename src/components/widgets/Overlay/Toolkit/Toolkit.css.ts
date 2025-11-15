@@ -3,12 +3,6 @@ import { match } from 'ts-pattern';
 import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
-export const toolkitGlobalStyle = css`
-  :root {
-    font-size: 16px;
-  }
-`;
-
 const enterKeyframe = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }

@@ -3,11 +3,12 @@ import type { repositoryImpl } from '@/repository';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 
 /* Definitions */
-export type InitParams = (InitParamsDock | InitParamsStatusBar) & {
+export type InitParams = (InitParamsDock | InitParamsStatusBar | InitParamsOverlay) & {
   config: Config;
 };
 
 export type InitParamsDock = { kind: 'dock'; params: { monitor: string } };
+export type InitParamsOverlay = { kind: 'overlay'; params: { monitor: string } };
 export type InitParamsStatusBar = { kind: 'status-bar'; params: { monitor: string } };
 
 export type MenuNodeKind = 'item' | 'section' | 'submenu';
@@ -22,8 +23,8 @@ export type MenuNode = {
 /* Bridge */
 export type BridgeMethodsMain = {
   onUpdate: (params: { id: string; value: unknown }) => void;
-  onHiddenChange: (isHidden: boolean) => void;
-  onToolkitCloseRequest: (params: void) => void;
+  onHiddenChange: (params: { isHidden: boolean }) => void;
+  onOverlayCloseRequest: (params: void) => void;
 };
 
 export type BridgeMethodsRenderer = {
@@ -31,8 +32,6 @@ export type BridgeMethodsRenderer = {
   debug: (params: unknown) => void;
   subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;
-  prepareOpenToolkit: (params: void) => void;
-  closeToolkit: (params: void) => void;
   exec: (params: { command: string | string[] }) => void;
   invoke: (params: { descriptor: RepositoryProxyDescriptor; returning: boolean }) => unknown;
   invokeGAction: (params: {

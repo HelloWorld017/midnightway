@@ -23,7 +23,7 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
       .$invokeMethod('get_notification', item.id)
       .$invokeMethod('invoke', actionId);
 
-    invoke(action).catch(() => {});
+    void invoke(action);
   };
 
   const onDismiss = () => {
@@ -31,7 +31,7 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
       .$invokeMethod('get_notification', item.id)
       .$invokeMethod('dismiss');
 
-    invoke(dismiss).catch(() => {});
+    void invoke(dismiss);
   };
 
   return (

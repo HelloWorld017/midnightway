@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconChevronDown, IconPower } from '@/assets/icons';
 import { Transition } from '@/components/common/Transition';
-import { useToolkit } from '@/components/widgets/StatusBar/Toolkit/ToolkitProvider';
+import { useToolkit } from '@/components/widgets/Overlay/Toolkit/ToolkitProvider';
 import * as styles from './PowerMenu.css';
 import { PowerMenuConfirm } from './PowerMenuConfirm';
 import { PowerMenuDropdown } from './PowerMenuDropdown';

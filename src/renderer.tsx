@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import { match } from 'ts-pattern';
 import { bridgeRenderer } from './bridge/renderer';
 import { ThemeProvider } from './components/common/ThemeProvider';
+import { Overlay } from './components/widgets/Overlay';
 import { StatusBar } from './components/widgets/StatusBar';
 import { initConfigByValue } from './config';
 import { locale } from './i18n';
@@ -17,6 +18,7 @@ const App = ({ init }: AppProps) => (
     <Global styles={[globalStyle]} />
     {match(init)
       .with({ kind: 'status-bar' }, init => <StatusBar monitorName={init.params.monitor} />)
+      .with({ kind: 'overlay' }, () => <Overlay />)
       .with({ kind: 'dock' }, () => null)
       .otherwise(() => null)}
   </ThemeProvider>

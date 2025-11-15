@@ -33,8 +33,8 @@ export const TrayItem = ({ id }: { id: string }) => {
 
     const tray = repo.tray.$invokeMethod('get_item', id);
     if (action === 'activate' || action === 'secondary_activate') {
-      invoke(tray.$invokeMethod(action, e.screenX, e.screenY)).catch(() => {});
       e.preventDefault();
+      void invoke(tray.$invokeMethod(action, e.screenX, e.screenY));
       return;
     }
 

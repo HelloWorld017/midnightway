@@ -3,11 +3,11 @@
 import '@/config/init';
 
 import { App } from 'astal/gtk4';
-import { MdStatusBar } from './components/astal/MdStatusBar';
+import { MdApp } from './components/astal/MdApp';
 import { eachMonitor } from './components/astal/utils/eachMonitor';
 
 App.start({
   main() {
-    eachMonitor(monitor => <MdStatusBar monitor={monitor} />);
+    eachMonitor(monitor => <MdApp monitor={monitor} />);
   },
 });

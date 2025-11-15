@@ -25,6 +25,7 @@ export const eachMonitor = (onMonitor: (monitor: Gdk.Monitor) => Gtk.Widget | Gt
     if (widgetWindow) {
       widgetWindow.forEach(widget => {
         App.remove_window(widget);
+        widget.destroy();
         widgetWindows.delete(monitor);
       });
     }
