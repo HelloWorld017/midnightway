@@ -1,5 +1,6 @@
 /** @jsxImportSource astal/gtk4 */
 
+import { bind } from 'astal/binding';
 import { App, Astal, Gtk } from 'astal/gtk4';
 import cairo from 'gi://cairo';
 import { match } from 'ts-pattern';
@@ -10,7 +11,6 @@ import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
 import type { MdWebViewProps } from './MdWebView';
 import type { BridgeMethodsMain } from '@/bridge/types';
-import type { OverlayItem } from '@/repository/overlay';
 import type { Gdk } from 'astal/gtk4';
 
 const BAR_HEIGHT_HIDDEN = 1;
@@ -79,26 +79,24 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   const bridge: Required<MdWebViewProps>['bridge'] = {};
-  const overlayConnectId = repositoryImpl.overlay.connect(
-    'overlayItems',
-    (items: OverlayItem[]) => {
-      if (items.length === 0) {
-        overlayWindowRef.current?.hide();
-        overlayWindowRef.current?.set_child(null);
-      }
-
-      if (items.length > 0 && !overlayWindowRef.current?.visible) {
-        overlayWindowRef.current?.present();
-        overlayWindowRef.current?.set_child(
-          <MdWebView
-            initParams={{ kind: 'overlay', params: { monitor: monitor.connector } }}
-            bridge={bridge}
-            setupBridge={overlayBridgeRef}
-          />
-        );
-      }
+  const overlayCleanup = bind(repositoryImpl.overlay, 'overlayItems').subscribe(() => {
+    const items = repositoryImpl.overlay.overlayItems;
+    if (items.length === 0) {
+      overlayWindowRef.current?.set_child(null);
+      overlayWindowRef.current?.hide();
     }
-  );
+
+    if (items.length > 0 && !overlayWindowRef.current?.visible) {
+      overlayWindowRef.current?.set_visible(true);
+      overlayWindowRef.current?.set_child(
+        <MdWebView
+          initParams={{ kind: 'overlay', params: { monitor: monitor.connector } }}
+          bridge={bridge}
+          setupBridge={overlayBridgeRef}
+        />
+      );
+    }
+  });
 
   return (
     <>
@@ -113,7 +111,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
         setup={setupBarWindow}
         defaultHeight={BAR_HEIGHT_MAXIMIZED}
         onDestroy={() => {
-          repositoryImpl.overlay.disconnect(overlayConnectId);
+          overlayCleanup();
         }}
       >
         <MdWebView

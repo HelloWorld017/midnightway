@@ -54,7 +54,7 @@ export const ControlCenterItemToggle = ({
     }
   });
 
-  const onToggleUpdateThrottled = useMemo(() => throttle(onToggleUpdate, 1000), [onToggleUpdate]);
+  const onToggleUpdateThrottled = useMemo(() => throttle(onToggleUpdate, 250), [onToggleUpdate]);
   const onToggle = useLatestCallback(() => {
     const nextState = !draftState;
     if (propsOnToggle) {

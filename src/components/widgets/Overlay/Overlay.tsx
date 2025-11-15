@@ -1,4 +1,8 @@
-import { animated, useTransition as useSpringTransition } from '@react-spring/web';
+import {
+  animated,
+  config as springConfig,
+  useTransition as useSpringTransition,
+} from '@react-spring/web';
 import { match } from 'ts-pattern';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
@@ -11,6 +15,8 @@ export const Overlay = () => {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
+    config: (_item, _index, state) =>
+      state === ('enter' as typeof state) ? springConfig.stiff : {},
   });
 
   return (

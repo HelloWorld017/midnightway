@@ -8,7 +8,7 @@ import { Calendar } from './Calendar';
 import { ControlCenter } from './ControlCenter';
 import { Notification } from './Notification';
 import * as styles from './Toolkit.css';
-import { useToolkit } from './ToolkitProvider';
+import { ToolkitPortalProvider } from './ToolkitPortalProvider';
 import type { ToolkitKind, ToolkitState } from '@/repository/overlay';
 import type { ReactNode } from 'react';
 
@@ -52,7 +52,6 @@ const ToolkitMenu = ({ state }: { state: ToolkitState }) => {
 };
 
 export const Toolkit = ({ state }: { state: ToolkitState }) => {
-  const toolkitInnerPortalRef = useToolkit(state => state.toolkitInnerPortalRef);
   const invoke = useInvokeRepo();
   const onClose = () => {
     void invoke(repo.overlay.$invokeMethod('setToolkitState', null));
@@ -70,13 +69,16 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
           css={styles.toolkitStyle(state.position.anchor)}
           style={{ left: `${state.position.x}px` }}
         >
-          <ToolkitMenu state={state} />
-          <main css={styles.contentStyle}>
-            <Transition kind={state.kind ?? ''}>
-              <div css={styles.scrollerStyle}>{state.kind && TOOLKIT_MAP[state.kind].element}</div>
-            </Transition>
-          </main>
-          <div css={styles.innerPortalStyle} ref={toolkitInnerPortalRef} />
+          <ToolkitPortalProvider css={styles.innerPortalStyle}>
+            <ToolkitMenu state={state} />
+            <main css={styles.contentStyle}>
+              <Transition kind={state.kind ?? ''}>
+                <div css={styles.scrollerStyle}>
+                  {state.kind && TOOLKIT_MAP[state.kind].element}
+                </div>
+              </Transition>
+            </main>
+          </ToolkitPortalProvider>
         </div>
       </ContextMenu>
     </SurfaceProvider>
