@@ -2,6 +2,7 @@
 
 import { bind } from 'astal/binding';
 import { App, Astal, Gtk } from 'astal/gtk4';
+import WebKit from 'gi://WebKit';
 import cairo from 'gi://cairo';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
@@ -28,6 +29,8 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const barBridgeRef = ref<BridgeMethodsMain | null>(null);
   const overlayWindowRef = ref<Astal.Window | null>(null);
   const overlayBridgeRef = ref<BridgeMethodsMain | null>(null);
+
+  const getAnyLivingBridge = () => barBridgeRef.current;
 
   /* Bar States */
   const shouldAutohideBar = config().bar.autohide;
@@ -82,19 +85,23 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const overlayCleanup = bind(repositoryImpl.overlay, 'overlayItems').subscribe(() => {
     const items = repositoryImpl.overlay.overlayItems;
     if (items.length === 0) {
-      overlayWindowRef.current?.set_child(null);
       overlayWindowRef.current?.hide();
+      overlayWindowRef.current?.set_child(null);
+      overlayBridgeRef.current?.zygoteRelease({ id: 'overlay' });
+      overlayBridgeRef.current = null;
     }
 
     if (items.length > 0 && !overlayWindowRef.current?.visible) {
       overlayWindowRef.current?.set_visible(true);
-      overlayWindowRef.current?.set_child(
-        <MdWebView
-          initParams={{ kind: 'overlay', params: { monitor: monitor.connector } }}
-          bridge={bridge}
-          setupBridge={overlayBridgeRef}
-        />
-      );
+      overlayBridgeRef.current = getAnyLivingBridge();
+      overlayBridgeRef.current?.zygoteFork({
+        id: 'overlay',
+        initParams: {
+          kind: 'overlay',
+          params: { monitor: monitor.connector },
+          config: config(),
+        },
+      });
     }
   });
 
@@ -116,6 +123,25 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       >
         <MdWebView
           initParams={{ kind: 'status-bar', params: { monitor: monitor.connector } }}
+          onCreateChild={({ self, navigationAction }) => {
+            const navigationURI = navigationAction.get_request().get_uri();
+            const forkId = navigationURI.match(/\?(.*)$/)?.at(1);
+            const targetWindow = match(forkId)
+              .with('overlay', () => overlayWindowRef.current)
+              .otherwise(() => null);
+
+            if (targetWindow) {
+              const webView = new WebKit.WebView({
+                hexpand: true,
+                vexpand: true,
+                relatedView: self,
+              });
+              targetWindow.set_child(webView);
+              return webView;
+            }
+
+            return null;
+          }}
           bridge={bridge}
           setupBridge={barBridgeRef}
         />

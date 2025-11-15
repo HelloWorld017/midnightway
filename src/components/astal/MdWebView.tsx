@@ -21,15 +21,71 @@ const index = html`
 `;
 
 const schemeEnabledContext = new WeakSet<WebKit.WebContext>();
+const enableSchemeForContext = (webContext: WebKit.WebContext) => {
+  if (schemeEnabledContext.has(webContext)) {
+    return;
+  }
+
+  webContext.get_security_manager().register_uri_scheme_as_secure('midnightway');
+  webContext.register_uri_scheme('midnightway', request => {
+    const path = request.get_path();
+    if (path === '/') {
+      return index;
+    }
+
+    const [filename] = GLib.filename_from_uri(import.meta.url);
+    const dirname = GLib.path_get_dirname(filename);
+
+    const filePath = path.startsWith('/@fs') ? path.slice(4) : join(dirname, path);
+    const file = Gio.file_new_for_path(filePath);
+    const stream = file.read(null);
+    request.finish(stream, -1, null);
+  });
+
+  schemeEnabledContext.add(webContext);
+};
+
+const onDecidePolicyMain = (
+  _webView: WebKit.WebView,
+  decision: WebKit.PolicyDecision,
+  decisionType: WebKit.PolicyDecisionType
+) => {
+  if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
+    const navigationDecision = decision as WebKit.NavigationPolicyDecision;
+    const navigationAction = navigationDecision.get_navigation_action();
+    const navigationURI = navigationAction.get_request().get_uri();
+
+    const isInternalRequest = navigationURI.startsWith('midnightway://');
+    const isWindowOpenRequest =
+      navigationAction.get_frame_name() === '' && navigationURI.match(/^about:blank(?:$|[?#])/);
+
+    if (!isInternalRequest && !isWindowOpenRequest) {
+      navigationDecision.ignore();
+      return true;
+    }
+  }
+};
+
+const onDecidePolicyChild = (
+  _webView: WebKit.WebView,
+  decision: WebKit.PolicyDecision,
+  decisionType: WebKit.PolicyDecisionType
+) => {
+  if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
+    decision.ignore();
+    return true;
+  }
+};
+
 const WebView = astalify(WebKit.WebView);
 
 type MissingMethods = Omit<Parameters<typeof createMainBridge>[1], 'initParams'>;
 export type MdWebViewProps = {
   initParams: Omit<InitParams, 'config'>;
-  onCreateChild?: (
-    self: WebKit.WebView,
-    navigationAction: WebKit.NavigationAction
-  ) => Gtk.Widget | null;
+  onCreateChild?: (params: {
+    self: WebKit.WebView;
+    navigationAction: WebKit.NavigationAction;
+  }) => WebKit.WebView | null;
   bridge?: MissingMethods;
   setupBridge?: (bridge: BridgeMethodsMain) => void;
   classNames?: string[];
@@ -46,26 +102,8 @@ export const MdWebView = ({
     setTimeout(() => {
       webView.set_background_color(new Gdk.RGBA());
       webView.get_settings().set_javascript_can_open_windows_automatically(true);
-
-      if (!schemeEnabledContext.has(webView.webContext)) {
-        webView.webContext.get_security_manager().register_uri_scheme_as_secure('midnightway');
-        webView.webContext.register_uri_scheme('midnightway', request => {
-          const path = request.get_path();
-          if (path === '/') {
-            return index;
-          }
-
-          const [filename] = GLib.filename_from_uri(import.meta.url);
-          const dirname = GLib.path_get_dirname(filename);
-
-          const filePath = path.startsWith('/@fs') ? path.slice(4) : join(dirname, path);
-          const file = Gio.file_new_for_path(filePath);
-          const stream = file.read(null);
-          request.finish(stream, -1, null);
-        });
-
-        schemeEnabledContext.add(webView.webContext);
-      }
+      webView.connect('decide-policy', onDecidePolicyMain);
+      enableSchemeForContext(webView.webContext);
 
       const shouldInspect = ARGV.includes('--inspect');
       if (shouldInspect) {
@@ -73,32 +111,17 @@ export const MdWebView = ({
         webView.get_inspector().show();
       }
 
-      webView.connect(
-        'create',
-        (self, navigationAction) => onCreateChild?.(self, navigationAction) ?? null
-      );
-
-      webView.connect('decide-policy', (_self, decision, decisionType) => {
-        if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
-          const navigationDecision = decision as WebKit.NavigationPolicyDecision;
-          const navigationAction = navigationDecision.get_navigation_action();
-          const navigationType = navigationAction.get_navigation_type();
-
-          const isWindowOpenRequest =
-            navigationAction.get_frame_name() === '' &&
-            navigationAction.get_request().get_uri() === 'about:blank';
-
-          const isAllowedNavigation =
-            navigationType === WebKit.NavigationType.RELOAD ||
-            navigationType === WebKit.NavigationType.BACK_FORWARD;
-
-          if (!isWindowOpenRequest && !isAllowedNavigation) {
-            navigationDecision.ignore();
-            return true;
-          }
+      webView.connect('create', (self, navigationAction) => {
+        const childWebView = onCreateChild?.({ self, navigationAction });
+        if (!childWebView) {
+          return null;
         }
 
-        return false;
+        childWebView.set_background_color(new Gdk.RGBA());
+        childWebView.connect('decide-policy', onDecidePolicyChild);
+        enableSchemeForContext(childWebView.webContext);
+
+        return childWebView;
       });
 
       webView.load_html(index, 'midnightway://midnightway/');

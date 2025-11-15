@@ -22,6 +22,8 @@ export type MenuNode = {
 
 /* Bridge */
 export type BridgeMethodsMain = {
+  zygoteFork: (params: { id: string; initParams: InitParams }) => void;
+  zygoteRelease: (params: { id: string }) => void;
   onUpdate: (params: { id: string; value: unknown }) => void;
   onHiddenChange: (params: { isHidden: boolean }) => void;
   onOverlayCloseRequest: (params: void) => void;
