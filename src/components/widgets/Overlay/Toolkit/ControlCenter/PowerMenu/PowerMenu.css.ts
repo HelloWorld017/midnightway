@@ -14,13 +14,13 @@ export const backdropStyle = (theme: Theme) => css`
 
 export const powerButtonStyle = (theme: Theme) => css`
   display: flex;
-  padding: 0.8rem;
+  padding: 1rem;
   margin-top: auto;
   margin-left: auto;
-  gap: 0.4rem;
-  border-radius: 1.2rem;
+  gap: 0.6rem;
+  border-radius: 1.6rem;
 
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   color: ${theme.surface.fillPrimary};
   background: ${theme.surface.bgElevated};
   transition: ${transition(theme, ['background'])};

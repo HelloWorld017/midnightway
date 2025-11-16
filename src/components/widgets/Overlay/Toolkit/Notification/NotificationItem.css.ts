@@ -5,30 +5,30 @@ import type { Theme } from '@emotion/react';
 export const containerStyle = (theme: Theme) => css`
   display: flex;
   flex-direction: column;
-  padding: 1rem 1.2rem;
-  padding-top: 0.8rem;
-  border-radius: 1.2rem;
+  padding: 1.2rem 1.6rem;
+  padding-top: 1rem;
+  border-radius: 1.6rem;
   background: ${theme.surface.bgSection};
 `;
 
 export const headerStyle = css`
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.6rem;
 `;
 
 export const headerTextStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.title};
   font-weight: 500;
-  font-size: 0.7rem;
-  line-height: 0.8rem;
+  font-size: 0.8rem;
+  line-height: 1rem;
   letter-spacing: -0.02em;
 `;
 
 export const headerDividerStyle = (theme: Theme) => css`
   background: ${theme.surface.fillLine};
-  width: 0.15rem;
+  width: 0.2rem;
   height: 0.4rem;
   transform: rotate(45deg);
   border-radius: 0.2rem;
@@ -37,10 +37,10 @@ export const headerDividerStyle = (theme: Theme) => css`
 export const dismissStyle = (theme: Theme) => css`
   cursor: pointer;
   margin-left: auto;
-  padding: 0.4rem;
-  border-radius: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 0.6rem;
   color: ${theme.surface.fillSecondary};
-  font-size: 0.8rem;
+  font-size: 1rem;
   background: ${theme.surface.bgElevated};
   transition: ${transition(theme, ['background'])};
 
@@ -56,30 +56,32 @@ export const dismissStyle = (theme: Theme) => css`
 export const contentsStyle = css`
   display: flex;
   align-items: flex-start;
-  margin-top: 0.4rem;
-  gap: 0.6rem;
+  margin-top: 0.6rem;
+  gap: 0.8rem;
 `;
 
 export const textContentsStyle = css`
   flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  gap: 0.2rem;
+  gap: 0.4rem;
 `;
 
 export const titleStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   font-family: ${theme.fonts.content};
-  line-height: 1.4rem;
+  line-height: 1.6rem;
   letter-spacing: -0.02em;
 `;
 
 export const descriptionStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-family: ${theme.fonts.content};
-  line-height: 1rem;
+  line-height: 1.2rem;
   letter-spacing: -0.02em;
   white-space: pre-line;
 `;
@@ -87,8 +89,8 @@ export const descriptionStyle = (theme: Theme) => css`
 export const imageStyle = css`
   flex: 0 0 auto;
   border-radius: 1rem;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 3.2rem;
+  height: 3.2rem;
   object-fit: cover;
 `;
 
@@ -97,21 +99,21 @@ export const actionsStyle = css`
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.4rem;
-  margin-top: 0.4rem;
+  margin-top: 0.6rem;
 `;
 
 export const actionStyle = (theme: Theme) => css`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 1.6rem;
-  padding: 0 0.6rem;
+  height: 2rem;
+  padding: 0 1rem;
   border-radius: 0.4rem;
   background: ${theme.surface.bgElevated};
   color: ${theme.surface.fillPrimary};
   font-family: ${theme.fonts.content};
-  font-size: 0.7rem;
-  line-height: 0.8rem;
+  font-size: 0.8rem;
+  line-height: 1rem;
   letter-spacing: -0.02em;
   white-space: nowrap;
   transition: ${transition(theme, ['background'])};

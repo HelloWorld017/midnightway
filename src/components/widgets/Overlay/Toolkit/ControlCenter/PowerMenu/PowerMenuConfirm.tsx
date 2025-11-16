@@ -25,7 +25,7 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
   }, [state, onClose]);
 
   return (
-    <label css={styles.labelStyle} style={{ '--percentage': `${state}%` }}>
+    <label css={styles.labelStyle} style={{ '--percentage': `${(state / 105) * 100}%` }}>
       <div css={styles.gradientStyle} />
       <div css={styles.sliderStyle}>
         <span css={styles.iconStyle}>{item.icon}</span>

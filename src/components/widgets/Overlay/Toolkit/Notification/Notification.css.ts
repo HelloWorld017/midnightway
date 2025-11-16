@@ -9,7 +9,7 @@ export const containerStyle = css`
 export const sectionStyle = css`
   display: flex;
   flex-direction: column;
-  padding-bottom: 1.6rem;
+  padding-bottom: 2rem;
 
   &:last-of-type {
     padding-bottom: 0;
@@ -20,16 +20,16 @@ export const sectionHeaderStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.6rem;
 `;
 
 export const sectionTitleStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.2rem;
+  line-height: 1.6rem;
 `;
 
 export const trayListStyle = css`
@@ -42,12 +42,12 @@ export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) 
   cursor: pointer;
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 0.8rem;
-  padding: 0.2rem;
-  margin: -0.2rem;
+  line-height: 1rem;
+  padding: 0.4rem;
+  margin: -0.4rem;
   opacity: ${+isVisible};
   transition: ${transition(theme, ['opacity'])};
   transform: translateZ(0);
@@ -64,7 +64,7 @@ export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) 
 
 export const notificationListStyle = css`
   position: relative;
-  min-height: 10.8rem;
+  min-height: 14.4rem;
 `;
 
 export const notificationListInnerStyle = css`
@@ -74,20 +74,28 @@ export const notificationListInnerStyle = css`
 `;
 
 export const notificationItemStyle = css`
-  padding: 0.2rem 0;
+  padding: 0.4rem 0;
+
+  *:first-of-type > & {
+    padding-top: 0;
+  }
+
+  *:last-of-type > & {
+    padding-bottom: 0;
+  }
 `;
 
 export const noItemsStyle = (isEnabled: boolean) => (theme: Theme) => css`
   position: absolute;
   inset: 0;
-  padding: 4.8rem 1.2rem;
+  padding: 6.4rem 1.6rem;
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   text-align: center;
   letter-spacing: -0.02em;
-  line-height: 1.2rem;
+  line-height: 1.6rem;
   opacity: ${+isEnabled};
   pointer-events: none;
   user-select: none;

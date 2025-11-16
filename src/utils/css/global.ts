@@ -6,6 +6,10 @@ export const globalStyle = css`
     display: revert;
   }
 
+  *:where(:not(a, button, input, textarea)) {
+    cursor: inherit;
+  }
+
   *,
   *::before,
   *::after {
@@ -14,6 +18,7 @@ export const globalStyle = css`
 
   :root {
     font-size: 12px;
+    cursor: default;
   }
 
   a,

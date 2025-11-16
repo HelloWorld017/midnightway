@@ -5,14 +5,14 @@ import type { Theme } from '@emotion/react';
 export const itemStyle = (theme: Theme) => css`
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
   width: 100%;
-  min-height: 4.2rem;
+  min-height: 5.6rem;
 
   cursor: pointer;
   background: ${theme.surface.bgElevated};
-  padding: 1rem 1.2rem;
-  border-radius: 1.2rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: 1.6rem;
   transition: ${transition(theme, ['background'])};
 
   &:hover {
@@ -27,7 +27,7 @@ export const itemStyle = (theme: Theme) => css`
 export const iconStyle = (theme: Theme) => css`
   display: flex;
   color: ${theme.surface.fillPrimary};
-  font-size: 1.6rem;
+  font-size: 2rem;
   flex: 0 0 auto;
 `;
 
@@ -40,17 +40,17 @@ export const contentStyle = css`
 
 export const titleStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.2rem;
+  line-height: 1.6rem;
   letter-spacing: -0.02em;
 `;
 
 export const descriptionStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 500;
-  line-height: 1rem;
+  line-height: 1.2rem;
   letter-spacing: -0.02em;
   white-space: nowrap;
   text-overflow: ellipsis;

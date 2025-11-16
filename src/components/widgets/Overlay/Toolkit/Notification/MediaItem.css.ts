@@ -13,20 +13,20 @@ export const containerStyle = (theme: Theme) => css`
   background-position: center;
   background-size: cover;
 
-  border-radius: 1.2rem;
-  padding: 1.2rem;
-  padding-top: 0.8rem;
+  border-radius: 1.6rem;
+  padding: 1.6rem;
+  padding-top: 1rem;
 
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1rem;
 `;
 
 export const bodyStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.2rem;
+  gap: 1.6rem;
 `;
 
 export const contentsStyle = css`
@@ -34,19 +34,19 @@ export const contentsStyle = css`
   flex-direction: column;
   flex: 1 1 0;
   min-width: 0;
-  margin-top: 0.4rem;
-  gap: 0.8rem;
+  margin-top: 0.6rem;
+  gap: 1rem;
 `;
 
 export const playPauseStyle = (theme: Theme) => css`
   position: relative;
   display: flex;
   flex: 0 0 auto;
-  padding: 0.8rem;
-  font-size: 0.8rem;
+  padding: 1rem;
+  font-size: 1rem;
   color: ${theme.surface.fillPrimary};
   background: rgba(from ${theme.surface.bgBase} r g b / 0.5);
-  border-radius: 0.8rem;
+  border-radius: 1rem;
   cursor: pointer;
   backdrop-filter: blur(12px);
 
@@ -68,7 +68,7 @@ export const playPauseStyle = (theme: Theme) => css`
 
 export const iconStyle = (theme: Theme) => css`
   color: ${theme.surface.fillPrimary};
-  font-size: 1.2rem;
+  font-size: 1.6rem;
 `;
 
 export const textContentsStyle = css`
@@ -82,7 +82,7 @@ export const titleStyle = (theme: Theme) => css`
   font-family: ${theme.fonts.content};
   font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.4rem;
+  line-height: 1.8rem;
   letter-spacing: -0.02em;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,9 +91,9 @@ export const titleStyle = (theme: Theme) => css`
 export const artistStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1rem;
+  line-height: 1.2rem;
   letter-spacing: -0.02em;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -102,7 +102,7 @@ export const artistStyle = (theme: Theme) => css`
 export const controllerStyle = css`
   display: flex;
   justify-content: flex-end;
-  gap: 1.2rem;
+  gap: 1.6rem;
 `;
 
 export const rangeStyle = (theme: Theme) => css`
@@ -118,8 +118,8 @@ export const rangeStyle = (theme: Theme) => css`
     position: absolute;
     left: var(--progress);
     transform: translateX(-50%);
-    width: 0.6rem;
-    height: 0.6rem;
+    width: 0.8rem;
+    height: 0.8rem;
     border-radius: 0.2rem;
     background: ${theme.surface.fillPrimary};
     transform: rotate(45deg);
@@ -158,7 +158,7 @@ export const rangeInputStyle = css`
 export const prevNextIconStyle = (isActive: boolean) => (theme: Theme) => css`
   cursor: ${isActive ? 'pointer' : 'not-allowed'};
   display: flex;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   color: ${isActive ? theme.surface.fillPrimary : theme.surface.fillSecondary};
   opacity: 1;
   transition: ${transition(theme, ['color', 'opacity'])};

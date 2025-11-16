@@ -16,15 +16,15 @@ export const backdropStyle = (theme: Theme) => css`
 
 export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: Theme) => css`
   position: absolute;
-  top: 3rem;
-  width: 32rem;
-  height: 32rem;
+  top: 4rem;
+  width: 40rem;
+  height: 40rem;
   overflow: hidden;
 
   display: flex;
-  gap: 0.8rem;
-  padding: 0.8rem;
-  border-radius: 2.4rem;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 3rem;
   background: ${theme.surface.bgBase};
   transition: ${transition(theme, ['left', 'width'])};
 
@@ -45,11 +45,11 @@ export const asideStyle = (theme: Theme) => css`
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  gap: 0.6rem;
-  padding: 0.6rem;
-  margin: 0.8rem;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  margin: 1rem;
   margin-right: 0;
-  border-radius: 1.2rem;
+  border-radius: 1.6rem;
   background: ${theme.surface.bgOverlay};
 `;
 
@@ -60,9 +60,9 @@ export const asideItemStyle = (isActive: boolean) => (theme: Theme) => css`
   justify-content: center;
   background: ${isActive ? theme.surface.fillHighlight : 'transparent'};
   color: ${isActive ? theme.surface.fillHighlightText : theme.surface.fillPrimary};
-  font-size: 1.2rem;
-  padding: 0.8rem;
-  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  padding: 1rem;
+  border-radius: 1rem;
 
   transition: ${transition(theme, ['background', 'color'])};
 
