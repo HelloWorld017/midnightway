@@ -6,12 +6,17 @@ export const containerStyle = (theme: Theme) => css`
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1.6rem;
-  padding-top: 1rem;
   border-radius: 1.6rem;
   background: ${theme.surface.bgSection};
 `;
 
 export const headerStyle = css`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+`;
+
+export const headerTextContainerStyle = css`
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -28,7 +33,7 @@ export const headerTextStyle = (theme: Theme) => css`
 
 export const headerDividerStyle = (theme: Theme) => css`
   background: ${theme.surface.fillLine};
-  width: 0.2rem;
+  width: 0.1rem;
   height: 0.4rem;
   transform: rotate(45deg);
   border-radius: 0.2rem;
@@ -37,6 +42,8 @@ export const headerDividerStyle = (theme: Theme) => css`
 export const dismissStyle = (theme: Theme) => css`
   cursor: pointer;
   margin-left: auto;
+  margin-top: -0.4rem;
+  margin-right: -0.6rem;
   padding: 0.6rem;
   border-radius: 0.6rem;
   color: ${theme.surface.fillSecondary};
@@ -56,7 +63,6 @@ export const dismissStyle = (theme: Theme) => css`
 export const contentsStyle = css`
   display: flex;
   align-items: flex-start;
-  margin-top: 0.6rem;
   gap: 0.8rem;
 `;
 
@@ -91,6 +97,7 @@ export const imageStyle = css`
   border-radius: 1rem;
   width: 3.2rem;
   height: 3.2rem;
+  margin-left: -0.2rem;
   object-fit: cover;
 `;
 

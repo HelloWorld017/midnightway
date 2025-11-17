@@ -37,9 +37,11 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
   return (
     <div css={styles.containerStyle}>
       <div css={styles.headerStyle}>
-        <span css={styles.headerTextStyle}>{item.appName}</span>
-        <span css={styles.headerDividerStyle} />
-        <span css={styles.headerTextStyle}>{formatDistanceToNow(item.time * 1000)}</span>
+        <div css={styles.headerTextContainerStyle}>
+          <span css={styles.headerTextStyle}>{item.appName}</span>
+          <span css={styles.headerDividerStyle} />
+          <span css={styles.headerTextStyle}>{formatDistanceToNow(item.time * 1000)}</span>
+        </div>
         <button css={styles.dismissStyle} onClick={onDismiss}>
           <IconX />
         </button>

@@ -5,6 +5,7 @@ export const sliderStyle = (theme: Theme) => css`
   position: relative;
   width: 100%;
   display: flex;
+  align-items: center;
   gap: 0.6rem;
   border-radius: 1.6rem;
   padding: 1.2rem;

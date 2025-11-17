@@ -74,7 +74,7 @@ export const iconStyle = (theme: Theme) => css`
 export const textContentsStyle = css`
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.2rem;
 `;
 
 export const titleStyle = (theme: Theme) => css`
@@ -82,7 +82,7 @@ export const titleStyle = (theme: Theme) => css`
   font-family: ${theme.fonts.content};
   font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.8rem;
+  line-height: 1.6rem;
   letter-spacing: -0.02em;
   overflow: hidden;
   text-overflow: ellipsis;
