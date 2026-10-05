@@ -1,6 +1,7 @@
-import { Variable } from 'astal';
+import { execAsync } from 'ags/process';
 import AstalNetwork from 'gi://AstalNetwork';
 import { config } from '@/config';
+import { poll } from '@/platform/poll';
 import { asConnectable } from '@/utils/binding';
 
 type IpOutput = {
@@ -19,15 +20,23 @@ type Usage = {
 };
 
 const network = AstalNetwork.get_default();
-const networkUsage = Variable<Usage>({
-  initialRx: null,
-  initialTx: null,
-  totalRx: 0,
-  totalTx: 0,
-}).poll(
+const networkUsage = poll<Usage>(
+  {
+    initialRx: null,
+    initialTx: null,
+    totalRx: 0,
+    totalTx: 0,
+  },
   config().system.updateInterval,
-  ['ip', '-s', '-j', 'link', 'show', config().system.networkInterface],
-  (out, prev) => {
+  async prev => {
+    const out = await execAsync([
+      'ip',
+      '-s',
+      '-j',
+      'link',
+      'show',
+      config().system.networkInterface,
+    ]);
     const ipOutput = JSON.parse(out) as IpOutput;
     const totalRx = ipOutput?.reduce((prev, item) => prev + item.stats64.rx.bytes, 0);
     const totalTx = ipOutput?.reduce((prev, item) => prev + item.stats64.tx.bytes, 0);

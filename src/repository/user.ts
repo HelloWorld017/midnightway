@@ -1,7 +1,8 @@
-import { execAsync, Variable } from 'astal';
+import { execAsync } from 'ags/process';
+import { writable } from '@/platform/reactivity';
 import { asConnectable } from '@/utils/binding';
 
-const userName = new Variable<string | null>('');
+const userName = writable<string | null>('');
 execAsync(['whoami'])
   .then(value => userName.set(value))
   .catch(() => {});

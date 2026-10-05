@@ -1,18 +1,20 @@
-/** @jsxImportSource astal/gtk4 */
+/** @jsxImportSource ags/gtk4 */
 
-import { bind } from 'astal/binding';
-import { App, Astal, Gtk } from 'astal/gtk4';
+import { onCleanup, onMount } from 'ags';
+import { Astal, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app';
 import WebKit from 'gi://WebKit';
 import cairo from 'gi://cairo';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
-import { repositoryImpl } from '@/repository';
+import { subscribeValue } from '@/platform/reactivity';
+import { overlayItems } from '@/repository/overlay';
 import { ref } from '@/utils/binding';
 import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
 import type { MdWebViewProps } from './MdWebView';
 import type { BridgeMethodsMain } from '@/bridge/types';
-import type { Gdk } from 'astal/gtk4';
+import type { Gdk } from 'ags/gtk4';
 
 const BAR_HEIGHT_HIDDEN = 1;
 const BAR_HEIGHT_VISIBLE = 32;
@@ -82,8 +84,8 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   const bridge: Required<MdWebViewProps>['bridge'] = {};
-  const overlayCleanup = bind(repositoryImpl.overlay, 'overlayItems').subscribe(() => {
-    const items = repositoryImpl.overlay.overlayItems;
+  const updateOverlay = () => {
+    const items = overlayItems.peek();
     if (items.length === 0) {
       overlayWindowRef.current?.hide();
       overlayWindowRef.current?.set_child(null);
@@ -98,64 +100,61 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
         id: 'overlay',
         initParams: {
           kind: 'overlay',
-          params: { monitor: monitor.connector },
+          params: { monitor: monitor.connector ?? '' },
           config: config(),
         },
       });
     }
-  });
+  };
+  onCleanup(subscribeValue(overlayItems, updateOverlay));
+  onMount(updateOverlay);
 
-  return (
-    <>
-      <window
-        visible
-        gdkmonitor={monitor}
-        exclusivitySize={shouldAutohideBar ? 0 : BAR_HEIGHT_VISIBLE}
-        layer={Layer.TOP}
-        anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP}
-        application={App}
-        cssClasses={[transparentStyle]}
-        setup={setupBarWindow}
-        defaultHeight={BAR_HEIGHT_MAXIMIZED}
-        onDestroy={() => {
-          overlayCleanup();
+  return [
+    <window
+      visible
+      gdkmonitor={monitor}
+      exclusivitySize={shouldAutohideBar ? 0 : BAR_HEIGHT_VISIBLE}
+      layer={Layer.TOP}
+      anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP}
+      application={app}
+      cssClasses={[transparentStyle]}
+      $={setupBarWindow}
+      defaultHeight={BAR_HEIGHT_MAXIMIZED}
+    >
+      <MdWebView
+        initParams={{ kind: 'status-bar', params: { monitor: monitor.connector ?? '' } }}
+        onCreateChild={({ self, navigationAction }) => {
+          const navigationURI = navigationAction.get_request().get_uri();
+          const forkId = navigationURI.match(/\?(.*)$/)?.at(1);
+          const targetWindow = match(forkId)
+            .with('overlay', () => overlayWindowRef.current)
+            .otherwise(() => null);
+
+          if (targetWindow) {
+            const webView = new WebKit.WebView({
+              hexpand: true,
+              vexpand: true,
+              relatedView: self,
+            });
+            targetWindow.set_child(webView);
+            return webView;
+          }
+
+          return null;
         }}
-      >
-        <MdWebView
-          initParams={{ kind: 'status-bar', params: { monitor: monitor.connector } }}
-          onCreateChild={({ self, navigationAction }) => {
-            const navigationURI = navigationAction.get_request().get_uri();
-            const forkId = navigationURI.match(/\?(.*)$/)?.at(1);
-            const targetWindow = match(forkId)
-              .with('overlay', () => overlayWindowRef.current)
-              .otherwise(() => null);
-
-            if (targetWindow) {
-              const webView = new WebKit.WebView({
-                hexpand: true,
-                vexpand: true,
-                relatedView: self,
-              });
-              targetWindow.set_child(webView);
-              return webView;
-            }
-
-            return null;
-          }}
-          bridge={bridge}
-          setupBridge={barBridgeRef}
-        />
-      </window>
-      <window
-        visible={false}
-        gdkmonitor={monitor}
-        layer={Layer.OVERLAY}
-        keymode={Keymode.ON_DEMAND}
-        anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP | WindowAnchor.BOTTOM}
-        application={App}
-        cssClasses={[transparentStyle]}
-        setup={setupOverlayWindow}
-      ></window>
-    </>
-  );
+        bridge={bridge}
+        setupBridge={barBridgeRef}
+      />
+    </window>,
+    <window
+      visible={false}
+      gdkmonitor={monitor}
+      layer={Layer.OVERLAY}
+      keymode={Keymode.ON_DEMAND}
+      anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP | WindowAnchor.BOTTOM}
+      application={app}
+      cssClasses={[transparentStyle]}
+      $={setupOverlayWindow}
+    ></window>,
+  ] as Astal.Window[];
 };

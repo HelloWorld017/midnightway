@@ -1,5 +1,5 @@
 import hash from '@emotion/hash';
-import { App } from 'astal/gtk4';
+import app from 'ags/gtk4/app';
 import { compile, serialize, stringify } from 'stylis';
 
 const stylePrefix = 'css-';
@@ -15,7 +15,7 @@ export const cssAstal = (template: TemplateStringsArray, ...args: unknown[]) => 
   }
 
   const style = serialize(compile(`.${className} { ${raw} }`), stringify);
-  App.apply_css(style);
+  app.apply_css(style);
 
   styleRegistry.add(rawHash);
   return className;

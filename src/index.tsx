@@ -1,13 +1,14 @@
-/** @jsxImportSource astal/gtk4 */
+/** @jsxImportSource ags/gtk4 */
 
 import '@/config/init';
 
-import { App } from 'astal/gtk4';
+import app from 'ags/gtk4/app';
 import { MdApp } from './components/astal/MdApp';
 import { eachMonitor } from './components/astal/utils/eachMonitor';
 
-App.start({
+app.start({
+  instanceName: 'midnightway',
   main() {
-    eachMonitor(monitor => <MdApp monitor={monitor} />);
+    eachMonitor(monitor => MdApp({ monitor }));
   },
 });

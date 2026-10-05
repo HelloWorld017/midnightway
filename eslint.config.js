@@ -20,6 +20,7 @@ const importIgnoreList = [
 ];
 
 export default ts.config(
+  { ignores: ['dist/**', 'src/definitions/girs/**'] },
   {
     // prettier-ignore
     files: [
@@ -98,7 +99,6 @@ export default ts.config(
       parserOptions: {
         tsconfigRootDir: import.meta.dirname,
         project: [resolve(import.meta.dirname, './tsconfig.json')],
-        projectService: true,
         ecmaVersion: 'latest',
         ecmaFeatures: {
           jsx: true,

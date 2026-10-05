@@ -1,7 +1,7 @@
 import { useState, useRef, useLayoutEffect } from 'react';
 import * as styles from './Transition.css';
 import type { Interpolation, Theme } from '@emotion/react';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 const useReferenceByKey = <T,>(key: string, value: T) => {
   const ref = useRef({ key, value });
@@ -16,7 +16,7 @@ const useReferenceByKey = <T,>(key: string, value: T) => {
 
 type TransitionProps = {
   kind: string;
-  tagName?: keyof ReactJSX.IntrinsicElements;
+  tagName?: keyof JSX.IntrinsicElements;
   className?: string;
   enterStyle?: Interpolation<Theme>;
   leaveStyle?: Interpolation<Theme>;

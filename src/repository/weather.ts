@@ -1,5 +1,7 @@
-import { Variable } from 'astal';
+import { execAsync } from 'ags/process';
 import { config } from '@/config';
+import { poll } from '@/platform/poll';
+import { writable } from '@/platform/reactivity';
 import { asConnectable } from '@/utils/binding';
 
 const url = (template: TemplateStringsArray, ...parts: unknown[]) =>
@@ -49,17 +51,18 @@ type Weather = {
   cod: 200;
 };
 
-const weather = Variable<Weather | null>(null);
-if (weatherConfig && weatherURL) {
-  weather.poll(weatherConfig.updateInterval, ['curl', weatherURL], out => {
-    try {
-      return JSON.parse(out) as Weather;
-    } catch (err) {
-      console.error('Failed to fetch weather', err);
-      return null;
-    }
-  });
-}
+const weather =
+  weatherConfig && weatherURL
+    ? poll<Weather | null>(null, weatherConfig.updateInterval, async () => {
+        const out = await execAsync(['curl', weatherURL]);
+        try {
+          return JSON.parse(out) as Weather;
+        } catch (err) {
+          console.error('Failed to fetch weather', err);
+          return null;
+        }
+      })
+    : writable<Weather | null>(null);
 
 export const weatherRepository = asConnectable({
   weather,

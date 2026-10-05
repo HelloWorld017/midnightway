@@ -9,7 +9,9 @@ import type { Connectable, Subscribable } from '@/platform/reactivity';
 
 const subscribeProperty = (object: Connectable, key: string, callback: () => void) => {
   if (object instanceof GObject.Object) {
-    return createBinding(object, key as keyof GObject.Object).subscribe(callback);
+    return createBinding(object, key as Exclude<keyof GObject.Object, '$signals'>).subscribe(
+      callback
+    );
   }
 
   const property = key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);

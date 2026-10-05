@@ -1,13 +1,13 @@
-/** @jsxImportSource astal/gtk4 */
+/** @jsxImportSource ags/gtk4 */
 
-import { join } from 'path';
-import { Gio, GLib } from 'astal';
-import { astalify, Gdk } from 'astal/gtk4';
+import { getScope, onCleanup } from 'ags';
+import { Gdk } from 'ags/gtk4';
+import GLib from 'gi://GLib?version=2.0';
+import Gio from 'gi://Gio?version=2.0';
 import WebKit from 'gi://WebKit';
 import { createMainBridge } from '@/bridge/main';
 import { config } from '@/config';
 import type { BridgeMethodsMain, InitParams } from '@/bridge/types';
-import type { Gtk } from 'astal/gtk4';
 
 const html = String.raw;
 const index = html`
@@ -33,10 +33,10 @@ const enableSchemeForContext = (webContext: WebKit.WebContext) => {
       return index;
     }
 
-    const [filename] = GLib.filename_from_uri(import.meta.url);
-    const dirname = GLib.path_get_dirname(filename);
-
-    const filePath = path.startsWith('/@fs') ? path.slice(4) : join(dirname, path);
+    // AGS executes its bundle from a runtime temporary file, not the install directory.
+    const filePath = path.startsWith('/@fs')
+      ? path.slice(4)
+      : GLib.build_filenamev([DATADIR, path]);
     const file = Gio.file_new_for_path(filePath);
     const stream = file.read(null);
     request.finish(stream, -1, null);
@@ -77,8 +77,6 @@ const onDecidePolicyChild = (
   }
 };
 
-const WebView = astalify(WebKit.WebView);
-
 type MissingMethods = Omit<Parameters<typeof createMainBridge>[1], 'initParams'>;
 export type MdWebViewProps = {
   initParams: Omit<InitParams, 'config'>;
@@ -98,41 +96,46 @@ export const MdWebView = ({
   setupBridge,
   classNames = [],
 }: MdWebViewProps) => {
-  const setupWebView = (webView: WebKit.WebView) =>
-    setTimeout(() => {
-      webView.set_background_color(new Gdk.RGBA());
-      webView.get_settings().set_javascript_can_open_windows_automatically(true);
-      webView.connect('decide-policy', onDecidePolicyMain);
-      enableSchemeForContext(webView.webContext);
+  const scope = getScope();
+  const setupWebView = (webView: WebKit.WebView) => {
+    const timer = setTimeout(() =>
+      scope.run(() => {
+        webView.set_background_color(new Gdk.RGBA());
+        webView.get_settings().set_javascript_can_open_windows_automatically(true);
+        webView.connect('decide-policy', onDecidePolicyMain);
+        enableSchemeForContext(webView.webContext);
 
-      const shouldInspect = ARGV.includes('--inspect');
-      if (shouldInspect) {
-        webView.get_settings().set_enable_developer_extras(true);
-        webView.get_inspector().show();
-      }
-
-      webView.connect('create', (self, navigationAction) => {
-        const childWebView = onCreateChild?.({ self, navigationAction });
-        if (!childWebView) {
-          return null;
+        const shouldInspect = ARGV.includes('--inspect');
+        if (shouldInspect) {
+          webView.get_settings().set_enable_developer_extras(true);
+          webView.get_inspector().show();
         }
 
-        childWebView.set_background_color(new Gdk.RGBA());
-        childWebView.connect('decide-policy', onDecidePolicyChild);
-        enableSchemeForContext(childWebView.webContext);
+        webView.connect('create', (self, navigationAction) => {
+          const childWebView = onCreateChild?.({ self, navigationAction });
+          if (!childWebView) {
+            return null;
+          }
 
-        return childWebView;
-      });
+          childWebView.set_background_color(new Gdk.RGBA());
+          childWebView.connect('decide-policy', onDecidePolicyChild);
+          enableSchemeForContext(childWebView.webContext);
 
-      webView.load_html(index, 'midnightway://midnightway/');
+          return childWebView;
+        });
 
-      const mainBridge = createMainBridge(webView, {
-        ...bridge,
-        initParams: () => ({ ...initParams, config: config() }) as InitParams,
-      });
+        webView.load_html(index, 'midnightway://midnightway/');
 
-      setupBridge?.(mainBridge);
-    });
+        const mainBridge = createMainBridge(webView, {
+          ...bridge,
+          initParams: () => ({ ...initParams, config: config() }) as InitParams,
+        });
 
-  return <WebView cssClasses={classNames} setup={setupWebView} hexpand={true} vexpand={true} />;
+        setupBridge?.(mainBridge);
+      })
+    );
+    onCleanup(() => clearTimeout(timer));
+  };
+
+  return <WebKit.WebView cssClasses={classNames} $={setupWebView} hexpand={true} vexpand={true} />;
 };

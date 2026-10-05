@@ -1,4 +1,4 @@
-import { Gio } from 'astal';
+import Gio from 'gi://Gio?version=2.0';
 import { z } from 'zod';
 import { repositoryImpl } from '@/repository';
 import { applyDescriptor } from '@/utils/repositoryProxy/operations';
@@ -33,15 +33,15 @@ export const traverseMenuImpl =
           : ['item', null];
 
       const label = defaultString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_LABEL)
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_LABEL, null)?.unpack()
       );
 
       const action = nullableString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_ACTION)
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_ACTION, null)?.unpack()
       );
 
       const actionTarget = nullableString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_TARGET)
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_TARGET, null)?.unpack()
       );
 
       return { kind, label, action, actionTarget, children };

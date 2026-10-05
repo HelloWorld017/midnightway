@@ -6,7 +6,7 @@ import { useMergedRef } from '@/hooks/useMergedRef';
 import * as styles from './ContextMenu.css';
 import { ContextMenuProvider, useContextMenuProvider } from './ContextMenuProvider';
 import type { ContextMenuNode, ContextMenuToken } from './types';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 const ContextMenuFallback = () => <div css={styles.fallbackStyle} />;
 

@@ -1,33 +1,37 @@
-import { App, Gtk } from 'astal/gtk4';
-import type { Gdk } from 'astal/gtk4';
+import { createRoot, onCleanup } from 'ags';
+import app from 'ags/gtk4/app';
+import type Gdk from 'gi://Gdk?version=4.0';
+import type Gtk from 'gi://Gtk?version=4.0';
 
-export const eachMonitor = (onMonitor: (monitor: Gdk.Monitor) => Gtk.Widget | Gtk.Widget[]) => {
-  const widgetWindows = new Map<Gdk.Monitor, Set<Gtk.Window>>();
-  const onAddMonitor = (monitor: Gdk.Monitor) => {
-    const widgets = onMonitor(monitor);
-    const widgetList = Array.isArray(widgets) ? widgets : [widgets];
-    widgetWindows.set(monitor, new Set());
-    widgetList.forEach(widget => {
-      if (!(widget instanceof Gtk.Window)) {
-        throw new Error('Given widget is not a window!');
+export const eachMonitor = (create: (monitor: Gdk.Monitor) => Gtk.Window[]) => {
+  const monitors = new Map<Gdk.Monitor, () => void>();
+  const reconcile = () => {
+    const current = new Set(app.get_monitors());
+    for (const [monitor, dispose] of monitors) {
+      if (!current.has(monitor)) {
+        dispose();
+        monitors.delete(monitor);
       }
+    }
 
-      widgetWindows.get(monitor)?.add(widget);
-    });
+    for (const monitor of current) {
+      if (!monitors.has(monitor)) {
+        createRoot(dispose => {
+          const windows = create(monitor);
+          monitors.set(monitor, () => {
+            dispose();
+            windows.forEach(window => window.destroy());
+          });
+        });
+      }
+    }
   };
 
-  App.get_monitors().forEach(onAddMonitor);
-
-  // FIXME monitor-added is not supported in gtk4
-  App.connect('monitor-added', (_, monitor: Gdk.Monitor) => onAddMonitor(monitor));
-  App.connect('monitor-removed', (_, monitor: Gdk.Monitor) => {
-    const widgetWindow = widgetWindows.get(monitor);
-    if (widgetWindow) {
-      widgetWindow.forEach(widget => {
-        App.remove_window(widget);
-        widget.destroy();
-        widgetWindows.delete(monitor);
-      });
-    }
+  const signal = app.connect('notify::monitors', reconcile);
+  reconcile();
+  onCleanup(() => {
+    app.disconnect(signal);
+    monitors.forEach(dispose => dispose());
+    monitors.clear();
   });
 };

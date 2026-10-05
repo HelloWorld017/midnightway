@@ -1,8 +1,11 @@
-import { Variable, execAsync } from 'astal';
+import { execAsync } from 'ags/process';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
+import { poll } from '@/platform/poll';
+import { writable } from '@/platform/reactivity';
 import { asConnectable } from '@/utils/binding';
 import type { ControlCenterState, GeneratedId } from '@/config/schema';
+import type { Accessor } from 'ags';
 
 const repositoryItem = config()
   .controlCenter.items.flat()
@@ -11,11 +14,13 @@ const repositoryItem = config()
 
 const asVariable = (state: ControlCenterState<unknown>) =>
   match(state)
-    .returnType<Variable<unknown>>()
-    .with({ kind: 'default' }, state => Variable(state.defaultState))
-    .with({ kind: 'poll' }, state => Variable(null).poll(state.pollInterval, state.pollCommand))
+    .returnType<Accessor<unknown>>()
+    .with({ kind: 'default' }, state => writable(state.defaultState))
+    .with({ kind: 'poll' }, state =>
+      poll<unknown>(null, state.pollInterval, () => execAsync(state.pollCommand))
+    )
     .with({ kind: 'init' }, state => {
-      const variable = Variable<unknown>(null);
+      const variable = writable<unknown>(null);
       execAsync(state.initCommand)
         .then(value => variable.set(value))
         .catch(() => {});
@@ -27,7 +32,7 @@ const asVariable = (state: ControlCenterState<unknown>) =>
 export const controlCenterRepository = {
   items: asConnectable(
     Object.fromEntries(repositoryItem.map(([key, state]) => [key, asVariable(state)] as const)) as {
-      [K in GeneratedId]: Variable<unknown>;
+      [K in GeneratedId]: Accessor<unknown>;
     }
   ),
 };

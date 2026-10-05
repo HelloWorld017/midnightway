@@ -1,4 +1,4 @@
-import { execAsync } from 'astal';
+import { execAsync } from 'ags/process';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 

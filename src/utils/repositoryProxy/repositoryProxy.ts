@@ -10,9 +10,9 @@ export type RepositoryProxyFilter = {
 };
 
 export type RepositoryProxyMethods<T, TRoot = unknown> = {
-  $pick: <TKey extends keyof T & string>(
+  $pick: <TKey extends keyof NonNullable<T> & string>(
     ...key: TKey[]
-  ) => RepositoryProxySelectable<Pick<T, TKey>, TRoot>;
+  ) => RepositoryProxySelectable<Pick<NonNullable<T>, TKey>, TRoot>;
   $pickArray: <TKey extends keyof (T & unknown[])[number] & string>(
     ...key: TKey[]
   ) => RepositoryProxySelectable<Pick<(T & unknown[])[number], TKey>[], TRoot>;
@@ -31,10 +31,10 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
     predicate: RepositoryProxyFilterPredicate,
     value: unknown
   ) => RepositoryProxySelectable<(T & unknown[])[number], TRoot>;
-  $invokeMethod: <TKey extends keyof T>(
+  $invokeMethod: <TKey extends keyof NonNullable<T>>(
     key: TKey,
-    ...args: T[TKey] extends (...args: infer TArgs) => unknown ? TArgs : [never]
-  ) => T[TKey] extends (...args: never[]) => infer TReturnValue
+    ...args: NonNullable<T>[TKey] extends (...args: infer TArgs) => unknown ? TArgs : [never]
+  ) => NonNullable<T>[TKey] extends (...args: never[]) => infer TReturnValue
     ? RepositoryProxySelectable<TReturnValue, TRoot>
     : never;
 };

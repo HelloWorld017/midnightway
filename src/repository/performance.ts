@@ -1,4 +1,4 @@
-import { Variable } from 'astal';
+import { createSubprocess } from 'ags/process';
 import { config } from '@/config';
 import { asConnectable, bindFile } from '@/utils/binding';
 
@@ -27,20 +27,22 @@ type VmStatKeys = keyof typeof VMSTAT_NAMES;
 type VmStatNames = (typeof VMSTAT_NAMES)[VmStatKeys];
 type VmStat = { headers?: VmStatKeys[]; values?: Record<VmStatNames, number> };
 
-const vmstat = Variable<VmStat>({}).watch(['vmstat', '1', '-y'], (out, prev) => {
+const vmstat = createSubprocess<VmStat>({}, ['vmstat', '1', '-y'], (out, prev) => {
+  if (!/^\d/.test(out)) {
+    if (out.startsWith('r ')) {
+      return { headers: out.split(/\s+/) as VmStatKeys[] };
+    }
+    return prev;
+  }
   const { headers } = prev;
   if (!headers) {
     return {
-      headers: (out.match(/^[a-z\s]+$/m)?.[0].match(/[a-z]+/g) ??
-        Object.keys(VMSTAT_NAMES)) as VmStatKeys[],
+      headers: Object.keys(VMSTAT_NAMES) as VmStatKeys[],
     };
   }
 
   const values = Object.fromEntries(
-    Array.from(out.matchAll(/(\d+)\s+/g)).map(([, value], index) => [
-      VMSTAT_NAMES[headers[index]],
-      parseInt(value, 10),
-    ])
+    out.split(/\s+/).map((value, index) => [VMSTAT_NAMES[headers[index]], parseInt(value, 10)])
   ) as Record<VmStatNames, number>;
 
   return { headers, values };

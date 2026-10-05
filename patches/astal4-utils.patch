@@ -5,9 +5,9 @@ index 58408a6..7cd857f 100644
 @@ -20,6 +20,7 @@ config = configure_file(
  
  deps = [
-   dependency('astal-io-0.1'),
-+  dependency('cairo'),
    dependency('glib-2.0'),
++  dependency('cairo'),
+   dependency('astal-io-0.1'),
    dependency('gtk4'),
    dependency('gtk4-layer-shell-0'),
 @@ -30,6 +31,7 @@ sources = [config] + files(

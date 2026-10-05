@@ -5,7 +5,7 @@ import {
 } from '@/utils/repositoryProxy';
 import type { ContextMenuModel, ContextMenuNode } from './types';
 import type { RepositoryProxy, RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
-import type { Gio } from 'astal';
+import type Gio from 'gi://Gio?version=2.0';
 
 type DefaultContextMenuToken = { key: string; nodes: DefaultContextMenuNode[] };
 type DefaultContextMenuNode = ContextMenuNode<DefaultContextMenuToken, () => void>;

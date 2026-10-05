@@ -1,4 +1,5 @@
-import { Variable } from 'astal';
+import { createComputed } from 'ags';
+import { writable } from '@/platform/reactivity';
 import { asConnectable } from '@/utils/binding';
 
 export type OverlayItem =
@@ -9,17 +10,16 @@ export type ToolkitPosition = { x: number; anchor: 'left' | 'center' | 'right' }
 export type ToolkitState = { position: ToolkitPosition; kind: ToolkitKind };
 export type NotificationBubblesState = { ids: number[] };
 
-const toolkitState = new Variable<ToolkitState | null>(null);
-const notificationBubblesState = new Variable<NotificationBubblesState | null>(null);
-const overlayItems = Variable.derive(
-  [toolkitState, notificationBubblesState],
-  (toolkitState, notificationBubblesState): OverlayItem[] => [
-    ...(toolkitState ? [{ kind: 'toolkit' as const, state: toolkitState }] : []),
-    ...(notificationBubblesState
-      ? [{ kind: 'notificationBubbles' as const, state: notificationBubblesState }]
-      : []),
-  ]
-);
+const toolkitState = writable<ToolkitState | null>(null);
+const notificationBubblesState = writable<NotificationBubblesState | null>(null);
+export const overlayItems = createComputed((): OverlayItem[] => {
+  const toolkit = toolkitState();
+  const bubbles = notificationBubblesState();
+  return [
+    ...(toolkit ? [{ kind: 'toolkit' as const, state: toolkit }] : []),
+    ...(bubbles ? [{ kind: 'notificationBubbles' as const, state: bubbles }] : []),
+  ];
+});
 
 export const overlayRepository = asConnectable({
   overlayItems,

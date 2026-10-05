@@ -1,14 +1,15 @@
-import { Variable } from 'astal';
+import { execAsync } from 'ags/process';
 import { config } from '@/config';
+import { poll } from '@/platform/poll';
 import { asConnectable } from '@/utils/binding';
 
 const { updateInterval } = config().system;
 
 type Sensors = Record<string, Record<string, Record<string, number> | string>>;
-const sensors = new Variable<Sensors>({}).poll(
+const sensors = poll<Sensors>(
+  {},
   updateInterval,
-  ['sensors', '-j'],
-  out => JSON.parse(out) as Sensors
+  async () => JSON.parse(await execAsync(['sensors', '-j'])) as Sensors
 );
 
 const sensorProbes = config().system.temperatures;

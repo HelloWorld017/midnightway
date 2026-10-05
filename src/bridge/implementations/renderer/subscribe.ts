@@ -1,13 +1,17 @@
+import { onCleanup } from 'ags';
 import { repositoryImpl } from '@/repository';
 import { createRepositoryProxy } from '@/utils/repositoryProxy';
 import { bindRepositoryProxy } from '@/utils/repositoryProxy/bind';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 
-const subscriptions = new Map<string, () => void>();
-export const subscribeImpl =
-  (bridge: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['subscribe'] =>
-  ({ descriptor }) => {
+export const subscriptionMethods = (bridge: MethodsProxy<BridgeMethodsMain>) => {
+  const subscriptions = new Map<string, () => void>();
+  onCleanup(() => {
+    subscriptions.forEach(cleanup => cleanup());
+    subscriptions.clear();
+  });
+  const subscribe: BridgeMethodsRenderer['subscribe'] = ({ descriptor }) => {
     const id = Math.random().toString(36).slice(2, 9);
     const proxy = createRepositoryProxy(descriptor);
     const bindable = bindRepositoryProxy(proxy, repositoryImpl);
@@ -25,9 +29,9 @@ export const subscribeImpl =
     return { id, value: bindable.get() };
   };
 
-export const unsubscribeImpl =
-  (_bridge: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['unsubscribe'] =>
-  ({ id }) => {
+  const unsubscribe: BridgeMethodsRenderer['unsubscribe'] = ({ id }) => {
     subscriptions.get(id)?.();
     subscriptions.delete(id);
   };
+  return { subscribe, unsubscribe };
+};

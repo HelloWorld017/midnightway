@@ -1,23 +1,16 @@
-import { readFileAsync, Variable } from 'astal';
+import { readFileAsync } from 'ags/file';
+import { poll } from '@/platform/poll';
+import { writable } from '@/platform/reactivity';
+import type { Accessor } from 'ags';
 
 export const bindFile = <T>(
   path: string | null,
   transform: (content: string) => T,
   interval: number
-): Variable<T | null> => {
-  const variable = new Variable<T | null>(null);
+): Accessor<T | null> => {
   if (!path) {
-    return variable;
+    return writable<T | null>(null);
   }
 
-  const intervalId = setInterval(async () => {
-    try {
-      const content = await readFileAsync(path);
-      variable.set(transform(content));
-    } catch (err) {
-      console.error(err);
-    }
-  }, interval);
-
-  return variable.onDropped(() => clearInterval(intervalId));
+  return poll<T | null>(null, interval, async () => transform(await readFileAsync(path)));
 };

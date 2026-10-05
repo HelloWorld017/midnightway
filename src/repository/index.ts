@@ -16,7 +16,7 @@ const batteryRepository = AstalBattery.get_default();
 const hyprlandRepository = AstalHyprland.get_default();
 const musicPlayerRepository = AstalMpris.get_default();
 const notificationRepository = AstalNotifd.get_default();
-const soundRepository = AstalWp.get_default()!;
+const soundRepository = AstalWp.get_default();
 const trayRepository = AstalTray.get_default();
 
 export const repositoryImpl = {

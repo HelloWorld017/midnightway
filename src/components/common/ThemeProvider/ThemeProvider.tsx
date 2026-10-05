@@ -1,7 +1,8 @@
 import { ThemeProvider as EmotionThemeProvider, useTheme } from '@emotion/react';
-import { useMemo, type ReactNode } from 'react';
+import { useMemo } from 'react';
 import { DEFAULT_THEME } from '@/constants/theme';
 import type { SurfaceKind } from '@/constants/theme';
+import type { ReactNode } from 'react';
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => (
   <EmotionThemeProvider theme={DEFAULT_THEME}>{children}</EmotionThemeProvider>

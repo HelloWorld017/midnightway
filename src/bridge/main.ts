@@ -1,3 +1,4 @@
+import { onCleanup } from 'ags';
 import JavaScriptCore from 'gi://JavaScriptCore';
 import { createMethodsProxy } from '@/utils/methodsProxy';
 import { methodsRendererImpl } from './implementations/renderer';
@@ -11,15 +12,17 @@ type MissingMethods = Omit<BridgeMethodsRenderer, keyof ReturnType<typeof method
 type Message = { id: string; name: string; params: unknown };
 
 export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<MissingMethods>) => {
+  const callbackPool = new Map<string, (output: unknown) => void>();
   /* Create Bridge */
   const bridge = createMethodsProxy<BridgeMethodsMain>((name: string, params: unknown) => {
     const id = `${Date.now()}+${Math.random().toString(36).slice(2, 7)}`;
     const outputPromise = new Promise(resolve => {
-      callbackPool.set(id, resolve);
-      setTimeout(() => {
-        resolve(undefined);
+      const timer = setTimeout(() => callbackPool.get(id)?.(undefined), 1000);
+      callbackPool.set(id, output => {
+        clearTimeout(timer);
         callbackPool.delete(id);
-      }, 1000);
+        resolve(output);
+      });
     });
 
     const code = js`
@@ -36,30 +39,36 @@ export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<M
   const impl = { ...methodsRendererImpl(bridge), ...methodsImpl };
   const contentManager = webView.userContentManager;
   contentManager.register_script_message_handler_with_reply('bridge', null);
-  contentManager.connect('script-message-with-reply-received', (_source, value, reply) => {
-    const { name, params } = JSON.parse(value.to_json(0)) as Message;
-    if (name.startsWith('reply/')) {
-      return;
+  const requestSignal = contentManager.connect(
+    'script-message-with-reply-received',
+    (_source, value, reply) => {
+      const { name, params } = JSON.parse(value.to_json(0)) as Message;
+      if (name.startsWith('reply/')) {
+        return;
+      }
+
+      if (!(name in impl)) {
+        console.error(`Unknown message: ${name}, ignoring`);
+        return;
+      }
+
+      const output = (impl as Record<string, (params: unknown) => void>)[name](params);
+      const outputValue = JavaScriptCore.Value.new_from_json(
+        value.context,
+        JSON.stringify(output) ?? 'null'
+      );
+
+      reply.return_value(outputValue);
     }
-
-    if (!(name in impl)) {
-      console.error(`Unknown message: ${name}, ignoring`);
-      return;
-    }
-
-    const output = (impl as Record<string, (params: unknown) => void>)[name](params);
-    const outputValue = JavaScriptCore.Value.new_from_json(
-      value.context,
-      JSON.stringify(output) ?? 'null'
-    );
-
-    reply.return_value(outputValue);
-  });
+  );
 
   /* Reply Handling */
-  const callbackPool = new Map<string, (output: unknown) => void>();
+  onCleanup(() => {
+    callbackPool.forEach(resolve => resolve(undefined));
+    callbackPool.clear();
+  });
   contentManager.register_script_message_handler('bridgeReply', null);
-  contentManager.connect('script-message-received', (_source, value) => {
+  const replySignal = contentManager.connect('script-message-received', (_source, value) => {
     const { name, params } = JSON.parse(value.to_json(0)) as Message;
     if (!name.startsWith('reply/')) {
       return;
@@ -68,6 +77,12 @@ export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<M
     const originId = name.slice(6);
     const callback = callbackPool.get(originId);
     callback?.(params);
+  });
+  onCleanup(() => {
+    contentManager.disconnect(requestSignal);
+    contentManager.disconnect(replySignal);
+    contentManager.unregister_script_message_handler('bridge', null);
+    contentManager.unregister_script_message_handler('bridgeReply', null);
   });
 
   return bridge;
