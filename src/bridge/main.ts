@@ -63,10 +63,6 @@ export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<M
   );
 
   /* Reply Handling */
-  onCleanup(() => {
-    callbackPool.forEach(resolve => resolve(undefined));
-    callbackPool.clear();
-  });
   contentManager.register_script_message_handler('bridgeReply', null);
   const replySignal = contentManager.connect('script-message-received', (_source, value) => {
     const { name, params } = JSON.parse(value.to_json(0)) as Message;
@@ -79,6 +75,7 @@ export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<M
     callback?.(params);
   });
   onCleanup(() => {
+    callbackPool.forEach(resolve => resolve(undefined));
     contentManager.disconnect(requestSignal);
     contentManager.disconnect(replySignal);
     contentManager.unregister_script_message_handler('bridge', null);

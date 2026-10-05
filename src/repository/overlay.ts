@@ -1,6 +1,5 @@
 import { createComputed } from 'ags';
-import { writable } from '@/platform/reactivity';
-import { asConnectable } from '@/utils/binding';
+import { asConnectable, writable } from '@/utils/binding';
 
 export type OverlayItem =
   | { kind: 'toolkit'; state: ToolkitState }
@@ -12,7 +11,7 @@ export type NotificationBubblesState = { ids: number[] };
 
 const toolkitState = writable<ToolkitState | null>(null);
 const notificationBubblesState = writable<NotificationBubblesState | null>(null);
-export const overlayItems = createComputed((): OverlayItem[] => {
+const overlayItems = createComputed((): OverlayItem[] => {
   const toolkit = toolkitState();
   const bubbles = notificationBubblesState();
   return [

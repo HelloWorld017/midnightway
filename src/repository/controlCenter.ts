@@ -1,9 +1,7 @@
 import { execAsync } from 'ags/process';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
-import { poll } from '@/platform/poll';
-import { writable } from '@/platform/reactivity';
-import { asConnectable } from '@/utils/binding';
+import { asConnectable, poll, writable } from '@/utils/binding';
 import type { ControlCenterState, GeneratedId } from '@/config/schema';
 import type { Accessor } from 'ags';
 

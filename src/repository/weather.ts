@@ -1,8 +1,6 @@
 import { execAsync } from 'ags/process';
 import { config } from '@/config';
-import { poll } from '@/platform/poll';
-import { writable } from '@/platform/reactivity';
-import { asConnectable } from '@/utils/binding';
+import { asConnectable, poll, writable } from '@/utils/binding';
 
 const url = (template: TemplateStringsArray, ...parts: unknown[]) =>
   String.raw(template, ...parts.map(part => encodeURIComponent(String(part))));

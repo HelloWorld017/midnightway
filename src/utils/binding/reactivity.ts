@@ -1,7 +1,59 @@
-import { readValue, subscribe } from '@/platform/reactivity';
+import { Accessor, createState } from 'ags';
+import { readFileAsync } from 'ags/file';
+import { createPoll } from 'ags/time';
 import { isObject } from '../type';
-import type { Connectable, Subscribable } from '@/platform/reactivity';
-import type { Accessor } from 'ags';
+
+export type Subscribable<T = unknown> = {
+  get(): T;
+  subscribe(callback: (value: T) => void): () => void;
+};
+
+export type Connectable = {
+  connect(signal: string, callback: (...args: unknown[]) => void): number;
+  disconnect(id: number): void;
+};
+
+type AstalRef<T> = {
+  (value: T): void;
+  current: T;
+};
+
+export const ref = <T>(initialValue: T): AstalRef<T> => {
+  let currentValue = initialValue;
+  const ref = (nextValue: T) => {
+    currentValue = nextValue;
+  };
+
+  return Object.defineProperty(ref as AstalRef<T>, 'current', {
+    enumerable: true,
+    get: () => currentValue,
+    set: ref,
+  });
+};
+
+export const writable = <T>(initial: T): Accessor<T> & { set(value: T): void } => {
+  const [value, setValue] = createState(initial);
+  return Object.assign(value, { set: (next: T) => setValue(() => next) });
+};
+
+export const poll = <T>(initial: T, interval: number, update: (previous: T) => Promise<T>) =>
+  createPoll(initial, interval, async previous => {
+    try {
+      return await update(previous);
+    } catch (error) {
+      console.error(error);
+      return previous;
+    }
+  });
+
+export const subscribeProperty = (object: Connectable, key: string, callback: () => void) => {
+  const property = key
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replaceAll('_', '-')
+    .toLowerCase();
+  const id = object.connect(`notify::${property}`, callback);
+  return () => object.disconnect(id);
+};
 
 const isSubscribable = (value: unknown): value is Subscribable | Accessor<unknown> =>
   isObject(value) && 'subscribe' in value && typeof value.subscribe === 'function';
@@ -42,9 +94,10 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
         subscriptions.set(key, new Set([onUpdate]));
         cleanups.set(
           key,
-          subscribe(value, value => {
+          value.subscribe(() => {
+            const current = value instanceof Accessor ? value.peek() : value.get();
             subscriptions.get(key)?.forEach(callback => {
-              callback(value);
+              callback(current);
             });
           })
         );
@@ -87,7 +140,7 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
 
       const value = Reflect.get(target, prop, receiver) as unknown;
       if (isSubscribable(value)) {
-        return readValue(value);
+        return value instanceof Accessor ? value.peek() : value.get();
       }
 
       return value;
@@ -97,4 +150,16 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
       return Reflect.has(target, key) || Reflect.has(controller, key);
     },
   });
+};
+
+export const bindFile = <T>(
+  path: string | null,
+  transform: (content: string) => T,
+  interval: number
+): Accessor<T | null> => {
+  if (!path) {
+    return writable<T | null>(null);
+  }
+
+  return poll<T | null>(null, interval, async () => transform(await readFileAsync(path)));
 };

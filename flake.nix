@@ -78,7 +78,6 @@
 
       pnpm = pkgs.pnpm_10;
       devDeps = [
-        agsPkg
         astalPkgs.astal3
         pkgs.gobject-introspection
         pkgs.nodejs_24
@@ -98,14 +97,14 @@
 
         buildPhase = ''
           runHook preBuild
-          pnpm build:renderer
-          ags bundle src/index.tsx dist/midnightway -d "DATADIR='$out/libexec/${pname}'" -d 'process.env.NODE_ENV="production"'
+          pnpm build
           runHook postBuild
         '';
 
         installPhase = ''
           mkdir -p $out/bin $out/libexec/${pname}
-          cp dist/renderer.js dist/${pname} $out/libexec/${pname}
+          cp dist/*.js $out/libexec/${pname}
+          echo '#!${pkgs.gjs}/bin/gjs -m' | cat - dist/index.js > $out/libexec/${pname}/${pname}
           chmod a+x $out/libexec/${pname}/${pname}
           ln -s $out/libexec/${pname}/${pname} $out/bin/${pname}
 

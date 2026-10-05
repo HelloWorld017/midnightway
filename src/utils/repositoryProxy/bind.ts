@@ -1,23 +1,10 @@
-import { createBinding } from 'ags';
 import { throttle } from 'es-toolkit';
-import GObject from 'gi://GObject';
+import { subscribeProperty } from '@/utils/binding';
 import { isObject } from '@/utils/type';
 import { applyDescriptor, applyDescriptorItem, bindDescriptorItem } from './operations';
 import { getRepositoryProxyDescriptor } from './repositoryProxy';
 import type { RepositoryProxy, RepositoryProxyDescriptor } from './repositoryProxy';
-import type { Connectable, Subscribable } from '@/platform/reactivity';
-
-const subscribeProperty = (object: Connectable, key: string, callback: () => void) => {
-  if (object instanceof GObject.Object) {
-    return createBinding(object, key as Exclude<keyof GObject.Object, '$signals'>).subscribe(
-      callback
-    );
-  }
-
-  const property = key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
-  const id = object.connect(`notify::${property}`, callback);
-  return () => object.disconnect(id);
-};
+import type { Connectable, Subscribable } from '@/utils/binding';
 
 const isConnectable = (value: unknown): value is Connectable =>
   isObject(value) && 'connect' in value && typeof value.connect === 'function';

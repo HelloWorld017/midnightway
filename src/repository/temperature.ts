@@ -1,7 +1,6 @@
 import { execAsync } from 'ags/process';
 import { config } from '@/config';
-import { poll } from '@/platform/poll';
-import { asConnectable } from '@/utils/binding';
+import { asConnectable, poll } from '@/utils/binding';
 
 const { updateInterval } = config().system;
 

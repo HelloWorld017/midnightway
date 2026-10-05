@@ -1,8 +1,7 @@
 import { execAsync } from 'ags/process';
 import AstalNetwork from 'gi://AstalNetwork';
 import { config } from '@/config';
-import { poll } from '@/platform/poll';
-import { asConnectable } from '@/utils/binding';
+import { asConnectable, poll } from '@/utils/binding';
 
 type IpOutput = {
   ifname: string;

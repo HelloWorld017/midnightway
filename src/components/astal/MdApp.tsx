@@ -3,14 +3,13 @@
 import { onCleanup, onMount } from 'ags';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
+import Cairo from 'cairo';
 import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
-import { createInputRegion } from '@/platform/inputRegion';
-import { subscribeValue } from '@/platform/reactivity';
-import { overlayItems } from '@/repository/overlay';
-import { ref } from '@/utils/binding';
+import { repositoryImpl } from '@/repository';
+import { ref, subscribeProperty } from '@/utils/binding';
 import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
 import type { MdWebViewProps } from './MdWebView';
@@ -41,7 +40,8 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const isBarMaximizedRef = ref(false);
 
   const updateInputRegion = () => {
-    const region = createInputRegion({
+    const region = new Cairo.Region();
+    region.unionRectangle({
       x: 0,
       y: 0,
       width: monitor.get_geometry().width,
@@ -86,7 +86,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
 
   const bridge: Required<MdWebViewProps>['bridge'] = {};
   const updateOverlay = () => {
-    const items = overlayItems.peek();
+    const items = repositoryImpl.overlay.overlayItems;
     if (items.length === 0) {
       overlayWindowRef.current?.hide();
       overlayWindowRef.current?.set_child(null);
@@ -107,7 +107,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       });
     }
   };
-  onCleanup(subscribeValue(overlayItems, updateOverlay));
+  onCleanup(subscribeProperty(repositoryImpl.overlay, 'overlayItems', updateOverlay));
   onMount(updateOverlay);
 
   return [

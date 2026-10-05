@@ -8,8 +8,8 @@
   "scripts": {
     "build": "pnpm build:renderer && pnpm build:shell",
     "build:renderer": "vite build",
-    "build:shell": "ags bundle src/index.tsx dist/midnightway -d \"DATADIR='$PWD/dist'\" -d 'process.env.NODE_ENV=\"production\"'",
-    "dev": "pnpm build && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=ngl dist/midnightway",
+    "build:shell": "vite build --mode shell",
+    "dev": "pnpm build && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=ngl gjs -m dist/index.js",
     "dev:inspect": "pnpm dev --inspect",
     "generate": "pnpm run generate:clean && pnpm run generate:gir",
     "generate:clean": "rm -rf src/definitions/girs",
