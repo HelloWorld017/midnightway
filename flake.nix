@@ -9,6 +9,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ags = {
+      url = "github:aylur/ags";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.astal.follows = "astal";
+    };
+
     flake-utils = {
       url = "github:numtide/flake-utils";
       inputs.systems.follows = "systems";
@@ -19,10 +25,11 @@
     };
   };
 
-  outputs = { nixpkgs, astal, flake-utils, ... }:
+  outputs = { nixpkgs, astal, ags, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       astalPkgs = astal.packages.${system};
+      agsPkg = ags.packages.${system}.default;
 
       deps = [
         (astalPkgs.astal4.overrideAttrs(oldAttrs: {
@@ -57,6 +64,7 @@
 
       pnpm = pkgs.pnpm_10;
       devDeps = [
+        agsPkg
         astalPkgs.astal3
         pkgs.gobject-introspection
         pkgs.nodejs_24
@@ -98,12 +106,13 @@
         '';
 
         pnpmDeps = pnpm.fetchDeps {
-          inherit pname version src EXTERN_ASTAL;
+          inherit pname version src EXTERN_ASTAL EXTERN_AGS;
           fetcherVersion = 2;
           hash = "sha256-oRPw4jUWrDtme1NjZCVLA9TEr+KU78WlJC/CBc0wE5A=";
         };
 
         EXTERN_ASTAL = "${astalPkgs.gjs}/share/astal/gjs";
+        EXTERN_AGS = "${agsPkg.jsPackage}";
       };
     in {
       packages.default = package;
@@ -111,6 +120,7 @@
         packages = deps ++ devDeps; # ++ [ package ];
         shellHook = ''
           export EXTERN_ASTAL="${astalPkgs.gjs}/share/astal/gjs";
+          export EXTERN_AGS="${agsPkg.jsPackage}";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";
           export GIO_MODULE_DIR="${pkgs.glib-networking}/lib/gio/modules";
           export MIDNIGHTWAY_CONFIG_FILE="./config.json";

@@ -1,14 +1,17 @@
+import { readValue, subscribe } from '@/platform/reactivity';
 import { isObject } from '../type';
-import type { Variable } from 'astal';
-import type { Connectable, Subscribable } from 'astal/binding';
+import type { Connectable, Subscribable } from '@/platform/reactivity';
+import type { Accessor } from 'ags';
 
-const isSubscribable = (value: unknown): value is Subscribable =>
+const isSubscribable = (value: unknown): value is Subscribable | Accessor<unknown> =>
   isObject(value) && 'subscribe' in value && typeof value.subscribe === 'function';
 
-const isVariable = (value: unknown): value is Variable<unknown> =>
+const isVariable = (value: unknown): value is { set(value: unknown): void } =>
   isSubscribable(value) && 'set' in value && typeof value.set === 'function';
 
-type RemoveSubscribable<T> = T extends Subscribable<infer TInner> ? TInner : T;
+type RemoveSubscribable<T> = T extends Accessor<infer TInner> | Subscribable<infer TInner>
+  ? TInner
+  : T;
 
 type ConnectablizedController<T extends object> = Pick<Connectable, 'connect' | 'disconnect'> & {
   set(key: keyof T, value: RemoveSubscribable<T[keyof T]>): void;
@@ -39,7 +42,7 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
         subscriptions.set(key, new Set([onUpdate]));
         cleanups.set(
           key,
-          value.subscribe(value => {
+          subscribe(value, value => {
             subscriptions.get(key)?.forEach(callback => {
               callback(value);
             });
@@ -84,7 +87,7 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
 
       const value = Reflect.get(target, prop, receiver) as unknown;
       if (isSubscribable(value)) {
-        return value.get();
+        return readValue(value);
       }
 
       return value;
