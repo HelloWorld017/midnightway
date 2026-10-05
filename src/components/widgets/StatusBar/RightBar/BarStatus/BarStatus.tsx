@@ -29,10 +29,12 @@ import type { BarStatusItem as BarStatusItemType } from '@/config/schema';
 type BarStatusItemSoundProps = { item: BarStatusItemType & { kind: 'sound' } };
 const BarStatusItemSound = ({ item }: BarStatusItemSoundProps) => {
   const volume = useRepo(repo.sound.defaultSpeaker.volume);
+  const isMuted = useRepo(repo.sound.defaultSpeaker.mute);
 
-  const IconVolume = match(volume)
-    .with(P.number.finite().lt(0.5).gt(0), () => IconVolume1)
-    .with(P.number.finite().gte(0.5), () => IconVolume2)
+  const IconVolume = match({ volume, isMuted })
+    .with({ isMuted: true }, () => IconVolumeX)
+    .with({ volume: P.number.finite().lt(0.5).gt(0) }, () => IconVolume1)
+    .with({ volume: P.number.finite().gte(0.5) }, () => IconVolume2)
     .otherwise(() => IconVolumeX);
 
   return (

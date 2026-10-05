@@ -1,17 +1,14 @@
-import { animated, useTransition as useSpringTransition } from '@react-spring/web';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { repo } from '@/bridge/repository';
 import { PlaybackStatus } from '@/constants/gir';
-import { useRefMap } from '@/hooks/useRefMap';
 import { useInvokeRepo, usePollRepo, useRepo } from '@/hooks/useRepo';
-import { sleep } from '@/utils/promise';
 import { MediaItem } from './MediaItem';
 import * as styles from './Notification.css';
-import { NotificationItem } from './NotificationItem';
+import { NotificationList } from './NotificationList';
 import { TrayItem } from './TrayItem';
+import { useNotifications } from './hooks/useNotifications';
 
-const TraySection = () => {
+export const TraySection = () => {
   const { t } = useTranslation();
   const trayItems = usePollRepo(repo.tray.$invokeMethod('get_items').$pickArray('itemId'), 1000);
 
@@ -31,7 +28,7 @@ const TraySection = () => {
   );
 };
 
-const MediaSection = () => {
+export const MediaSection = () => {
   const { t } = useTranslation();
   const player = useRepo(
     repo.musicPlayer.players
@@ -67,36 +64,9 @@ const MediaSection = () => {
   );
 };
 
-const NotificationSection = () => {
+export const NotificationSection = () => {
   const { t } = useTranslation();
-  const notifications = useRepo(
-    repo.notification.notifications.$pickArray(
-      'id',
-      'appName',
-      'time',
-      'summary',
-      'body',
-      'image',
-      'category'
-    )
-  );
-
-  const notificationActions = useRepo(
-    repo.notification.notifications
-      .$pickArray('actions')
-      .$mapArray(action => action.actions.$pickArray('id', 'label'))
-  );
-
-  const notificationEntries = useMemo(
-    () =>
-      notifications &&
-      notificationActions &&
-      notifications.map((notification, index) => ({
-        ...notification,
-        actions: notificationActions?.[index] ?? [],
-      })),
-    [notifications, notificationActions]
-  );
+  const notifications = useNotifications();
 
   const invoke = useInvokeRepo();
   const onClearAll = () => {
@@ -108,23 +78,6 @@ const NotificationSection = () => {
       ).catch(() => {});
     });
   };
-
-  const [refMap, refCallback] = useRefMap<number, HTMLDivElement>();
-  const transitions = useSpringTransition(notificationEntries ?? [], {
-    keys: item => item.id,
-    from: { x: -30, opacity: 0, height: 0 },
-    enter: item => async next => {
-      await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight });
-    },
-    update: item => async next => {
-      await next({ height: refMap.get(item.id)?.offsetHeight });
-    },
-    leave: item => async next => {
-      await next({ height: refMap.get(item.id)?.offsetHeight });
-      await Promise.all([next({ x: 30, opacity: 0 }), sleep(150).then(() => next({ height: 0 }))]);
-    },
-    trail: 50,
-  });
 
   return (
     <div css={styles.sectionStyle}>
@@ -138,18 +91,11 @@ const NotificationSection = () => {
           {t('notification.clear-all')}
         </button>
       </div>
-      <div css={styles.notificationListStyle}>
+      <NotificationList notifications={notifications ?? []}>
         <div css={styles.noItemsStyle(!notifications?.length)}>
           {t('notification.no-notification')}
         </div>
-        {transitions((style, item) => (
-          <animated.div style={style}>
-            <div css={styles.notificationItemStyle} ref={refCallback(item.id)}>
-              <NotificationItem item={item} />
-            </div>
-          </animated.div>
-        ))}
-      </div>
+      </NotificationList>
     </div>
   );
 };

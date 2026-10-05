@@ -6,6 +6,7 @@ import {
 import { match } from 'ts-pattern';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
+import { NotificationBubbles } from './NotificationBubbles';
 import { Toolkit } from './Toolkit';
 
 export const Overlay = () => {
@@ -25,6 +26,9 @@ export const Overlay = () => {
         <animated.div style={style}>
           {match(item)
             .with({ kind: 'toolkit' }, toolkit => <Toolkit state={toolkit.state} />)
+            .with({ kind: 'notificationBubbles' }, bubbles => (
+              <NotificationBubbles state={bubbles} />
+            ))
             .exhaustive()}
         </animated.div>
       ))}

@@ -7,7 +7,7 @@ import * as styles from './NotificationItem.css';
 import type { BridgeRepository } from '@/bridge/types';
 
 type Notification = BridgeRepository['notification']['notifications'][number];
-type NotificationItemProps = {
+export type NotificationItemProps = {
   item: Pick<
     Notification,
     'id' | 'appName' | 'time' | 'summary' | 'body' | 'image' | 'category'

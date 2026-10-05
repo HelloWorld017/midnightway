@@ -77,11 +77,16 @@ type ControlCenterItemVolumeSliderProps = {
 };
 
 const ControlCenterItemVolumeSlider = ({ item }: ControlCenterItemVolumeSliderProps) => {
+  const mute = useRepo(repo.sound.defaultSpeaker.mute);
   const volumeFloat = useRepo(repo.sound.defaultSpeaker.volume);
   const volume = (volumeFloat ?? 0) * 100;
 
   const invoke = useInvokeRepo();
   const setVolume = useLatestCallback((nextVolumePercent: number) => {
+    if (mute && nextVolumePercent > 0) {
+      void invoke(repo.sound.defaultSpeaker.$invokeMethod('set_mute', false));
+    }
+
     const nextVolumeFloat = nextVolumePercent / 100;
     void invoke(repo.sound.defaultSpeaker.$invokeMethod('set_volume', nextVolumeFloat));
   });
