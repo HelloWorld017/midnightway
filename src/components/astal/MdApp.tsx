@@ -3,10 +3,11 @@
 import { onCleanup, onMount } from 'ags';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
+import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
-import cairo from 'gi://cairo';
 import { match } from 'ts-pattern';
 import { config } from '@/config';
+import { createInputRegion } from '@/platform/inputRegion';
 import { subscribeValue } from '@/platform/reactivity';
 import { overlayItems } from '@/repository/overlay';
 import { ref } from '@/utils/binding';
@@ -40,7 +41,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const isBarMaximizedRef = ref(false);
 
   const updateInputRegion = () => {
-    const barRect = new cairo.RectangleInt({
+    const region = createInputRegion({
       x: 0,
       y: 0,
       width: monitor.get_geometry().width,
@@ -50,7 +51,6 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
         .otherwise(() => BAR_HEIGHT_VISIBLE),
     });
 
-    const region = Astal.Utils.create_region_by_rectangles(barRect);
     const surface = barWindowRef.current?.get_surface();
     surface?.set_input_region(region);
   };
@@ -62,6 +62,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   const setupBarWindow = (window: Astal.Window) => {
+    Gtk4LayerShell.set_exclusive_zone(window, shouldAutohideBar ? 0 : BAR_HEIGHT_VISIBLE);
     if (shouldAutohideBar) {
       const eventController = new Gtk.EventControllerMotion();
       eventController.connect('enter', () => updateBarIsHidden(false));
@@ -113,12 +114,12 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
     <window
       visible
       gdkmonitor={monitor}
-      exclusivitySize={shouldAutohideBar ? 0 : BAR_HEIGHT_VISIBLE}
       layer={Layer.TOP}
       anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP}
       application={app}
       cssClasses={[transparentStyle]}
       $={setupBarWindow}
+      onRealize={updateInputRegion}
       defaultHeight={BAR_HEIGHT_MAXIMIZED}
     >
       <MdWebView

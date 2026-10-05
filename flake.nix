@@ -54,15 +54,7 @@
       });
 
       deps = [
-        (astalPkgs.astal4.overrideAttrs(oldAttrs: {
-          propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ [
-            pkgs.cairo
-          ];
-          patches = [
-            ./patches/astal4-fixed-exclusivity.patch
-            ./patches/astal4-utils.patch
-          ];
-        }))
+        astalPkgs.astal4
         astalPkgs.battery
         astalPkgs.hyprland
         astalPkgs.io
@@ -78,6 +70,7 @@
         pkgs.glib
         pkgs.glib-networking
         pkgs.gjs
+        pkgs.gtk4-layer-shell
         pkgs.libadwaita
         pkgs.libgtop
         pkgs.webkitgtk_6_0
