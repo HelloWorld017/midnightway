@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
+      url = "github:nixos/nixpkgs/nixpkgs-unstable";
     };
 
     astal = {
@@ -70,7 +70,7 @@
 
         buildInputs = deps;
         nativeBuildInputs = devDeps ++ [
-          pkgs.wrapGAppsHook
+          pkgs.wrapGAppsHook4
           pnpm.configHook
         ];
 
