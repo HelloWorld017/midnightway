@@ -26,9 +26,7 @@ export const Overlay = () => {
         <animated.div style={style}>
           {match(item)
             .with({ kind: 'toolkit' }, toolkit => <Toolkit state={toolkit.state} />)
-            .with({ kind: 'notificationBubbles' }, bubbles => (
-              <NotificationBubbles state={bubbles} />
-            ))
+            .with({ kind: 'notificationBubbles' }, () => <NotificationBubbles />)
             .exhaustive()}
         </animated.div>
       ))}

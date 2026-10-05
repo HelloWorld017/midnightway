@@ -41,6 +41,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "eslint.config.js",
-    "rspack.config.ts"
+    "vite.config.ts"
   ]
 }

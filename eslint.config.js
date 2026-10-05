@@ -26,7 +26,7 @@ export default ts.config(
       'src/**/*.ts',
       'src/**/*.tsx',
       'eslint.config.js',
-      'rspack.config.ts',
+      'vite.config.ts',
     ],
     ignores: ['src/definitions/girs/*'],
     extends: [
@@ -61,7 +61,10 @@ export default ts.config(
       ],
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/only-throw-error': ['error', { allow: [{ from: 'lib', name: 'Promise' }] }],
+      '@typescript-eslint/only-throw-error': [
+        'error',
+        { allow: [{ from: 'lib', name: 'Promise' }] },
+      ],
       'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
       'import-x/first': 'error',
       'import-x/newline-after-import': 'error',
@@ -111,7 +114,7 @@ export default ts.config(
     },
   },
   {
-    files: ['src/definitions/*.ts', 'eslint.config.js', 'rspack.config.ts'],
+    files: ['src/definitions/*.ts', 'eslint.config.js', 'vite.config.ts'],
     rules: {
       'import-x/no-default-export': 'off',
     },

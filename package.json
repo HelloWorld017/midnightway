@@ -6,8 +6,10 @@
   "type": "module",
   "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "build": "NODE_OPTIONS=--experimental-transform-types rspack build",
-    "dev": "BUILD_MODE=development pnpm build --mode development && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=ngl gjs -m dist/index.js",
+    "build": "pnpm build:renderer && pnpm build:shell",
+    "build:renderer": "vite build",
+    "build:shell": "vite build --mode shell",
+    "dev": "pnpm build && LD_PRELOAD=\"$EXTERN_GTK4_LAYER_SHELL\" GSK_RENDERER=ngl gjs -m dist/index.js",
     "dev:inspect": "pnpm dev --inspect",
     "generate": "pnpm run generate:clean && pnpm run generate:gir",
     "generate:clean": "rm -rf src/definitions/girs",
@@ -25,11 +27,8 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@rspack/cli": "^1.1.8",
-    "@rspack/core": "^1.1.8",
     "@styled/typescript-styled-plugin": "^1.0.1",
     "@stylistic/eslint-plugin": "^2.12.1",
-    "@svgr/webpack": "^8.1.0",
     "@ts-for-gir/cli": "4.0.0-beta.19",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.10.5",
@@ -47,7 +46,9 @@
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.19.1"
+    "typescript-eslint": "^8.19.1",
+    "vite": "^6.4.1",
+    "vite-plugin-svgr": "^4.5.0"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
