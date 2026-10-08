@@ -1,15 +1,18 @@
 import { execAsync } from 'ags/process';
 import AstalNetwork from 'gi://AstalNetwork';
+import * as z from 'zod';
 import { config } from '@/config';
 import { asConnectable, poll } from '@/utils/binding';
 
-type IpOutput = {
-  ifname: string;
-  stats64: {
-    rx: { bytes: number };
-    tx: { bytes: number };
-  };
-}[];
+const zIpOutput = z.array(
+  z.object({
+    ifname: z.string(),
+    stats64: z.object({
+      rx: z.object({ bytes: z.number().finite().nonnegative() }),
+      tx: z.object({ bytes: z.number().finite().nonnegative() }),
+    }),
+  })
+);
 
 type Usage = {
   initialRx: number | null;
@@ -36,9 +39,9 @@ const networkUsage = poll<Usage>(
       'show',
       config().system.networkInterface,
     ]);
-    const ipOutput = JSON.parse(out) as IpOutput;
-    const totalRx = ipOutput?.reduce((prev, item) => prev + item.stats64.rx.bytes, 0);
-    const totalTx = ipOutput?.reduce((prev, item) => prev + item.stats64.tx.bytes, 0);
+    const ipOutput = zIpOutput.parse(JSON.parse(out));
+    const totalRx = ipOutput.reduce((prev, item) => prev + item.stats64.rx.bytes, 0);
+    const totalTx = ipOutput.reduce((prev, item) => prev + item.stats64.tx.bytes, 0);
 
     return {
       initialRx: Math.min(totalRx, prev.initialRx ?? totalRx),

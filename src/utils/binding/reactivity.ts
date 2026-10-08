@@ -161,5 +161,9 @@ export const bindFile = <T>(
     return writable<T | null>(null);
   }
 
-  return poll<T | null>(null, interval, async () => transform(await readFileAsync(path)));
+  return poll<T | null>(null, interval, async previous =>
+    readFileAsync(path)
+      .then(transform)
+      .catch(() => previous)
+  );
 };

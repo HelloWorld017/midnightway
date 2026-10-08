@@ -1,14 +1,15 @@
 import { execAsync } from 'ags/process';
+import * as z from 'zod';
 import { config } from '@/config';
 import { asConnectable, poll } from '@/utils/binding';
 
 const { updateInterval } = config().system;
 
-type Sensors = Record<string, Record<string, Record<string, number> | string>>;
-const sensors = poll<Sensors>(
-  {},
-  updateInterval,
-  async () => JSON.parse(await execAsync(['sensors', '-j'])) as Sensors
+const zSensors = z.record(z.record(z.union([z.record(z.number().finite()), z.string()])));
+type Sensors = z.TypeOf<typeof zSensors>;
+
+const sensors = poll<Sensors>({}, updateInterval, async () =>
+  zSensors.parse(JSON.parse(await execAsync(['sensors', '-j'])))
 );
 
 const sensorProbes = config().system.temperatures;
