@@ -1,0 +1,20 @@
+controlCenter.networkConnected: Connected
+controlCenter.networkConnectedWithoutGlobal: Local Only
+controlCenter.networkConnecting: Connecting
+controlCenter.networkDisconnecting: Disconnecting
+controlCenter.networkDisconnected: Not Connected
+controlCenter.sessionDuration: Session {hours}h {minutes}m {seconds}s
+notification.tray: System Tray
+notification.media: Playing Media
+notification.notification: Notification
+notification.noNotification: No notifications.
+notification.clearAll: Clear All
+controlCenter.network: Network
+controlCenter.silentMode: Silent Mode
+controlCenter.slideTo: Slide to {action}
+controlCenter.powerShutdown: Shutdown
+controlCenter.powerReboot: Reboot
+controlCenter.powerSuspend: Suspend
+controlCenter.sessionLogoff: Log Off
+controlCenter.sessionLock: Lock
+calendar.input: "{year} / {month}"

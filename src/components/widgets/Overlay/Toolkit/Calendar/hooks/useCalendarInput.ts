@@ -1,9 +1,17 @@
+import { useLatestCallback } from '@/hooks/useLatestCallback';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
 import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { match, P } from 'ts-pattern';
-import { useLatestCallback } from '@/hooks/useLatestCallback';
 import type { KeyboardEvent, MouseEvent } from 'react';
+
+defineI18n(
+  yaml => yaml`
+  # scope: calendar
+  input: '{year} / {month}'
+`,
+);
 
 const asCalendarKey = (year: number, month: number) =>
   `${year.toString().padStart(4, '0')}${month.toString().padStart(2, '0')}`;
@@ -59,14 +67,14 @@ export const useCalendarInput = (now: number) => {
     }
   }, [calendarKey, calendarKeyDraft]);
 
-  const { t } = useTranslation();
+  const { ts } = useI18n();
   const inputDisplay = useMemo(() => {
     const draft = parseCalendarKey(calendarKeyDraft);
-    return t('calendar.input', {
+    return ts(ts.calendar.input, {
       year: (draft.year ?? 0).toString().padStart(4, '0'),
       month: (draft.month ?? 0).toString().padStart(2, '0'),
     });
-  }, [calendarKeyDraft]);
+  }, [calendarKeyDraft, ts]);
 
   const onMouseDown = useLatestCallback((e: MouseEvent<HTMLInputElement>) => {
     if (e.currentTarget.matches(':focus-within')) {

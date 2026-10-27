@@ -1,19 +1,28 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { match } from 'ts-pattern';
 import { repo } from '@/bridge/repository';
 import { useNetworkState } from '@/components/widgets/StatusBar/hooks/useNetworkState';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
+import { useMemo } from 'react';
+import { match } from 'ts-pattern';
 import { ControlCenterItemButton } from './ControlCenterItemButton';
 import { ControlCenterItemIconButton } from './ControlCenterItemIconButton';
 import { ControlCenterItemSlider } from './ControlCenterItemSlider';
 import { ControlCenterItemToggle } from './ControlCenterItemToggle';
 import type { ControlCenterItem as ControlCenterItemType } from '@/config/schema';
 
+defineI18n(
+  yaml => yaml`
+  # scope: controlCenter
+  network: 'Network'
+  silentMode: 'Silent Mode'
+`,
+);
+
 type ControlCenterItemNetworkProps = { item: ControlCenterItemType & { kind: 'network' } };
 const ControlCenterItemNetwork = ({ item }: ControlCenterItemNetworkProps) => {
-  const { t } = useTranslation();
+  const { ts } = useI18n();
   const { isConnected, icon, text } = useNetworkState();
   const toggleItem = useMemo(
     (): ControlCenterItemType & { kind: 'toggle' } => ({
@@ -21,12 +30,12 @@ const ControlCenterItemNetwork = ({ item }: ControlCenterItemNetworkProps) => {
       kind: 'toggle',
       icon: '',
       title: text,
-      description: t('control-center.network'),
+      description: ts(ts.controlCenter.network),
       activateCommand: '',
       deactivateCommand: '',
       state: { kind: 'default', defaultState: false },
     }),
-    [item, text]
+    [item, text, ts],
   );
 
   return (
@@ -41,7 +50,7 @@ const ControlCenterItemNetwork = ({ item }: ControlCenterItemNetworkProps) => {
 
 type ControlCenterItemSilentProps = { item: ControlCenterItemType & { kind: 'silent' } };
 const ControlCenterItemSilent = ({ item }: ControlCenterItemSilentProps) => {
-  const { t } = useTranslation();
+  const { ts } = useI18n();
   const isSilentMode = useRepo(repo.notification.dontDisturb);
 
   const invoke = useInvokeRepo();
@@ -54,13 +63,13 @@ const ControlCenterItemSilent = ({ item }: ControlCenterItemSilentProps) => {
       id: item.id,
       kind: 'toggle',
       icon: 'circle-slash',
-      title: t('control-center.silent-mode'),
+      title: ts(ts.controlCenter.silentMode),
       description: '',
       activateCommand: '',
       deactivateCommand: '',
       state: { kind: 'default', defaultState: false },
     }),
-    [item]
+    [item, ts],
   );
 
   return (
@@ -99,7 +108,7 @@ const ControlCenterItemVolumeSlider = ({ item }: ControlCenterItemVolumeSliderPr
       state: { kind: 'default', defaultState: 0 },
       command: '',
     }),
-    [item]
+    [item],
   );
 
   return <ControlCenterItemSlider item={sliderItem} state={volume} onChangeUpdate={setVolume} />;

@@ -1,49 +1,61 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { IconLock, IconLogOut, IconMoonStar, IconPower, IconRotateCcw } from '@/assets/icons';
 import { bridgeRenderer } from '@/bridge/renderer';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
+import { useMemo } from 'react';
 import * as styles from './PowerMenuDropdown.css';
 import type { PowerMenuItem } from './types';
+
+defineI18n(
+  yaml => yaml`
+  # scope: controlCenter
+  powerShutdown: 'Shutdown'
+  powerReboot: 'Reboot'
+  powerSuspend: 'Suspend'
+  sessionLogoff: 'Log Off'
+  sessionLock: 'Lock'
+`,
+);
 
 type PowerMenuDropdownProps = {
   onConfirm: (item: PowerMenuItem) => void;
 };
 
 export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
-  const { t } = useTranslation();
+  const { ts } = useI18n();
   const items = useMemo<(PowerMenuItem | null)[]>(
     () => [
       {
         icon: <IconPower />,
-        name: t('control-center.power-shutdown'),
+        name: ts(ts.controlCenter.powerShutdown),
         command: ['systemctl', 'poweroff'],
         shouldConfirm: true,
       },
       {
         icon: <IconRotateCcw />,
-        name: t('control-center.power-reboot'),
+        name: ts(ts.controlCenter.powerReboot),
         command: ['systemctl', 'reboot'],
         shouldConfirm: true,
       },
       {
         icon: <IconMoonStar />,
-        name: t('control-center.power-suspend'),
+        name: ts(ts.controlCenter.powerSuspend),
         command: ['systemctl', 'suspend'],
       },
       null,
       {
         icon: <IconLogOut />,
-        name: t('control-center.session-logoff'),
+        name: ts(ts.controlCenter.sessionLogoff),
         command: ['hyprctl', 'dispatch', 'exit'],
         shouldConfirm: true,
       },
       {
         icon: <IconLock />,
-        name: t('control-center.session-lock'),
+        name: ts(ts.controlCenter.sessionLock),
         command: ['loginctl', 'lock-session'],
       },
     ],
-    [t]
+    [ts],
   );
 
   const onClickItem = (item: PowerMenuItem) => {
@@ -65,7 +77,7 @@ export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
           </button>
         ) : (
           <hr css={styles.dividerStyle} />
-        )
+        ),
       )}
     </div>
   );

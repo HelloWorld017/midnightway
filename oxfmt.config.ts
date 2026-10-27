@@ -14,7 +14,7 @@ export default defineConfig({
   arrowParens: 'avoid',
   endOfLine: 'lf',
   insertFinalNewline: true,
-  ignorePatterns: ['src/definitions/girs/**'],
+  ignorePatterns: ['src/definitions/girs/**', 'src/i18n/generated/**'],
   sortImports: {
     groups: ['builtin', 'external', 'internal', 'parent', 'index', 'sibling', 'type'],
     newlinesBetween: false,

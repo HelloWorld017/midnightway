@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import simplei18n from '@simplei18n/core/vite';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
@@ -7,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: { 'process.env.NODE_ENV': JSON.stringify('production') },
-    plugins: [svgr({ include: '**/*.svg', svgrOptions: { svgo: false } })],
+    plugins: [simplei18n(), svgr({ include: '**/*.svg', svgrOptions: { svgo: false } })],
     resolve: {
       alias: {
         '@': resolve(import.meta.dirname, 'src'),

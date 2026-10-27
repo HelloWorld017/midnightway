@@ -1,16 +1,15 @@
+import { config } from '@/config';
 import { enUS as dateLocaleEnUS } from 'date-fns/locale/en-US';
 import { ko as dateLocaleKoKR } from 'date-fns/locale/ko';
-import { config } from '@/config';
-import { translationsEnUS } from './en-US';
-import { translationsKoKR } from './ko-KR';
+import type { LocaleKey } from '@simplei18n/core';
 import type { Locale as DateLocale } from 'date-fns';
 
 export type LocaleCode = 'en-US' | 'ko-KR';
 
-const translations = {
-  'en-US': translationsEnUS,
-  'ko-KR': translationsKoKR,
-} satisfies Record<LocaleCode, Record<string, unknown>>;
+export const translationLocales = {
+  'en-US': 'en_US',
+  'ko-KR': 'ko_KR',
+} satisfies Record<LocaleCode, LocaleKey>;
 
 const dateLocales = {
   'en-US': dateLocaleEnUS,
@@ -19,6 +18,5 @@ const dateLocales = {
 
 export const locale = () => ({
   locale: config().locale,
-  translation: translations[config().locale],
   date: dateLocales[config().locale],
 });

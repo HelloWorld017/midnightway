@@ -1,8 +1,16 @@
-import { useTranslation } from 'react-i18next';
 import { repo } from '@/bridge/repository';
 import { useNow } from '@/hooks/useNow';
 import { useRepo } from '@/hooks/useRepo';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
 import * as styles from './ControlCenterHeader.css';
+
+defineI18n(
+  yaml => yaml`
+  # scope: controlCenter
+  sessionDuration: 'Session {hours}h {minutes}m {seconds}s'
+`,
+);
 
 const useDuration = (startedAt?: number) => {
   const now = useNow();
@@ -20,7 +28,7 @@ const useDuration = (startedAt?: number) => {
 };
 
 export const ControlCenterHeader = () => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const user = useRepo(repo.user.$pick('userName', 'sessionStartedAt'));
   const duration = useDuration(user?.sessionStartedAt);
 
@@ -29,7 +37,7 @@ export const ControlCenterHeader = () => {
       <div css={styles.headerContentStyle}>
         <h1 css={styles.headerTitleStyle}>{user?.userName}</h1>
         <span css={styles.headerDescriptionStyle}>
-          {t('control-center.session-duration', duration)}
+          {t(t.controlCenter.sessionDuration, duration)}
         </span>
       </div>
     </header>

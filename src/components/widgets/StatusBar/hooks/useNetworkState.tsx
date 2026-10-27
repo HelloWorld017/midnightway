@@ -1,9 +1,21 @@
-import { useTranslation } from 'react-i18next';
-import { match, P } from 'ts-pattern';
 import { IconNetwork, IconRouteOff, IconWifi } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { NetworkPrimary, NetworkState } from '@/constants/gir';
 import { useRepo } from '@/hooks/useRepo';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
+import { match, P } from 'ts-pattern';
+
+defineI18n(
+  yaml => yaml`
+  # scope: controlCenter
+  networkConnected: 'Connected'
+  networkConnectedWithoutGlobal: 'Local Only'
+  networkConnecting: 'Connecting'
+  networkDisconnecting: 'Disconnecting'
+  networkDisconnected: 'Not Connected'
+`,
+);
 
 export const useNetworkState = () => {
   const networkStatus = useRepo(repo.network.networkManager.$pick('primary', 'state')) as {
@@ -19,15 +31,15 @@ export const useNetworkState = () => {
       : IconNetwork
     : IconRouteOff;
 
-  const { t } = useTranslation();
+  const { ts } = useI18n();
   const stateText = match(networkStatus?.state)
-    .with(NetworkState.CONNECTED_GLOBAL, () => t('control-center.network-connected'))
+    .with(NetworkState.CONNECTED_GLOBAL, () => ts(ts.controlCenter.networkConnected))
     .with(P.union(NetworkState.CONNECTED_SITE, NetworkState.CONNECTED_LOCAL), () =>
-      t('control-center.network-connected-without-global')
+      ts(ts.controlCenter.networkConnectedWithoutGlobal),
     )
-    .with(NetworkState.CONNECTING, () => t('control-center.network-connecting'))
-    .with(NetworkState.DISCONNECTING, () => t('control-center.network-disconnecting'))
-    .otherwise(() => t('control-center.network-disconnected'));
+    .with(NetworkState.CONNECTING, () => ts(ts.controlCenter.networkConnecting))
+    .with(NetworkState.DISCONNECTING, () => ts(ts.controlCenter.networkDisconnecting))
+    .otherwise(() => ts(ts.controlCenter.networkDisconnected));
 
   return { isConnected, icon: <Icon />, text: stateText };
 };

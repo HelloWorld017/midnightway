@@ -7,7 +7,7 @@ export default defineConfig({
     node: true,
     builtin: true,
   },
-  ignorePatterns: ['src/definitions/girs/**'],
+  ignorePatterns: ['src/definitions/girs/**', 'src/i18n/generated/**'],
   options: {
     typeAware: true,
     reportUnusedDisableDirectives: 'warn',

@@ -1,15 +1,27 @@
-import { useTranslation } from 'react-i18next';
 import { repo } from '@/bridge/repository';
 import { PlaybackStatus } from '@/constants/gir';
 import { useInvokeRepo, usePollRepo, useRepo } from '@/hooks/useRepo';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
 import { MediaItem } from './MediaItem';
 import * as styles from './Notification.css';
 import { NotificationList } from './NotificationList';
 import { TrayItem } from './TrayItem';
 import { useNotifications } from './hooks/useNotifications';
 
+defineI18n(
+  yaml => yaml`
+  # scope: notification
+  tray: 'System Tray'
+  media: 'Playing Media'
+  notification: 'Notification'
+  noNotification: 'No notifications.'
+  clearAll: 'Clear All'
+`,
+);
+
 export const TraySection = () => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const trayItems = usePollRepo(repo.tray.$invokeMethod('get_items').$pickArray('itemId'), 1000);
 
   if (!trayItems?.length) {
@@ -19,17 +31,19 @@ export const TraySection = () => {
   return (
     <div css={styles.sectionStyle}>
       <div css={styles.sectionHeaderStyle}>
-        <h2 css={styles.sectionTitleStyle}>{t('notification.tray')}</h2>
+        <h2 css={styles.sectionTitleStyle}>{t(t.notification.tray)}</h2>
       </div>
       <div css={styles.trayListStyle}>
-        {trayItems?.map(({ itemId }) => <TrayItem id={itemId} key={itemId} />)}
+        {trayItems?.map(({ itemId }) => (
+          <TrayItem id={itemId} key={itemId} />
+        ))}
       </div>
     </div>
   );
 };
 
 export const MediaSection = () => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const player = useRepo(
     repo.musicPlayer.players
       .$find('playbackStatus', 'in', [PlaybackStatus.PLAYING, PlaybackStatus.PAUSED])
@@ -46,8 +60,8 @@ export const MediaSection = () => {
         'canPause',
         'canGoNext',
         'canGoPrevious',
-        'canSeek'
-      )
+        'canSeek',
+      ),
   );
 
   if (!player) {
@@ -57,7 +71,7 @@ export const MediaSection = () => {
   return (
     <div css={styles.sectionStyle}>
       <div css={styles.sectionHeaderStyle}>
-        <h2 css={styles.sectionTitleStyle}>{t('notification.media')}</h2>
+        <h2 css={styles.sectionTitleStyle}>{t(t.notification.media)}</h2>
       </div>
       <MediaItem player={player} />
     </div>
@@ -65,7 +79,7 @@ export const MediaSection = () => {
 };
 
 export const NotificationSection = () => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const notifications = useNotifications();
 
   const invoke = useInvokeRepo();
@@ -74,7 +88,7 @@ export const NotificationSection = () => {
       invoke(
         repo.notification
           .$invokeMethod('get_notification', notification.id)
-          .$invokeMethod('dismiss')
+          .$invokeMethod('dismiss'),
       ).catch(() => {});
     });
   };
@@ -82,18 +96,18 @@ export const NotificationSection = () => {
   return (
     <div css={styles.sectionStyle}>
       <div css={styles.sectionHeaderStyle}>
-        <h2 css={styles.sectionTitleStyle}>{t('notification.notification')}</h2>
+        <h2 css={styles.sectionTitleStyle}>{t(t.notification.notification)}</h2>
         <button
           css={styles.notificationClearAllStyle(!!notifications?.length)}
           type="button"
           onClick={onClearAll}
         >
-          {t('notification.clear-all')}
+          {t(t.notification.clearAll)}
         </button>
       </div>
       <NotificationList notifications={notifications ?? []}>
         <div css={styles.noItemsStyle(!notifications?.length)}>
-          {t('notification.no-notification')}
+          {t(t.notification.noNotification)}
         </div>
       </NotificationList>
     </div>

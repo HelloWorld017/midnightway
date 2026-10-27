@@ -1,9 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { IconArrowRight } from '@/assets/icons';
 import { bridgeRenderer } from '@/bridge/renderer';
+import { defineI18n } from '@simplei18n/core';
+import { useI18n } from '@simplei18n/core/react';
+import { useEffect, useRef, useState } from 'react';
 import * as styles from './PowerMenuConfirm.css';
 import type { PowerMenuItem } from './types';
+
+defineI18n(
+  yaml => yaml`
+  # scope: controlCenter
+  slideTo: 'Slide to {action}'
+`,
+);
 
 type PowerMenuConfirmProps = {
   item: PowerMenuItem;
@@ -13,7 +21,7 @@ type PowerMenuConfirmProps = {
 export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
   const hasConfirmedRef = useRef(false);
 
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const [state, setState] = useState(0);
 
   useEffect(() => {
@@ -32,9 +40,7 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
       </div>
       <div css={styles.guideStyle(state === 0)}>
         <IconArrowRight css={styles.guideArrowStyle} />
-        <span css={styles.guideTextStyle}>
-          {t('control-center.slide-to', { action: item.name })}
-        </span>
+        <span css={styles.guideTextStyle}>{t(t.controlCenter.slideTo, { action: item.name })}</span>
       </div>
       <input
         css={styles.inputStyle}
