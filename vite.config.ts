@@ -13,9 +13,8 @@ export default defineConfig(({ mode }) => {
         '@': resolve(import.meta.dirname, 'src'),
       },
     },
-    esbuild: {
-      jsx: 'automatic',
-      jsxImportSource: '@emotion/react',
+    oxc: {
+      jsx: { runtime: 'automatic', importSource: '@emotion/react' },
       target: 'es2022',
     },
     build: {
@@ -27,9 +26,9 @@ export default defineConfig(({ mode }) => {
         formats: ['es'],
         fileName: () => `${entry}.js`,
       },
-      rollupOptions: {
+      rolldownOptions: {
         external: /^(?:gi:\/\/|resource:\/\/|file:\/\/|cairo$|console$|gettext$|system$)/,
-        output: { inlineDynamicImports: true },
+        output: { codeSplitting: false },
       },
     },
   };
