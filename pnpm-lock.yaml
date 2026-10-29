@@ -160,7 +160,7 @@ lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
-  excludeLinksFromLockfile: true
+  excludeLinksFromLockfile: false
 
 packageExtensionsChecksum: sha256-a+wHhEYjxcwpdovxPYIINznCSRSX0FuXE05HtHWhrWI=
 
@@ -185,6 +185,9 @@ importers:
       '@simplei18n/core':
         specifier: ^0.1.4
         version: 0.1.4(@types/react@19.3.0)(react@19.3.1)(typescript@7.0.2)
+      ags:
+        specifier: link:/nix/store/4qjz7m8mnclf6rcadvnl9pfq1g6j7vnh-ags-js-lib
+        version: link:../../../../nix/store/4qjz7m8mnclf6rcadvnl9pfq1g6j7vnh-ags-js-lib
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
