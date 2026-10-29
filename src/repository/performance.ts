@@ -35,8 +35,8 @@ const zVmStatValues = z
   .and(z.object({ cpuIdle: z.number().finite() }));
 
 type VmStat = {
-  headers?: z.TypeOf<typeof zVmStatHeaders>;
-  values?: z.TypeOf<typeof zVmStatValues>;
+  headers?: z.infer<typeof zVmStatHeaders>;
+  values?: z.infer<typeof zVmStatValues>;
 };
 
 const zSystemNumber = z.string().trim().min(1).pipe(z.coerce.number().finite().nonnegative());

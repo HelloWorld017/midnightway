@@ -30,28 +30,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
       astalPkgs = astal.packages.${system};
       agsPkg = ags.packages.${system}.default;
-      # AGS/Gnim export TypeScript sources. Provide declarations through the
-      # standard "types" export condition so skipLibCheck applies to them too.
-      agsJsPkg = agsPkg.jsPackage.overrideAttrs(oldAttrs: {
-        nativeBuildInputs = (oldAttrs.nativeBuildInputs or []) ++ [ pkgs.typescript ];
-        installPhase = oldAttrs.installPhase + ''
-          tsc --declaration --emitDeclarationOnly --noCheck --target es2022 \
-            --module preserve --moduleResolution bundler --rootDir "$out" --outDir "$out/types" \
-            "$out"/lib/*.ts "$out"/lib/*/*.ts \
-            "$out"/node_modules/gnim/dist/*.ts "$out"/node_modules/gnim/dist/*/*.ts
-          mv "$out/types/node_modules/gnim" "$out/node_modules/gnim/types"
-          ${pkgs.nodejs_24}/bin/node --input-type=module - "$out" <<'JS'
-          import { readFileSync, writeFileSync } from 'node:fs';
-          for (const suffix of ['/package.json', '/node_modules/gnim/package.json']) {
-            const path = process.argv[2] + suffix;
-            const pkg = JSON.parse(readFileSync(path, 'utf8'));
-            pkg.exports = Object.fromEntries(Object.entries(pkg.exports).map(([key, source]) =>
-              [key, { types: './types' + source.slice(1).replace(/\.ts$/, '.d.ts'), default: source }]));
-            writeFileSync(path, JSON.stringify(pkg));
-          }
-          JS
-        '';
-      });
+      agsJsPkg = agsPkg.jsPackage;
 
       deps = [
         astalPkgs.astal4
@@ -76,11 +55,11 @@
         pkgs.webkitgtk_6_0
       ];
 
-      pnpm = pkgs.pnpm_10;
+      pnpm = pkgs.pnpm_12;
       devDeps = [
         astalPkgs.astal3
         pkgs.gobject-introspection
-        pkgs.nodejs_24
+        pkgs.nodejs_26
         pnpm
       ];
 
@@ -92,7 +71,7 @@
         buildInputs = deps;
         nativeBuildInputs = devDeps ++ [
           pkgs.wrapGAppsHook4
-          pnpm.configHook
+          pkgs.pnpmConfigHook
         ];
 
         buildPhase = ''
@@ -118,10 +97,10 @@
           )
         '';
 
-        pnpmDeps = pnpm.fetchDeps {
+        pnpmDeps = pkgs.fetchPnpmDeps {
           inherit pname version src EXTERN_AGS;
-          fetcherVersion = 3;
-          hash = "sha256-qF+ruDtivyQkgaaD8EISKoTVHgbBPr4XUWFXsi3N6hw=";
+          fetcherVersion = 4;
+          hash = "sha256-DgyHg0Medy9ofVOvgNXol68qlIEIq6iYxvM7iQTHFAs=";
         };
 
         EXTERN_AGS = "${agsJsPkg}";
@@ -130,8 +109,11 @@
       packages.default = package;
       devShells.default = pkgs.mkShell {
         packages = deps ++ devDeps; # ++ [ package ];
-        shellHook = ''
-          export XDG_DATA_DIRS="${pkgs.lib.concatMapStringsSep ":" (p: "${p.out or p}/share/gsettings-schemas/${p.name}") (deps ++ [pkgs.gtk4])}:$XDG_DATA_DIRS";
+        shellHook = let
+          buildDataDirs =
+            pkgs.lib.concatMapStringsSep ":" (p: "${p.out or p}/share/gsettings-schemas/${p.name}");
+        in ''
+          export XDG_DATA_DIRS="${buildDataDirs (deps ++ [pkgs.gtk4])}:$XDG_DATA_DIRS";
           export EXTERN_AGS="${agsJsPkg}";
           export EXTERN_GTK4_LAYER_SHELL="${pkgs.gtk4-layer-shell}/lib/libgtk4-layer-shell.so";
           export GIO_MODULE_DIR="${pkgs.glib-networking}/lib/gio/modules";

@@ -6,7 +6,7 @@ const zGeneratedId = z
   .transform(id => id || Math.random().toString(36).slice(2))
   .brand('Id');
 
-const zControlCenterState = <T>(type: z.ZodSchema<T>) =>
+const zControlCenterState = <T>(type: z.ZodType<T>) =>
   z.discriminatedUnion('kind', [
     z.object({
       kind: z.literal('poll'),
@@ -97,10 +97,10 @@ export const zConfig = z
             workspace: z.number().default(220),
             music: z.number().default(160),
           })
-          .default({}),
+          .prefault({}),
         status: z
           .object({
-            items: z.array(zBarStatusItem).default([
+            items: z.array(zBarStatusItem).prefault([
               { kind: 'temperature', visibility: 'default' },
               { kind: 'performance', visibility: 'default' },
               { kind: 'network', visibility: 'default' },
@@ -108,18 +108,18 @@ export const zConfig = z
               { kind: 'battery', visibility: 'full' },
             ]),
           })
-          .default({}),
+          .prefault({}),
       })
-      .default({}),
+      .prefault({}),
 
     controlCenter: z
       .object({
-        items: z.tuple([z.array(zControlCenterItem), z.array(zControlCenterItem)]).default([
+        items: z.tuple([z.array(zControlCenterItem), z.array(zControlCenterItem)]).prefault([
           [{ kind: 'network' }, { kind: 'silent' }],
           [{ kind: 'bluetooth' }, { kind: 'volume-slider' }],
         ]),
       })
-      .default({}),
+      .prefault({}),
 
     system: z
       .object({
@@ -134,7 +134,7 @@ export const zConfig = z
           ]),
         updateInterval: z.number().default(1000),
       })
-      .default({}),
+      .prefault({}),
 
     weather: z
       .object({
@@ -145,11 +145,11 @@ export const zConfig = z
       .nullable()
       .default(null),
   })
-  .default({});
+  .prefault({});
 
-export type Config = z.TypeOf<typeof zConfig>;
+export type Config = z.infer<typeof zConfig>;
 
-export type BarStatusItem = z.TypeOf<typeof zBarStatusItem>;
-export type ControlCenterItem = z.TypeOf<typeof zControlCenterItem>;
-export type ControlCenterState<T> = z.TypeOf<ReturnType<typeof zControlCenterState<T>>>;
-export type GeneratedId = z.TypeOf<typeof zGeneratedId>;
+export type BarStatusItem = z.infer<typeof zBarStatusItem>;
+export type ControlCenterItem = z.infer<typeof zControlCenterItem>;
+export type ControlCenterState<T> = z.infer<ReturnType<typeof zControlCenterState<T>>>;
+export type GeneratedId = z.infer<typeof zGeneratedId>;

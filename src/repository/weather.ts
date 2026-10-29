@@ -50,7 +50,7 @@ const zWeather = z.object({
   cod: z.literal(200),
 });
 
-type Weather = z.TypeOf<typeof zWeather>;
+type Weather = z.infer<typeof zWeather>;
 
 const weather =
   weatherConfig && weatherURL

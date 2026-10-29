@@ -1,0 +1,7 @@
+allowBuilds:
+  '@swc/core': false
+excludeLinksFromLockfile: true
+packageExtensions:
+  "@ts-for-gir/cli@5.6.0":
+    dependencies:
+      typescript: "6.0.3"

@@ -5,3 +5,4 @@ dist
 src/definitions/girs
 *.tsbuildinfo
 config.json
+result
