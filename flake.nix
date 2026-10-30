@@ -28,6 +28,9 @@
   outputs = { nixpkgs, astal, ags, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+      release = if builtins.pathExists ./release.json
+        then builtins.fromJSON (builtins.readFile ./release.json)
+        else null;
       astalPkgs = astal.packages.${system};
       agsPkg = ags.packages.${system}.default;
       agsJsPkg = agsPkg.jsPackage.overrideAttrs (old: {
@@ -74,7 +77,11 @@
       package = pkgs.stdenvNoCC.mkDerivation rec {
         pname = "midnightway";
         version = (builtins.fromJSON (builtins.readFile ./package.json)).version;
-        src = ./.;
+        src = if release == null then ./. else pkgs.fetchFromGitHub {
+          owner = "HelloWorld017";
+          repo = "midnightway";
+          inherit (release) rev hash;
+        };
 
         buildInputs = deps;
         nativeBuildInputs = devDeps ++ [

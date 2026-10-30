@@ -6,13 +6,19 @@ Yet another webkit-based wayland bar, dock, and panels.
 > `midnightway` is not stable and not recommended for daily use.
 
 ```nix
-# 1. Add `midnightway` to the flake input
-midnightway = {
-	url = "github:HelloWorld017/midnightway/v1.1.0";
-	inputs.nixpkgs.follows = "nixpkgs";
+# 1. Add following settings to your config
+nix.settings = {
+  substituters = [ "https://github.com/HelloWorld017/midnightway/releases/download/v1.2.0/nix-cache-info" ];
+  trusted-public-keys = [ "midnightway.nenw.dev-1:gqHOdIZxjAMstAju9US/So4HFSwKiHuFoOHqgVZ1qS4=" ];
 };
 
-# 2. Use the package
+# 2. Add `midnightway` to the flake input
+# If you specify the nixpkgs override, the substitute would not be matched.
+midnightway = {
+  url = "github:HelloWorld017/midnightway/flakes-v1.2.0";
+};
+
+# 3. Use the package
 inputs.midnightway.packages.${system}.default
 ```
 

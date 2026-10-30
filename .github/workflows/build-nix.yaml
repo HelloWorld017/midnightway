@@ -1,0 +1,58 @@
+name: Build Nix
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit to build
+        type: string
+
+  workflow_call:
+    inputs:
+      sha:
+        required: true
+        type: string
+    secrets:
+      NIX_CACHE_PRIVATE_KEY:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Generate release flake
+        run: |
+          rev=$(git rev-parse HEAD)
+          url="https://github.com/HelloWorld017/midnightway/archive/$rev.tar.gz"
+          hash=$(nix store prefetch-file --unpack --json "$url" | jq -r .hash)
+
+          mkdir -p flakes
+          cp flake.nix flake.lock package.json flakes/
+          cp -r patches flakes/
+          jq -n --arg rev "$rev" --arg hash "$hash" '{rev: $rev, hash: $hash}' > flakes/release.json
+
+      - name: Build
+        run: nix build path:./flakes#default
+
+      - uses: organization/nix-substitute-release@v1
+        with:
+          private-key: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
+          public-key: ${{ vars.NIX_CACHE_PUBLIC_KEY }}
+          artifact-name: nix-x86_64
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nix-flake
+          if-no-files-found: error
+          path: flakes/

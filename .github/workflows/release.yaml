@@ -1,0 +1,100 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version declared in package.json
+        required: true
+        type: string
+
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.release.outputs.sha }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - id: release
+        env:
+          VERSION: ${{ inputs.version || '' }}
+        run: |
+          if [ -n "$VERSION" ]; then
+            version=$VERSION
+          else
+            version=${GITHUB_REF_NAME#v}
+          fi
+
+          source_version=$(jq -r .version package.json)
+          test "$version" = "$source_version"
+
+          sha=$(git rev-parse HEAD)
+          if git show-ref --verify --quiet "refs/tags/v$version"; then
+            test "$(git rev-parse "v$version^{commit}")" = "$sha"
+          fi
+
+          printf 'version=%s\nsha=%s\n' "$version" "$sha" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
+    uses: ./.github/workflows/build-nix.yaml
+    with:
+      sha: ${{ needs.prepare.outputs.sha }}
+    secrets:
+      NIX_CACHE_PRIVATE_KEY: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
+
+  publish:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: nix-flake
+          path: flakes
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          SHA: ${{ needs.prepare.outputs.sha }}
+        run: |
+          flags=()
+          if [[ "$VERSION" == *-* ]]; then
+            flags+=(--prerelease)
+          fi
+
+          gh release create "v$VERSION" --target "$SHA" --draft --generate-notes "${flags[@]}"
+
+      - uses: organization/nix-substitute-release/publish@v1
+        with:
+          tag: v${{ needs.prepare.outputs.version }}
+          artifact-name: nix-x86_64
+          flake-directory: flakes
+
+      - name: Finalize release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: gh release edit "v$VERSION" --draft=false
