@@ -54,7 +54,7 @@ export const useCalendarInput = (now: number) => {
 
   useEffect(() => {
     if (!calendarKey || calendarKey === calendarKeyDraft) {
-      return;
+      return undefined;
     }
 
     const parsed = parseCalendarKey(calendarKeyDraft);
@@ -65,6 +65,8 @@ export const useCalendarInput = (now: number) => {
       }, 400);
       return () => clearTimeout(timeoutId);
     }
+
+    return undefined;
   }, [calendarKey, calendarKeyDraft]);
 
   const { ts } = useI18n();

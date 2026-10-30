@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
 import { registerImplementations } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { config } from '@/config';
 import { useRepo } from '@/hooks/useRepo';
+import { useEffect, useMemo, useState } from 'react';
 import { Clock } from './Clock';
 import { LeftBar } from './LeftBar';
 import { RightBar } from './RightBar/RightBar';
@@ -19,13 +19,13 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   const focusedWorkspaceClients = useRepo(repo.hyprland.focusedWorkspace.clients.length);
   const activeWorkspace = useRepo(
     repo.hyprland.monitors.$find('name', 'is', monitorName).activeWorkspace.$pick('id', 'name'),
-    [monitorName]
+    [monitorName],
   );
 
   const overlayItems = useRepo(repo.overlay.overlayItems);
   const isToolkitOpen = useMemo(
     () => !!overlayItems?.find(item => item.kind === 'toolkit'),
-    [overlayItems]
+    [overlayItems],
   );
 
   const [isHidden, setIsHidden] = useState(config().bar.autohide);
@@ -36,11 +36,11 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   useEffect(
     () =>
       registerImplementations({
-        onHiddenChange({ isHidden }) {
-          setIsHidden(isHidden);
+        onHiddenChange({ isHidden: nextIsHidden }) {
+          setIsHidden(nextIsHidden);
         },
       }),
-    []
+    [],
   );
 
   return (

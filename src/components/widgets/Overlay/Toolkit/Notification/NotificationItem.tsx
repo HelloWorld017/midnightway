@@ -1,8 +1,8 @@
-import { formatDistanceToNow } from 'date-fns';
 import { IconX } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { useInvokeRepo } from '@/hooks/useRepo';
 import { useSanitizeHTML } from '@/hooks/useSanitizeHTML';
+import { formatDistanceToNow } from 'date-fns';
 import * as styles from './NotificationItem.css';
 import type { BridgeRepository } from '@/bridge/types';
 
@@ -47,7 +47,7 @@ export const NotificationItem = ({ item }: NotificationItemProps) => {
         </button>
       </div>
       <div css={styles.contentsStyle}>
-        {item.image && <img css={styles.imageStyle} src={`/@fs${item.image}`} />}
+        {item.image && <img css={styles.imageStyle} src={`/@fs${item.image}`} alt="" />}
         <div css={styles.textContentsStyle}>
           <h3 css={styles.titleStyle}>{item.summary}</h3>
           <p css={styles.descriptionStyle} {...bodyMarkup} />

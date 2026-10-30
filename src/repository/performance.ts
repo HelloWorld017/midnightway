@@ -39,7 +39,7 @@ type VmStat = {
   values?: z.infer<typeof zVmStatValues>;
 };
 
-const zSystemNumber = z.string().trim().min(1).pipe(z.coerce.number().finite().nonnegative());
+const zSystemNumber = z.string().trim().min(1).pipe(z.coerce.number<string>().finite().nonnegative());
 const zMemory = z.object({
   total: z.number().finite().nonnegative(),
   available: z.number().finite().nonnegative(),

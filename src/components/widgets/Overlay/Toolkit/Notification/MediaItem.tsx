@@ -1,5 +1,3 @@
-import { debounce, throttle } from 'es-toolkit';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   IconFastForward,
   IconRewind,
@@ -11,6 +9,8 @@ import { repo } from '@/bridge/repository';
 import { PlaybackStatus } from '@/constants/gir';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useInvokeRepo } from '@/hooks/useRepo';
+import { debounce, throttle } from 'es-toolkit';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as styles from './MediaItem.css';
 import type { BridgeRepository } from '@/bridge/types';
 
@@ -48,7 +48,7 @@ const useProgress = ({ player }: MediaItemProps) => {
 
     const currentPlayer = await invoke(
       repo.musicPlayer.players.$find('busName', 'is', player.busName).$pick('title', 'canSeek'),
-      true
+      true,
     );
 
     if (currentPlayer?.title !== title) {
@@ -58,13 +58,13 @@ const useProgress = ({ player }: MediaItemProps) => {
     await invoke(
       repo.musicPlayer.players
         .$find('busName', 'is', player.busName)
-        .$invokeMethod('set_position', position)
+        .$invokeMethod('set_position', position),
     );
   });
 
   const onProgressChangeUpdateThrottled = useMemo(
     () => throttle(onProgressChangeUpdate, 500),
-    [onProgressChangeUpdate]
+    [onProgressChangeUpdate],
   );
 
   const onProgressChange = useLatestCallback((value: number) => {
@@ -88,14 +88,14 @@ export const MediaItem = ({ player }: MediaItemProps) => {
         debounce(
           () => {
             invoke(
-              repo.musicPlayer.players.$find('busName', 'is', player.busName).$invokeMethod(action)
+              repo.musicPlayer.players.$find('busName', 'is', player.busName).$invokeMethod(action),
             ).catch(() => {});
           },
           750,
-          { edges: ['leading'] }
-        )
+          { edges: ['leading'] },
+        ),
       ),
-    [player.busName]
+    [invoke, player.busName],
   );
 
   return (
@@ -121,6 +121,7 @@ export const MediaItem = ({ player }: MediaItemProps) => {
           <label
             css={styles.rangeStyle}
             style={{ '--progress': `${((progress / player.length) * 100).toFixed(2)}%` }}
+            aria-label="Track Progress"
           >
             <span css={styles.rangeTrackStyle} />
             <input

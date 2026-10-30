@@ -12,15 +12,20 @@ export const useMeasure = () => {
         }
 
         setSize([size.inlineSize, size.blockSize]);
-      })
+      }),
   );
 
-  const targetRef = useCallback<RefCallback<HTMLElement>>(child => {
-    if (child) {
-      observer.observe(child);
-      return () => observer.unobserve(child);
-    }
-  }, []);
+  const targetRef = useCallback<RefCallback<HTMLElement>>(
+    child => {
+      if (child) {
+        observer.observe(child);
+        return () => observer.unobserve(child);
+      }
+
+      return undefined;
+    },
+    [observer],
+  );
 
   return [targetRef, size] as const;
 };

@@ -20,7 +20,7 @@ export const useNow = (boundary = 1000) => {
         clearTimeout(timeoutId);
       }
     };
-  }, []);
+  }, [boundary]);
 
   return now;
 };

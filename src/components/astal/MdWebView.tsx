@@ -1,12 +1,12 @@
 /** @jsxImportSource ags/gtk4 */
 
+import { createMainBridge } from '@/bridge/main';
+import { config } from '@/config';
 import { onMount } from 'ags';
 import { Gdk } from 'ags/gtk4';
 import GLib from 'gi://GLib?version=2.0';
 import Gio from 'gi://Gio?version=2.0';
 import WebKit from 'gi://WebKit';
-import { createMainBridge } from '@/bridge/main';
-import { config } from '@/config';
 import type { BridgeMethodsMain, InitParams } from '@/bridge/types';
 
 const html = String.raw;
@@ -40,7 +40,7 @@ const enableSchemeForContext = (webContext: WebKit.WebContext) => {
       : GLib.build_filenamev([dirname, path]);
     const file = Gio.file_new_for_path(filePath);
     const stream = file.read(null);
-    request.finish(stream, -1, null);
+    return request.finish(stream, -1, null);
   });
 
   schemeEnabledContext.add(webContext);
@@ -49,7 +49,7 @@ const enableSchemeForContext = (webContext: WebKit.WebContext) => {
 const onDecidePolicyMain = (
   _webView: WebKit.WebView,
   decision: WebKit.PolicyDecision,
-  decisionType: WebKit.PolicyDecisionType
+  decisionType: WebKit.PolicyDecisionType,
 ) => {
   if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
     const navigationDecision = decision as WebKit.NavigationPolicyDecision;
@@ -65,17 +65,21 @@ const onDecidePolicyMain = (
       return true;
     }
   }
+
+  return undefined;
 };
 
 const onDecidePolicyChild = (
   _webView: WebKit.WebView,
   decision: WebKit.PolicyDecision,
-  decisionType: WebKit.PolicyDecisionType
+  decisionType: WebKit.PolicyDecisionType,
 ) => {
   if (decisionType === WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
     decision.ignore();
     return true;
   }
+
+  return undefined;
 };
 
 type MissingMethods = Omit<Parameters<typeof createMainBridge>[1], 'initParams'>;
@@ -113,7 +117,7 @@ export const MdWebView = ({
       webView.connect('create', (self, navigationAction) => {
         const childWebView = onCreateChild?.({ self, navigationAction });
         if (!childWebView) {
-          return null;
+          return null as WebKit.WebView | null as WebKit.WebView;
         }
 
         childWebView.set_background_color(new Gdk.RGBA());
@@ -127,7 +131,7 @@ export const MdWebView = ({
 
       const mainBridge = createMainBridge(webView, {
         ...bridge,
-        initParams: () => ({ ...initParams, config: config() }) as InitParams,
+        initParams: () => ({ ...initParams, config: config() }),
       });
 
       setupBridge?.(mainBridge);

@@ -30,7 +30,7 @@ export const ControlCenterItemToggle = ({
 }: ControlCenterItemToggleProps) => {
   const repoStateRaw = useRepo(repo.controlCenter.items[item.id]);
   const repoState =
-    !!repoStateRaw && !['false', 'no', '0'].includes(String(repoStateRaw as string));
+    !!repoStateRaw && !['false', 'no', '0'].includes(String(repoStateRaw));
 
   const state = propsState ?? repoState;
   const [draftState, setDraftState] = useState(state);

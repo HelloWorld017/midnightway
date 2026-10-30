@@ -30,45 +30,15 @@
       pkgs = nixpkgs.legacyPackages.${system};
       astalPkgs = astal.packages.${system};
       agsPkg = ags.packages.${system}.default;
-      agsJsPkg = pkgs.runCommand "ags-js-lib-with-types" {
-        nativeBuildInputs = [ pkgs.nodejs_26 pkgs.typescript ];
-      } ''
-        cp -R ${agsPkg.jsPackage} $out
-        chmod -R u+w $out
-        cd $out
-
-        cat > tsconfig.json <<'EOF'
-        {
-          "compilerOptions": {
-            "target": "ES2022",
-            "module": "preserve",
-            "moduleResolution": "bundler",
-            "strict": true,
-            "noCheck": true,
-            "declaration": true,
-            "emitDeclarationOnly": true,
-            "rootDir": "lib",
-            "outDir": "types"
-          },
-          "include": ["lib/**/*.ts"]
-        }
-        EOF
-        tsc --project tsconfig.json
-
-        node --input-type=module <<'EOF'
-        import { readFileSync, writeFileSync } from 'node:fs';
-
-        const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-        for (const [name, entry] of Object.entries(pkg.exports)) {
-          pkg.exports[name] = {
-            types: entry.replace('./lib/', './types/').replace(/\.ts$/, '.d.ts'),
-            default: entry,
-          };
-        }
-
-        writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-        EOF
-      '';
+      agsJsPkg = agsPkg.jsPackage.overrideAttrs (old: {
+        installPhase = old.installPhase + ''
+          find \
+            "$out/lib" \
+            "$out/node_modules/gnim/dist" \
+            -type f \( -name '*.ts' -o -name '*.tsx' \) \
+            -exec sed -i '1i// @ts-nocheck' {} +
+        '';
+      });
 
       deps = [
         astalPkgs.astal4

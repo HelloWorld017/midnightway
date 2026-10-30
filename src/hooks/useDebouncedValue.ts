@@ -8,7 +8,7 @@ type UseDebouncedValueOpts = {
 export const useDebouncedValue = <T>(value: T, opts: UseDebouncedValueOpts) => {
   const [state, setState] = useState(value);
   const debouncedSetState = useMemo(() => debounce(setState, opts.delay), [opts.delay]);
-  useEffect(() => debouncedSetState(value), [value]);
+  useEffect(() => debouncedSetState(value), [value, debouncedSetState]);
 
   return state;
 };

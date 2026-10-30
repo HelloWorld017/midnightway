@@ -2,7 +2,7 @@ import { IconLock, IconLogOut, IconMoonStar, IconPower, IconRotateCcw } from '@/
 import { bridgeRenderer } from '@/bridge/renderer';
 import { defineI18n } from '@simplei18n/core';
 import { useI18n } from '@simplei18n/core/react';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import * as styles from './PowerMenuDropdown.css';
 import type { PowerMenuItem } from './types';
 
@@ -69,16 +69,18 @@ export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
 
   return (
     <div css={styles.containerStyle}>
-      {items.map(item =>
-        item ? (
-          <button css={styles.itemStyle} type="button" onClick={() => onClickItem(item)}>
-            <div css={styles.iconStyle}>{item.icon}</div>
-            <span css={styles.labelStyle}>{item.name}</span>
-          </button>
-        ) : (
-          <hr css={styles.dividerStyle} />
-        ),
-      )}
+      {items.map((item, index) => (
+        <Fragment key={index}>
+          {item ? (
+            <button css={styles.itemStyle} type="button" onClick={() => onClickItem(item)}>
+              <div css={styles.iconStyle}>{item.icon}</div>
+              <span css={styles.labelStyle}>{item.name}</span>
+            </button>
+          ) : (
+            <hr css={styles.dividerStyle} />
+          )}
+        </Fragment>
+      ))}
     </div>
   );
 };

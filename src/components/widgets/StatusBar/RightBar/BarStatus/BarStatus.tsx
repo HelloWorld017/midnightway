@@ -1,4 +1,3 @@
-import { match, P } from 'ts-pattern';
 import {
   IconBattery,
   IconBatteryCharging,
@@ -12,13 +11,13 @@ import {
   IconVolume2,
   IconVolumeX,
 } from '@/assets/icons';
-import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { config } from '@/config';
 import { useRepo } from '@/hooks/useRepo';
 import { formatNumberByDigits } from '@/utils/format';
 import { isFiniteNumber } from '@/utils/type';
+import { match, P } from 'ts-pattern';
 import { useNetworkState } from '../../hooks/useNetworkState';
 import * as styles from './BarStatus.css';
 import { useNetworkUsage } from './hooks/useNetworkUsage';
@@ -41,6 +40,7 @@ const BarStatusItemSound = ({ item }: BarStatusItemSoundProps) => {
     <>
       {isFiniteNumber(volume) && (
         <div css={styles.statusItemStyle}>
+          {/* oxlint-disable-next-line react/static-components */}
           <IconVolume css={styles.statusIconStyle} />
           {item.visibility === 'full' && formatNumberByDigits(volume * 100)}
         </div>
@@ -131,6 +131,7 @@ const BarStatusItemBattery = ({ item }: BarStatusItemBatteryProps) => {
     <>
       {shouldShowIcon && (
         <div css={styles.statusItemStyle}>
+          {/* oxlint-disable-next-line react/static-components */}
           <IconBatteryState css={styles.statusIconStyle} />
           {shouldShowValue && formatNumberByDigits(battery.percentage * 100)}
         </div>

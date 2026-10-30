@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { buildContext } from '@/utils/context';
 import { isPromise } from '@/utils/promise';
+import { useEffect, useState } from 'react';
 import type { ContextMenuModel, ContextMenuNode, ContextMenuToken } from './types';
 
 export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => {
@@ -30,6 +30,8 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
         [menuModel!.key(childMap)]: output,
       }));
     }
+
+    return undefined;
   });
 
   const expandToken = useLatestCallback((token: ContextMenuToken): ContextMenuNode[] | null => {

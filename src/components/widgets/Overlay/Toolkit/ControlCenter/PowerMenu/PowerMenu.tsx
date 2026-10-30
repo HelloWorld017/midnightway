@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { IconChevronDown, IconPower } from '@/assets/icons';
 import { Transition } from '@/components/common/Transition';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useToolkitPortal } from '../../ToolkitPortalProvider';
 import * as styles from './PowerMenu.css';
 import { PowerMenuConfirm } from './PowerMenuConfirm';
@@ -28,7 +28,13 @@ export const PowerMenu = () => {
       {createPortal(
         <div>
           <Transition kind={uiState?.kind ?? ''}>
-            {uiState && <div css={styles.backdropStyle} onClick={() => setUIState(null)} />}
+            {uiState && (
+              <div
+                role="presentation"
+                css={styles.backdropStyle}
+                onClick={() => setUIState(null)}
+              />
+            )}
             {uiState?.kind === 'dropdown' && (
               <PowerMenuDropdown onConfirm={item => setUIState({ kind: 'confirm', item })} />
             )}
@@ -37,7 +43,7 @@ export const PowerMenu = () => {
             )}
           </Transition>
         </div>,
-        toolkitInnerPortalRef.current!
+        toolkitInnerPortalRef.current!,
       )}
     </div>
   );

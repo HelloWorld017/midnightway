@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import type { SurfaceKind } from '@/constants/theme';
 import type { Theme } from '@emotion/react';
 
 export const launcherIconStyle = (theme: Theme) => css`

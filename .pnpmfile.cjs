@@ -7,10 +7,9 @@ module.exports = {
         return pkg;
       }
 
-      const patchDeps = deps => Object.fromEntries(
-        Object
-          .entries(deps)
-          .map(([key, descriptor]) => {
+      const patchDeps = deps =>
+        Object.fromEntries(
+          Object.entries(deps).map(([key, descriptor]) => {
             if (!descriptor.startsWith('extern:')) {
               return [key, descriptor];
             }
@@ -19,13 +18,13 @@ module.exports = {
             if (!externPath) {
               throw new Error(
                 `The extern dependency, '${key}', was not found in the env vars.\n` +
-                `Make sure you're using the nix.`
+                  `Make sure you're using the nix.`,
               );
             }
 
             return [key, `link:${externPath}`];
-          })
-      );
+          }),
+        );
 
       return {
         ...pkg,
@@ -34,5 +33,5 @@ module.exports = {
         dependencies: patchDeps(pkg.dependencies),
       };
     },
-  }
+  },
 };

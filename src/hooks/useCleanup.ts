@@ -7,6 +7,6 @@ export const useCleanup = (callback: () => void) => {
     () => () => {
       latestCallbackRef.current();
     },
-    []
+    [latestCallbackRef],
   );
 };

@@ -22,7 +22,9 @@ const App = ({ init }: AppProps) => (
     <ThemeProvider>
       <Global styles={[globalStyle]} />
       {match(init)
-        .with({ kind: 'status-bar' }, init => <StatusBar monitorName={init.params.monitor} />)
+        .with({ kind: 'status-bar' }, statusBarInit => (
+          <StatusBar monitorName={statusBarInit.params.monitor} />
+        ))
         .with({ kind: 'overlay' }, () => <Overlay />)
         .with({ kind: 'dock' }, () => null)
         .otherwise(() => null)}
@@ -34,11 +36,11 @@ const App = ({ init }: AppProps) => (
 window.$debug = (...args) => void bridgeRenderer.debug(args);
 
 // Initialize bridge / initParams
-const init = await bridgeRenderer.initParams();
-initConfigByValue(init.config);
+const rootInit = await bridgeRenderer.initParams();
+initConfigByValue(rootInit.config);
 
 // Run
-createRoot(document.querySelector('main')!).render(<App init={init} />);
+createRoot(document.querySelector('main')!).render(<App init={rootInit} />);
 
 // Register Zygote
 // > To reduce parse overhead, as it is the critical path when creating overlay.

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLatestCallback } from './useLatestCallback';
 
 type UseClickOutsideParams = {
   isActive: boolean;
@@ -12,6 +13,7 @@ export const useClickOutside = <T extends HTMLElement>({
   targetWindow = window,
 }: UseClickOutsideParams) => {
   const excludeRef = useRef<T | null>(null);
+  const onClickOutsideLatest = useLatestCallback(onClickOutside);
 
   useEffect(() => {
     if (isActive) {
@@ -21,13 +23,15 @@ export const useClickOutside = <T extends HTMLElement>({
         }
 
         e.preventDefault();
-        onClickOutside();
+        onClickOutsideLatest();
       };
 
       targetWindow?.addEventListener('click', onHandle, { capture: true });
       return () => targetWindow?.removeEventListener('click', onHandle, { capture: true });
     }
-  }, [targetWindow, isActive]);
+
+    return undefined;
+  }, [targetWindow, isActive, onClickOutsideLatest]);
 
   return excludeRef;
 };

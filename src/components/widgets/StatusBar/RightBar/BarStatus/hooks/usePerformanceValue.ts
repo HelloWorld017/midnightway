@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
+import { useMemo } from 'react';
 
 export const usePerformanceValue = () => {
   const performance = useRepo(
-    repo.performance.$pick('cpuUsage', 'memoryUsed', 'memoryTotal', 'gpuUsage')
+    repo.performance.$pick('cpuUsage', 'memoryUsed', 'memoryTotal', 'gpuUsage'),
   );
 
   const performanceValue = useMemo(() => {
@@ -20,7 +20,7 @@ export const usePerformanceValue = () => {
         (performance.memoryUsed / performance.memoryTotal) * 100,
     ]
       .filter(x => x !== null)
-      .sort();
+      .sort((a, b) => a - b);
 
     const { sum, total } = activeStats.reduce<{ multiplier: number; total: number; sum: number }>(
       (reduced, stat) => ({
@@ -28,7 +28,7 @@ export const usePerformanceValue = () => {
         total: reduced.total + 100 * reduced.multiplier,
         sum: reduced.sum + stat * reduced.multiplier,
       }),
-      { multiplier: 0.5, total: 0, sum: 0 }
+      { multiplier: 0.5, total: 0, sum: 0 },
     );
 
     return (sum / total) * 100;

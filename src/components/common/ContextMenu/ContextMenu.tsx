@@ -1,8 +1,8 @@
-import { Suspense, useMemo, useRef, useState } from 'react';
-import { match } from 'ts-pattern';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useMeasure } from '@/hooks/useMeasure';
 import { useMergedRef } from '@/hooks/useMergedRef';
+import { Suspense, useMemo, useRef, useState } from 'react';
+import { match } from 'ts-pattern';
 import * as styles from './ContextMenu.css';
 import { ContextMenuProvider, useContextMenuProvider } from './ContextMenuProvider';
 import type { ContextMenuNode, ContextMenuToken } from './types';
@@ -44,7 +44,7 @@ const ContextMenuItem = ({ item }: { item: ContextMenuNode }) => (
 
 const ContextMenuRenderer = ({ token }: { token: ContextMenuToken }) => {
   const expandToken = useContextMenuProvider(state => state.expandToken);
-  const menu = useMemo(() => expandToken(token), []);
+  const menu = useMemo(() => expandToken(token), [expandToken, token]);
   if (!menu) {
     return null;
   }
@@ -53,7 +53,7 @@ const ContextMenuRenderer = ({ token }: { token: ContextMenuToken }) => {
     match(node)
       .with({ kind: 'submenu' }, submenu => <ContextMenuSubmenu submenu={submenu} />)
       .with({ kind: 'section' }, section => <ContextMenuSection section={section} />)
-      .otherwise(item => <ContextMenuItem item={item} />)
+      .otherwise(item => <ContextMenuItem item={item} />),
   );
 
   return <div css={styles.listStyle}>{children}</div>;

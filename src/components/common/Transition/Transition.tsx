@@ -75,7 +75,7 @@ export const Transition = ({
         },
       }));
     };
-  }, [kind]);
+  }, [latestChildren, kind]);
 
   return (
     <>

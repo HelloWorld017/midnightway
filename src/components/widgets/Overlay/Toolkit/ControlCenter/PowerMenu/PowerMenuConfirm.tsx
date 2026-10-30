@@ -1,5 +1,6 @@
 import { IconArrowRight } from '@/assets/icons';
 import { bridgeRenderer } from '@/bridge/renderer';
+import { useLatestRef } from '@/hooks/useLatestRef';
 import { defineI18n } from '@simplei18n/core';
 import { useI18n } from '@simplei18n/core/react';
 import { useEffect, useRef, useState } from 'react';
@@ -23,14 +24,15 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
 
   const { t } = useI18n();
   const [state, setState] = useState(0);
+  const itemRef = useLatestRef(item);
 
   useEffect(() => {
     if (!hasConfirmedRef.current && state === 100) {
-      void bridgeRenderer.exec({ command: item.command });
+      void bridgeRenderer.exec({ command: itemRef.current.command });
       hasConfirmedRef.current = true;
       onClose();
     }
-  }, [state, onClose]);
+  }, [state, itemRef, onClose]);
 
   return (
     <label css={styles.labelStyle} style={{ '--percentage': `${(state / 105) * 100}%` }}>

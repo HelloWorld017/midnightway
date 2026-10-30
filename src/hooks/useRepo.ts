@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
 import { bridgeRenderer, registerImplementations } from '@/bridge/renderer';
 import { getRepositoryProxyDescriptor } from '@/utils/repositoryProxy';
+import { useCallback, useEffect, useState } from 'react';
+import { useLatestRef } from './useLatestRef';
 import type { RepositoryProxy } from '@/utils/repositoryProxy';
 
 const subscriptions = new Map<string, (nextValue: unknown) => void>();
@@ -24,6 +25,7 @@ export const useRepo = <T>(repo: RepositoryProxy<T>, deps: unknown[] = []) => {
         subscriptions.delete(id);
       }
     };
+    // oxlint-disable-next-line react/exhaustive-deps
   }, deps);
 
   return value;
@@ -32,10 +34,12 @@ export const useRepo = <T>(repo: RepositoryProxy<T>, deps: unknown[] = []) => {
 export const usePollRepo = <T>(repo: RepositoryProxy<T>, interval: number) => {
   const [value, setValue] = useState<T | null>(null);
   const descriptor = getRepositoryProxyDescriptor(repo);
+  const latestDescriptor = useLatestRef(descriptor);
+
   useEffect(() => {
     const onPoll = () => {
       bridgeRenderer
-        .invoke({ descriptor, returning: true })
+        .invoke({ descriptor: latestDescriptor.current, returning: true })
         .then(result => setValue(result as T))
         .catch(() => {});
     };
@@ -43,7 +47,7 @@ export const usePollRepo = <T>(repo: RepositoryProxy<T>, interval: number) => {
     onPoll();
     const intervalId = setInterval(onPoll, interval);
     return () => clearInterval(intervalId);
-  }, [interval]);
+  }, [latestDescriptor, interval]);
 
   return value;
 };
@@ -55,7 +59,7 @@ export const useInvokeRepo = () => {
         descriptor: getRepositoryProxyDescriptor(invocation),
         returning,
       }) as Promise<T | null>,
-    []
+    [],
   );
 
   return invokeRepo;

@@ -1,5 +1,4 @@
 declare global {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   type Any = any;
   type Otherwise<T> = T & Record<never, never>;
   type PossiblyPromise<T> = Promise<T> | T;

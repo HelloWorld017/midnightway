@@ -5,7 +5,10 @@ import { asConnectable, poll } from '@/utils/binding';
 
 const { updateInterval } = config().system;
 
-const zSensors = z.record(z.record(z.union([z.record(z.number().finite()), z.string()])));
+const zSensors = z.record(
+  z.string(),
+  z.record(z.string(), z.union([z.record(z.string(), z.number().finite()), z.string()]))
+);
 type Sensors = z.infer<typeof zSensors>;
 
 const sensors = poll<Sensors>({}, updateInterval, async () =>

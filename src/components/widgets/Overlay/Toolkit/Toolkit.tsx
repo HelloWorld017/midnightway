@@ -64,7 +64,7 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
   return (
     <SurfaceProvider surface="floating">
       <ContextMenu>
-        <div css={styles.backdropStyle} onClick={onClose}></div>
+        <div role="presentation" css={styles.backdropStyle} onClick={onClose}></div>
         <div
           css={styles.toolkitStyle(state.position.anchor)}
           style={{ left: `${state.position.x}px` }}

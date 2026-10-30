@@ -17,12 +17,12 @@ export const useCreateSignal = <T>(value: T): Signal<T> => {
         return () => subscriptions.delete(onUpdate);
       },
     }),
-    [subscriptions]
+    [valueRef, subscriptions],
   );
 
   useLayoutEffect(() => {
     subscriptions.forEach(subscription => subscription(value));
-  }, [value]);
+  }, [subscriptions, value]);
 
   return signal;
 };
