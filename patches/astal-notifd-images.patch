@@ -1,0 +1,46 @@
+diff --git a/src/daemon.vala b/src/daemon.vala
+--- a/src/daemon.vala
++++ b/src/daemon.vala
+@@ -82,9 +82,12 @@
+         int expire_timeout
+     ) throws DBusError, IOError {
+         if (hints.get("image-data") != null) {
+-            var file = yield cache_image(hints.get("image-data"), app_name);
++            var image = hints.get("image-data");
++            var file = yield cache_image(image, app_name);
+             if (file != null) {
+                 hints.set("image-path", new Variant.string(file));
++                hints.set("image-width", image.get_child_value(0));
++                hints.set("image-height", image.get_child_value(1));
+                 hints.remove("image-data");
+             }
+         }
+diff --git a/src/notification.vala b/src/notification.vala
+--- a/src/notification.vala
++++ b/src/notification.vala
+@@ -95,6 +95,12 @@
+         }
+     }
+ 
++    /** Width of the cached notification image. */
++    public int image_width { get { return get_int_hint("image-width"); } }
++    /** Height of the cached notification image. */
++    public int image_height { get { return get_int_hint("image-height"); } }
++    /** Indicates whether notification should be collapsed. */
++    public bool append { get { return get_bool_hint("x-canonical-append"); } }
+     /** Standard `image-path` hint. Path to an image. */
+     public string image {
+         owned get { return get_str_hint("image-path"); }
+diff --git a/src/gschema.xml b/src/gschema.xml
+--- a/src/gschema.xml
++++ b/src/gschema.xml
+@@ -23,7 +23,8 @@
+         'body-markup',
+         'icon-static',
+         'persistence',
+-        'sound'
++        'sound',
++        'x-canonical-append'
+       ]</default>
+     </key>
+   </schema>
