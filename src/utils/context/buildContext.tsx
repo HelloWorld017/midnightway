@@ -1,6 +1,6 @@
-import { createContext, useContext, useMemo } from 'react';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useCreateSignal, useSignal } from '@/hooks/useSignal';
+import { createContext, useContext, useMemo } from 'react';
 import type { Signal } from '@/hooks/useSignal';
 import type { ReactNode } from 'react';
 
@@ -22,7 +22,7 @@ export const buildContext = <T,>(useContextValue: () => T) => {
         get: () => latestSelector(contextSignal.get()),
         subscribe: onUpdate => contextSignal.subscribe(value => onUpdate(latestSelector(value))),
       }),
-      [contextSignal, latestSelector]
+      [contextSignal, latestSelector],
     );
 
     return useSignal(selectedSignal);

@@ -18,18 +18,18 @@ export type RepositoryProxyMethods<T, TRoot = unknown> = {
   ) => RepositoryProxySelectable<Pick<(T & unknown[])[number], TKey>[], TRoot>;
   $mapArray: <TSelected>(
     map: (
-      proxy: RepositoryProxySelectable<(T & unknown[])[number], TRoot>
-    ) => RepositoryProxy<TSelected, TRoot>
+      proxy: RepositoryProxySelectable<(T & unknown[])[number], TRoot>,
+    ) => RepositoryProxy<TSelected, TRoot>,
   ) => RepositoryProxySelectable<TSelected[], TRoot>;
   $filter: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
-    value: unknown
+    value: unknown,
   ) => RepositoryProxySelectable<T, TRoot>;
   $find: (
     key: keyof (T & unknown[])[number] & string,
     predicate: RepositoryProxyFilterPredicate,
-    value: unknown
+    value: unknown,
   ) => RepositoryProxySelectable<(T & unknown[])[number], TRoot>;
   $invokeMethod: <TKey extends keyof NonNullable<T>>(
     key: TKey,
@@ -97,7 +97,7 @@ export const createRepositoryProxy = <T, TRoot = unknown>(descriptor: Repository
 
         return createRepositoryProxy([...descriptor, key]);
       },
-    }
+    },
   );
 
 export const repositoryProxyDescriptorToString = (descriptor: RepositoryProxyDescriptor) =>

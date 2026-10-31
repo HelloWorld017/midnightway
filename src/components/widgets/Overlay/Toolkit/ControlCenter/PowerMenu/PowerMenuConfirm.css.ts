@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
 import { transition } from '@/utils/css/transition';
+import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const labelStyle = (theme: Theme) => css`
@@ -17,17 +17,18 @@ export const labelStyle = (theme: Theme) => css`
   background: ${theme.surface.bgOverlay};
 `;
 
-export const guideStyle = (isVisible: boolean) => (theme: Theme) => css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.6rem;
-  flex: 1 1 0;
-  min-width: 0;
-  overflow: hidden;
-  opacity: ${+isVisible};
-  transition: ${transition(theme, ['opacity'])};
-`;
+export const guideStyle = (isVisible: boolean) => (theme: Theme) =>
+  css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    opacity: ${+isVisible};
+    transition: ${transition(theme, ['opacity'])};
+  `;
 
 export const guideArrowStyle = (theme: Theme) => css`
   flex: 0 0 auto;

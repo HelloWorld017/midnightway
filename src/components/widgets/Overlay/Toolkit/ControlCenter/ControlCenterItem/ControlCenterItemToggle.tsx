@@ -1,13 +1,13 @@
-import hash from '@emotion/hash';
-import { throttle } from 'es-toolkit';
-import { DynamicIcon } from 'lucide-react/dynamic';
-import { useEffect, useMemo, useState } from 'react';
 import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import { MarqueeOnOverflow } from '@/components/common/MarqueeOnOverflow';
 import { useCleanup } from '@/hooks/useCleanup';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
+import hash from '@emotion/hash';
+import { throttle } from 'es-toolkit';
+import { DynamicIcon } from 'lucide-react/dynamic';
+import { useEffect, useMemo, useState } from 'react';
 import * as styles from './ControlCenterItemToggle.css';
 import type { ControlCenterItem } from '@/config/schema';
 import type { IconName } from 'lucide-react/dynamic';
@@ -29,8 +29,7 @@ export const ControlCenterItemToggle = ({
   onToggleUpdate: propsOnToggleUpdate,
 }: ControlCenterItemToggleProps) => {
   const repoStateRaw = useRepo(repo.controlCenter.items[item.id]);
-  const repoState =
-    !!repoStateRaw && !['false', 'no', '0'].includes(String(repoStateRaw));
+  const repoState = !!repoStateRaw && !['false', 'no', '0'].includes(String(repoStateRaw));
 
   const state = propsState ?? repoState;
   const [draftState, setDraftState] = useState(state);

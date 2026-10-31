@@ -1,5 +1,9 @@
 /** @jsxImportSource ags/gtk4 */
 
+import { config } from '@/config';
+import { repositoryImpl } from '@/repository';
+import { ref, subscribeProperty } from '@/utils/binding';
+import { cssAstal as css } from '@/utils/css';
 import { onCleanup, onMount } from 'ags';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
@@ -7,10 +11,6 @@ import Cairo from 'cairo';
 import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
-import { config } from '@/config';
-import { repositoryImpl } from '@/repository';
-import { ref, subscribeProperty } from '@/utils/binding';
-import { cssAstal as css } from '@/utils/css';
 import { MdWebView } from './MdWebView';
 import type { MdWebViewProps } from './MdWebView';
 import type { BridgeMethodsMain } from '@/bridge/types';

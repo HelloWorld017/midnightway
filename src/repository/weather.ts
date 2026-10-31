@@ -1,7 +1,7 @@
-import { execAsync } from 'ags/process';
-import * as z from 'zod';
 import { config } from '@/config';
 import { asConnectable, poll, writable } from '@/utils/binding';
+import { execAsync } from 'ags/process';
+import * as z from 'zod';
 
 const url = (template: TemplateStringsArray, ...parts: unknown[]) =>
   String.raw(template, ...parts.map(part => encodeURIComponent(String(part))));
@@ -18,7 +18,7 @@ const weatherURL = (() => {
 const zWeather = z.object({
   coord: z.object({ lon: z.number(), lat: z.number() }),
   weather: z.array(
-    z.object({ id: z.number(), main: z.string(), description: z.string(), icon: z.string() })
+    z.object({ id: z.number(), main: z.string(), description: z.string(), icon: z.string() }),
   ),
   base: z.string(),
   main: z.object({

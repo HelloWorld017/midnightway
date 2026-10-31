@@ -31,21 +31,21 @@ Midnightway
 
 ## API 대응표
 
-| 기존 Astal GJS | AGS/Gnim |
-|---|---|
-| `@jsxImportSource astal/gtk4` | `@jsxImportSource ags/gtk4` |
-| `App` | `app` from `ags/gtk4/app` |
-| `Astal`, `Gtk`, `Gdk` | from `ags/gtk4` |
-| `setup={callback}` | `$={callback}` |
-| `astalify(SomeWidget)` | GI 위젯을 JSX에서 직접 사용 |
-| `Variable(initial)` | `createState(initial)` |
-| `Variable.derive(...)` | `createComputed(...)` |
-| `variable.poll(...)` | `createPoll(...)` |
-| `variable.watch(...)` | `createSubprocess(...)` |
-| `bind(gobject, property)` | `createBinding(gobject, property)` |
-| `readFile*` | `ags/file` |
-| `exec*` | `ags/process` |
-| 타이머·poll | `ags/time` |
+| 기존 Astal GJS                | AGS/Gnim                           |
+| ----------------------------- | ---------------------------------- |
+| `@jsxImportSource astal/gtk4` | `@jsxImportSource ags/gtk4`        |
+| `App`                         | `app` from `ags/gtk4/app`          |
+| `Astal`, `Gtk`, `Gdk`         | from `ags/gtk4`                    |
+| `setup={callback}`            | `$={callback}`                     |
+| `astalify(SomeWidget)`        | GI 위젯을 JSX에서 직접 사용        |
+| `Variable(initial)`           | `createState(initial)`             |
+| `Variable.derive(...)`        | `createComputed(...)`              |
+| `variable.poll(...)`          | `createPoll(...)`                  |
+| `variable.watch(...)`         | `createSubprocess(...)`            |
+| `bind(gobject, property)`     | `createBinding(gobject, property)` |
+| `readFile*`                   | `ags/file`                         |
+| `exec*`                       | `ags/process`                      |
+| 타이머·poll                   | `ags/time`                         |
 
 이는 현재 AGS 공식 마이그레이션 가이드에 제시된 대응 관계입니다. [aylur.github.io](https://aylur.github.io/ags/guide/migration-guide.html)
 
@@ -58,14 +58,12 @@ Midnightway
 ```tsx
 /** @jsxImportSource ags/gtk4 */
 
-import app from "ags/gtk4/app";
-import { Astal, Gdk, Gtk } from "ags/gtk4";
+import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app';
 
 app.start({
   main() {
-    eachMonitor((monitor) => (
-      <MdApp monitor={monitor} />
-    ));
+    eachMonitor(monitor => <MdApp monitor={monitor} />);
   },
 });
 ```
@@ -75,15 +73,15 @@ app.start({
 ```tsx
 /** @jsxImportSource ags/gtk4 */
 
-import app from "ags/gtk4/app";
-import { Astal, Gdk, Gtk } from "ags/gtk4";
+import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import app from 'ags/gtk4/app';
 
 export function MdApp({ monitor }: { monitor: Gdk.Monitor }) {
   return (
     <window
       application={app}
       monitor={monitor}
-      $={(window) => {
+      $={window => {
         // 기존 setup 내용
       }}
     >
@@ -114,17 +112,17 @@ export function MdApp({ monitor }: { monitor: Gdk.Monitor }) {
 ```tsx
 /** @jsxImportSource ags/gtk4 */
 
-import Gio from "gi://Gio?version=2.0";
-import GLib from "gi://GLib?version=2.0";
-import WebKit from "gi://WebKit?version=6.0";
+import GLib from 'gi://GLib?version=2.0';
+import Gio from 'gi://Gio?version=2.0';
+import WebKit from 'gi://WebKit?version=6.0';
 
 export function MdWebView() {
   return (
     <WebKit.WebView
       hexpand
       vexpand
-      cssClasses={["webview"]}
-      $={(webView) => {
+      cssClasses={['webview']}
+      $={webView => {
         // 기존 setupWebView 내용
       }}
     />
@@ -160,11 +158,7 @@ const [value, setValue] = createState(initial);
 
 ```ts
 // src/platform/reactivity.ts
-import {
-  createComputed,
-  createState,
-  type Accessor,
-} from "ags";
+import { createComputed, createState, type Accessor } from 'ags';
 
 export type WritableAccessor<T> = Accessor<T> & {
   set(value: T): void;
@@ -178,10 +172,7 @@ export function writable<T>(initial: T): WritableAccessor<T> {
   });
 }
 
-export function subscribeValue<T>(
-  value: Accessor<T>,
-  callback: (value: T) => void,
-): () => void {
+export function subscribeValue<T>(value: Accessor<T>, callback: (value: T) => void): () => void {
   const update = () => callback(value());
 
   update();
@@ -206,12 +197,8 @@ state.subscribe(callback)
 `asConnectable`의 읽기 부분은 Gnim Accessor가 함수라는 점을 지원하도록 변경하면 됩니다.
 
 ```ts
-function readValue<T>(
-  value: Accessor<T> | { get(): T },
-): T {
-  return typeof value === "function"
-    ? value()
-    : value.get();
+function readValue<T>(value: Accessor<T> | { get(): T }): T {
+  return typeof value === 'function' ? value() : value.get();
 }
 ```
 
@@ -232,14 +219,12 @@ Gnim의 `createBinding()`은 실제 `GObject.Object` 또는 `Gio.Settings`를 �
 export const overlayItems = createComputed(() => {
   const state = toolkitState();
 
-  return state
-    ? [{ kind: "toolkit", state }]
-    : [];
+  return state ? [{ kind: 'toolkit', state }] : [];
 });
 ```
 
 ```ts
-const cleanup = subscribeValue(overlayItems, (items) => {
+const cleanup = subscribeValue(overlayItems, items => {
   updateInputRegion(items);
 });
 ```
@@ -255,26 +240,22 @@ const cleanup = subscribeValue(overlayItems, (items) => {
 예를 들어 network와 temperature는 다음처럼 바꿀 수 있습니다.
 
 ```ts
-import { createPoll } from "ags/time";
+import { createPoll } from 'ags/time';
 
 export const temperature = createPoll<number | null>(
   null,
   2_000,
-  ["sh", "-c", "cat /sys/class/thermal/thermal_zone0/temp"],
-  (output) => Number(output.trim()) / 1000,
+  ['sh', '-c', 'cat /sys/class/thermal/thermal_zone0/temp'],
+  output => Number(output.trim()) / 1000,
 );
 ```
 
 비동기 함수를 직접 넘기는 형태도 사용할 수 있습니다.
 
 ```ts
-const usage = createPoll(
-  initialUsage,
-  updateInterval,
-  async () => {
-    return await readNetworkUsage();
-  },
-);
+const usage = createPoll(initialUsage, updateInterval, async () => {
+  return await readNetworkUsage();
+});
 ```
 
 ### `Variable.watch`
@@ -282,13 +263,9 @@ const usage = createPoll(
 `vmstat`처럼 장기 실행되는 프로세스는 `createSubprocess`로 옮깁니다.
 
 ```ts
-import { createSubprocess } from "ags/process";
+import { createSubprocess } from 'ags/process';
 
-const vmstat = createSubprocess(
-  initialVmStat,
-  ["vmstat", "1", "-y"],
-  (line) => parseVmStat(line),
-);
+const vmstat = createSubprocess(initialVmStat, ['vmstat', '1', '-y'], line => parseVmStat(line));
 ```
 
 ### `Variable.derive`
@@ -317,13 +294,11 @@ const vmstat = createSubprocess(
 다음처럼 목록을 diff하는 방식이 안전합니다.
 
 ```ts
-import app from "ags/gtk4/app";
-import type Gdk from "gi://Gdk?version=4.0";
-import type Gtk from "gi://Gtk?version=4.0";
+import app from 'ags/gtk4/app';
+import type Gdk from 'gi://Gdk?version=4.0';
+import type Gtk from 'gi://Gtk?version=4.0';
 
-export function eachMonitor(
-  create: (monitor: Gdk.Monitor) => Gtk.Window,
-): () => void {
+export function eachMonitor(create: (monitor: Gdk.Monitor) => Gtk.Window): () => void {
   const windows = new Map<Gdk.Monitor, Gtk.Window>();
 
   const reconcile = () => {
@@ -346,13 +321,12 @@ export function eachMonitor(
 
   reconcile();
 
-  const signal = app.connect("notify::monitors", reconcile);
+  const signal = app.connect('notify::monitors', reconcile);
 
   return () => {
     app.disconnect(signal);
 
-    for (const window of windows.values())
-      window.destroy();
+    for (const window of windows.values()) window.destroy();
 
     windows.clear();
   };

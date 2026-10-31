@@ -1,5 +1,5 @@
-import { css, keyframes } from '@emotion/react';
 import { transition } from '@/utils/css/transition';
+import { css, keyframes } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 const enterKeyframe = keyframes`

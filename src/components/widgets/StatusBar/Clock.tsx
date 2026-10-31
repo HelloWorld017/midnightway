@@ -1,9 +1,9 @@
-import { format } from 'date-fns';
-import { useMemo, useRef } from 'react';
 import { repo } from '@/bridge/repository';
 import { useNow } from '@/hooks/useNow';
 import { useInvokeRepo } from '@/hooks/useRepo';
 import { locale } from '@/i18n';
+import { format } from 'date-fns';
+import { useMemo, useRef } from 'react';
 import * as styles from './Clock.css';
 
 export const Clock = ({ isIdle }: { isIdle: boolean }) => {
@@ -19,7 +19,7 @@ export const Clock = ({ isIdle }: { isIdle: boolean }) => {
       repo.overlay.$invokeMethod('setToolkitState', {
         kind: 'calendar',
         position: { x: rect.x + rect.width / 2, anchor: 'center' },
-      })
+      }),
     );
   };
 

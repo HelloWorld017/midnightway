@@ -23,7 +23,7 @@ const TRANSITION_KEY = {
 export const transition = (
   theme: Theme,
   keys: (keyof typeof TRANSITION_KEY)[],
-  delaySeconds: number | number[] = 0
+  delaySeconds: number | number[] = 0,
 ) =>
   keys
     .map((key, index) =>
@@ -32,6 +32,6 @@ export const transition = (
         `${theme.easings[TRANSITION_KEY[key]].duration}s`,
         theme.easings[TRANSITION_KEY[key]].easing,
         typeof delaySeconds === 'number' ? `${delaySeconds}s` : `${delaySeconds[index] ?? 0}`,
-      ].join(' ')
+      ].join(' '),
     )
     .join(', ');

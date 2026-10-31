@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
+import swc from '@rollup/plugin-swc';
 import simplei18n from '@simplei18n/core/vite';
 import { defineConfig, withFilter } from 'vite';
 import svgr from 'vite-plugin-svgr';
-import swc from '@rollup/plugin-swc';
 
 export default defineConfig(({ mode }) => {
   const entry = mode === 'shell' ? 'index' : 'renderer';
@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
               parser: {
                 syntax: 'ecmascript',
                 decorators: true,
-                decoratorsBeforeExport: true
+                decoratorsBeforeExport: true,
               },
               transform: { decoratorVersion: '2023-11' },
             },

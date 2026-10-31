@@ -1,6 +1,6 @@
+import { createMethodsProxy } from '@/utils/methodsProxy';
 import { onCleanup } from 'ags';
 import JavaScriptCore from 'gi://JavaScriptCore';
-import { createMethodsProxy } from '@/utils/methodsProxy';
 import { methodsRendererImpl } from './implementations/renderer';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from './types';
 import type WebKit from 'gi://WebKit';
@@ -55,11 +55,11 @@ export const createMainBridge = (webView: WebKit.WebView, methodsImpl: Partial<M
       const output = (impl as Record<string, (params: unknown) => void>)[name](params);
       const outputValue = JavaScriptCore.Value.new_from_json(
         value.context,
-        JSON.stringify(output) ?? 'null'
+        JSON.stringify(output) ?? 'null',
       );
 
       reply.return_value(outputValue);
-    }
+    },
   );
 
   /* Reply Handling */

@@ -1,5 +1,5 @@
-import { DynamicIcon } from 'lucide-react/dynamic';
 import { bridgeRenderer } from '@/bridge/renderer';
+import { DynamicIcon } from 'lucide-react/dynamic';
 import * as styles from './ControlCenterItemButton.css';
 import type { ControlCenterItem } from '@/config/schema';
 import type { IconName } from 'lucide-react/dynamic';

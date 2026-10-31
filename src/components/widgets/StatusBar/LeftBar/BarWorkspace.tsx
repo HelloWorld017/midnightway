@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
 import { IconSetWorkspace } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { useRepo } from '@/hooks/useRepo';
+import { useMemo } from 'react';
 import * as styles from './BarWorkspace.css';
 
 type BarWorkspaceProps = {

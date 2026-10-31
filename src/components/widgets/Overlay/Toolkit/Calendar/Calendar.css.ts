@@ -1,6 +1,6 @@
+import { transition } from '@/utils/css/transition';
 import { css } from '@emotion/react';
 import { match } from 'ts-pattern';
-import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
 export const containerStyle = css`
@@ -147,37 +147,40 @@ export const calendarWeekStyle = css`
 `;
 
 export const calendarDateStyle =
-  (kind: 'inactive' | 'active' | 'holiday' | 'today') => (theme: Theme) => css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 3.6rem;
-    height: 3.6rem;
-    border-radius: 1.6rem;
-
-    font-family: ${theme.fonts.content};
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.6rem;
-
-    color: ${match(kind)
-      .with('active', () => theme.surface.fillPrimary)
-      .with('inactive', () => theme.surface.fillSecondary)
-      .with('holiday', () => theme.surface.fillHighlight)
-      .with('today', () => theme.surface.fillHighlightText)
-      .exhaustive()};
-
-    cursor: default;
-    &:hover {
-      background: ${theme.surface.bgElevated};
-    }
-
-    ${kind === 'today' &&
+  (kind: 'inactive' | 'active' | 'holiday' | 'today') => (theme: Theme) =>
     css`
-      background: ${theme.surface.fillHighlight};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 3.6rem;
+      height: 3.6rem;
+      border-radius: 1.6rem;
+
+      font-family: ${theme.fonts.content};
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.6rem;
+
+      color: ${match(kind)
+        .with('active', () => theme.surface.fillPrimary)
+        .with('inactive', () => theme.surface.fillSecondary)
+        .with('holiday', () => theme.surface.fillHighlight)
+        .with('today', () => theme.surface.fillHighlightText)
+        .exhaustive()};
+
+      cursor: default;
       &:hover {
-        background: ${theme.surface.fillHighlight};
+        background: ${theme.surface.bgElevated};
       }
-    `}
-  `;
+
+      ${
+        kind === 'today' &&
+        css`
+          background: ${theme.surface.fillHighlight};
+          &:hover {
+            background: ${theme.surface.fillHighlight};
+          }
+        `
+      }
+    `;

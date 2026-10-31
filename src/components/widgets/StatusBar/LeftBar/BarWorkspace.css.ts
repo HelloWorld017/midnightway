@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
 import { config } from '@/config';
+import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const workspaceStyle = () => css`

@@ -1,13 +1,14 @@
-import { css } from '@emotion/react';
 import { transition } from '@/utils/css/transition';
+import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
-export const weatherCollapsibleStyle = (isVisible: boolean) => (theme: Theme) => css`
-  opacity: ${+isVisible};
-  visibility: ${isVisible ? 'visibile' : 'hidden'};
-  margin-left: ${isVisible ? 0 : -2.4}rem;
-  transition: ${transition(theme, ['opacity', 'visibility', 'margin'])};
-`;
+export const weatherCollapsibleStyle = (isVisible: boolean) => (theme: Theme) =>
+  css`
+    opacity: ${+isVisible};
+    visibility: ${isVisible ? 'visibile' : 'hidden'};
+    margin-left: ${isVisible ? 0 : -2.4}rem;
+    transition: ${transition(theme, ['opacity', 'visibility', 'margin'])};
+  `;
 
 export const weatherStyle = css`
   display: flex;
@@ -39,24 +40,25 @@ export const weatherHeaderStyle = (theme: Theme) => css`
   white-space: nowrap;
 `;
 
-export const weatherConditionStyle = (isVisible: boolean) => (theme: Theme) => css`
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+export const weatherConditionStyle = (isVisible: boolean) => (theme: Theme) =>
+  css`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 
-  color: ${theme.surface.fillSecondary};
-  font-family: ${theme.fonts.content};
-  font-weight: 500;
-  font-size: 0.9rem;
-  line-height: 1.1rem;
-  letter-spacing: -0.02em;
+    color: ${theme.surface.fillSecondary};
+    font-family: ${theme.fonts.content};
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
+    letter-spacing: -0.02em;
 
-  opacity: ${+isVisible};
-  visibility: ${isVisible ? 'visibile' : 'hidden'};
-  transform: translateY(${isVisible ? '0' : '-100%'});
-  transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.4)};
-  white-space: nowrap;
-`;
+    opacity: ${+isVisible};
+    visibility: ${isVisible ? 'visibile' : 'hidden'};
+    transform: translateY(${isVisible ? '0' : '-100%'});
+    transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.4)};
+    white-space: nowrap;
+  `;
 
 export const weatherConditionDividerStyle = (theme: Theme) => css`
   display: block;

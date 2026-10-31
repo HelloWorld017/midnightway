@@ -1,6 +1,6 @@
+import { transition } from '@/utils/css/transition';
 import { css, keyframes } from '@emotion/react';
 import { match } from 'ts-pattern';
-import { transition } from '@/utils/css/transition';
 import type { Theme } from '@emotion/react';
 
 const enterKeyframe = keyframes`
@@ -14,32 +14,33 @@ export const backdropStyle = (theme: Theme) => css`
   background: ${theme.colors.glass.bgBase};
 `;
 
-export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: Theme) => css`
-  position: absolute;
-  top: 4rem;
-  width: 40rem;
-  height: 40rem;
-  overflow: hidden;
+export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: Theme) =>
+  css`
+    position: absolute;
+    top: 4rem;
+    width: 40rem;
+    height: 40rem;
+    overflow: hidden;
 
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 3rem;
-  background: ${theme.surface.bgBase};
-  transition: ${transition(theme, ['left', 'width'])};
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 3rem;
+    background: ${theme.surface.bgBase};
+    transition: ${transition(theme, ['left', 'width'])};
 
-  transform: ${match(anchor)
-    .with('left', () => 'translate(0)')
-    .with('center', () => 'translate(-50%)')
-    .with('right', () => 'translate(-100%)')
-    .exhaustive()};
+    transform: ${match(anchor)
+      .with('left', () => 'translate(0)')
+      .with('center', () => 'translate(-50%)')
+      .with('right', () => 'translate(-100%)')
+      .exhaustive()};
 
-  animation-name: ${enterKeyframe};
-  animation-duration: ${theme.easings.opacity.duration}s;
-  animation-timing-function: ${theme.easings.opacity.easing};
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-`;
+    animation-name: ${enterKeyframe};
+    animation-duration: ${theme.easings.opacity.duration}s;
+    animation-timing-function: ${theme.easings.opacity.easing};
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+  `;
 
 export const asideStyle = (theme: Theme) => css`
   display: flex;
@@ -53,26 +54,29 @@ export const asideStyle = (theme: Theme) => css`
   background: ${theme.surface.bgOverlay};
 `;
 
-export const asideItemStyle = (isActive: boolean) => (theme: Theme) => css`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${isActive ? theme.surface.fillHighlight : 'transparent'};
-  color: ${isActive ? theme.surface.fillHighlightText : theme.surface.fillPrimary};
-  font-size: 1.6rem;
-  padding: 1rem;
-  border-radius: 1rem;
-
-  transition: ${transition(theme, ['background', 'color'])};
-
-  ${!isActive &&
+export const asideItemStyle = (isActive: boolean) => (theme: Theme) =>
   css`
-    &:hover {
-      background: ${theme.surface.bgElevated};
-    }
-  `};
-`;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${isActive ? theme.surface.fillHighlight : 'transparent'};
+    color: ${isActive ? theme.surface.fillHighlightText : theme.surface.fillPrimary};
+    font-size: 1.6rem;
+    padding: 1rem;
+    border-radius: 1rem;
+
+    transition: ${transition(theme, ['background', 'color'])};
+
+    ${
+      !isActive &&
+      css`
+        &:hover {
+          background: ${theme.surface.bgElevated};
+        }
+      `
+    };
+  `;
 
 export const contentStyle = css`
   position: relative;

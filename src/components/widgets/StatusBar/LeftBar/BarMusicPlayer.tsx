@@ -9,7 +9,7 @@ export const BarMusicPlayer = ({ isIdle }: { isIdle: boolean }) => {
   const player = useRepo(
     repo.musicPlayer.players
       .$find('playbackStatus', 'is', PlaybackStatus.PLAYING)
-      .$pick('artist', 'title')
+      .$pick('artist', 'title'),
   );
 
   const hasArtist = !!player?.artist;

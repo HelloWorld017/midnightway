@@ -1,6 +1,6 @@
-import { animated, useTransition as useSpringTransition } from '@react-spring/web';
 import { useRefMap } from '@/hooks/useRefMap';
 import { sleep } from '@/utils/promise';
+import { animated, useTransition as useSpringTransition } from '@react-spring/web';
 import { NotificationItem } from './NotificationItem';
 import * as styles from './NotificationList.css';
 import type { NotificationItemProps } from './NotificationItem';

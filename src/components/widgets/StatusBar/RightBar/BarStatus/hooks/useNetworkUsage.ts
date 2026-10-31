@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
 import { formatNumberByUnit } from '@/utils/format';
 import { isFiniteNumber } from '@/utils/type';
+import { useMemo } from 'react';
 
 export const useNetworkUsage = () => {
   const networkUsage = useRepo(repo.network.usage);
@@ -14,9 +14,9 @@ export const useNetworkUsage = () => {
         networkUsage.totalRx -
           networkUsage.initialRx +
           networkUsage.totalTx -
-          networkUsage.initialTx
+          networkUsage.initialTx,
       ),
-    [networkUsage]
+    [networkUsage],
   );
 
   return networkUsageFormatted || null;

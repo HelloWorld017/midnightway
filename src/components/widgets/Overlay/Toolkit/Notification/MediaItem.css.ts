@@ -1,9 +1,10 @@
-import { css } from '@emotion/react';
 import { transition } from '@/utils/css/transition';
+import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const containerStyle = (theme: Theme) => css`
-  background: linear-gradient(
+  background:
+    linear-gradient(
       to left,
       rgb(from ${theme.surface.bgBase} r g b / 0.5),
       rgb(from ${theme.surface.bgBase} r g b / 0.5)
@@ -155,16 +156,17 @@ export const rangeInputStyle = css`
   opacity: 0;
 `;
 
-export const prevNextIconStyle = (isActive: boolean) => (theme: Theme) => css`
-  cursor: ${isActive ? 'pointer' : 'not-allowed'};
-  display: flex;
-  font-size: 1.6rem;
-  color: ${isActive ? theme.surface.fillPrimary : theme.surface.fillSecondary};
-  opacity: 1;
-  transition: ${transition(theme, ['color', 'opacity'])};
-  transform: translateZ(0);
+export const prevNextIconStyle = (isActive: boolean) => (theme: Theme) =>
+  css`
+    cursor: ${isActive ? 'pointer' : 'not-allowed'};
+    display: flex;
+    font-size: 1.6rem;
+    color: ${isActive ? theme.surface.fillPrimary : theme.surface.fillSecondary};
+    opacity: 1;
+    transition: ${transition(theme, ['color', 'opacity'])};
+    transform: translateZ(0);
 
-  &:hover {
-    opacity: 0.8;
-  }
-`;
+    &:hover {
+      opacity: 0.8;
+    }
+  `;

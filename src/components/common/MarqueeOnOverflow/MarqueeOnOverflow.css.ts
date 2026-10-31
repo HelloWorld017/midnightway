@@ -29,11 +29,13 @@ export const contentsWrapperStyle = (shouldMarquee: boolean) => css`
   gap: var(--gap);
   animation: none;
 
-  ${shouldMarquee &&
-  css`
-    animation: ${marquee};
-    animation-timing-function: linear;
-    animation-duration: var(--duration);
-    animation-iteration-count: infinite;
-  `};
+  ${
+    shouldMarquee &&
+    css`
+      animation: ${marquee};
+      animation-timing-function: linear;
+      animation-duration: var(--duration);
+      animation-iteration-count: infinite;
+    `
+  };
 `;

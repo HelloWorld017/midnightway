@@ -1,11 +1,11 @@
+import { repo } from '@/bridge/repository';
+import { useRepo } from '@/hooks/useRepo';
 import {
   animated,
   config as springConfig,
   useTransition as useSpringTransition,
 } from '@react-spring/web';
 import { match } from 'ts-pattern';
-import { repo } from '@/bridge/repository';
-import { useRepo } from '@/hooks/useRepo';
 import { NotificationBubbles } from './NotificationBubbles';
 import { Toolkit } from './Toolkit';
 

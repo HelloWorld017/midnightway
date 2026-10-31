@@ -1,9 +1,9 @@
-import { add, format, startOfDay, startOfWeek } from 'date-fns';
-import { useMemo } from 'react';
-import { match } from 'ts-pattern';
 import { IconChevronDown, IconChevronUp, IconFocus } from '@/assets/icons';
 import { useNow } from '@/hooks/useNow';
 import { locale } from '@/i18n';
+import { add, format, startOfDay, startOfWeek } from 'date-fns';
+import { useMemo } from 'react';
+import { match } from 'ts-pattern';
 import * as styles from './Calendar.css';
 import { useCalendarInput } from './hooks/useCalendarInput';
 
@@ -37,7 +37,7 @@ type CalendarMonthProps = {
 const CalendarMonth = ({ calendarYear, calendarMonth, today }: CalendarMonthProps) => {
   const startOfCalendar = useMemo(
     () => startOfWeek(new Date(calendarYear, calendarMonth - 1, 1), { locale: locale().date }),
-    [calendarYear, calendarMonth]
+    [calendarYear, calendarMonth],
   );
   const startDay = startOfCalendar.getDay();
 

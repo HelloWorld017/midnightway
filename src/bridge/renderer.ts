@@ -6,7 +6,7 @@ export const bridgeRenderer = createMethodsProxy<BridgeMethodsRenderer>((name, p
   window.webkit.messageHandlers.bridge.postMessage({
     name,
     params,
-  })
+  }),
 );
 
 export const registerImplementations = (impl: Partial<BridgeMethodsMain>) => {

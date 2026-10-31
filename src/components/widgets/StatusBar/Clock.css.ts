@@ -13,20 +13,23 @@ export const clockStyle = (isIdle: boolean) => css`
   transform: translate(-50%, -50%);
 `;
 
-export const clockTextStyle = (isChanging: boolean) => (theme: Theme) => css`
-  display: flex;
-  color: ${theme.surface.fillPrimary};
-  font-family: ${theme.fonts.content};
-  font-weight: 400;
-  font-size: 1.3rem;
-  line-height: 1.6rem;
-  letter-spacing: -0.04em;
-
-  ${isChanging &&
+export const clockTextStyle = (isChanging: boolean) => (theme: Theme) =>
   css`
-    font-variant-numeric: tabular-nums;
-  `};
-`;
+    display: flex;
+    color: ${theme.surface.fillPrimary};
+    font-family: ${theme.fonts.content};
+    font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 1.6rem;
+    letter-spacing: -0.04em;
+
+    ${
+      isChanging &&
+      css`
+        font-variant-numeric: tabular-nums;
+      `
+    };
+  `;
 
 export const clockDividerStyle = (theme: Theme) => css`
   background: ${theme.surface.fillSecondary};

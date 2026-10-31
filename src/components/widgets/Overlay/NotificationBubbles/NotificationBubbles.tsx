@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { repo } from '@/bridge/repository';
 import { useInvokeRepo } from '@/hooks/useRepo';
+import { useEffect } from 'react';
 import { NotificationList } from '../Toolkit/Notification/NotificationList';
 import { useNotifications } from '../Toolkit/Notification/hooks/useNotifications';
 

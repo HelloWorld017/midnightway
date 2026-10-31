@@ -99,7 +99,7 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
             subscriptions.get(key)?.forEach(callback => {
               callback(current);
             });
-          })
+          }),
         );
       }
 
@@ -155,7 +155,7 @@ export const asConnectable = <const T extends object>(object: T): Simplify<Conne
 export const bindFile = <T>(
   path: string | null,
   transform: (content: string) => T,
-  interval: number
+  interval: number,
 ): Accessor<T | null> => {
   if (!path) {
     return writable<T | null>(null);
@@ -164,6 +164,6 @@ export const bindFile = <T>(
   return poll<T | null>(null, interval, async previous =>
     readFileAsync(path)
       .then(transform)
-      .catch(() => previous)
+      .catch(() => previous),
   );
 };

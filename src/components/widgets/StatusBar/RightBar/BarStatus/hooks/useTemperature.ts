@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
+import { useMemo } from 'react';
 
 export const useTemperature = () => {
   const temperatureByPart = useRepo(repo.temperatures.temperatures);
@@ -9,9 +9,9 @@ export const useTemperature = () => {
       temperatureByPart &&
       Object.values(temperatureByPart).reduce<{ sum: number; total: number }>(
         ({ sum, total }, current) => ({ sum: sum + current, total: total + 1 }),
-        { sum: 0, total: 0 }
+        { sum: 0, total: 0 },
       ),
-    [temperatureByPart]
+    [temperatureByPart],
   );
 
   if (!temperatureAccumulated) {

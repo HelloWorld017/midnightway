@@ -50,7 +50,6 @@ import {
   WifiIcon,
   XIcon,
 } from 'lucide-react';
-
 import type { ComponentProps, ComponentType } from 'react';
 
 const wrapLucideComponent =

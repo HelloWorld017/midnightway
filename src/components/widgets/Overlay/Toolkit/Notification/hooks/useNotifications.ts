@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
 import { repo } from '@/bridge/repository';
 import { useRepo } from '@/hooks/useRepo';
+import { useMemo } from 'react';
 
 export const useNotifications = () => {
   const notifications = useRepo(
@@ -11,14 +11,14 @@ export const useNotifications = () => {
       'summary',
       'body',
       'image',
-      'category'
-    )
+      'category',
+    ),
   );
 
   const notificationActions = useRepo(
     repo.notification.notifications
       .$pickArray('actions')
-      .$mapArray(action => action.actions.$pickArray('id', 'label'))
+      .$mapArray(action => action.actions.$pickArray('id', 'label')),
   );
 
   const notificationEntries = useMemo(
@@ -29,7 +29,7 @@ export const useNotifications = () => {
         ...notification,
         actions: notificationActions?.[index] ?? [],
       })),
-    [notifications, notificationActions]
+    [notifications, notificationActions],
   );
 
   return notificationEntries;

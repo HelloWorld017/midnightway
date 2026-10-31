@@ -1,5 +1,5 @@
-import { match, P } from 'ts-pattern';
 import { isObject } from '@/utils/type';
+import { match, P } from 'ts-pattern';
 import type {
   RepositoryProxyDescriptor,
   RepositoryProxyDescriptorItem,
@@ -41,7 +41,7 @@ const mapArrayOperator = (array: unknown, descriptor: RepositoryProxyDescriptor)
 const bindMapArrayOperator = (
   array: unknown,
   descriptor: RepositoryProxyDescriptor,
-  bindDescriptor: Binder<RepositoryProxyDescriptor>
+  bindDescriptor: Binder<RepositoryProxyDescriptor>,
 ) => bindArray(array, descriptor, bindDescriptor);
 
 const filterOperator = (array: unknown, filter: RepositoryProxyFilter) =>
@@ -65,12 +65,12 @@ const invokeMethodOperator = (value: unknown, invokeMethod: { key: string; param
 export const applyDescriptor = <T>(descriptor: RepositoryProxyDescriptor, repository: unknown) =>
   descriptor.reduce<unknown>(
     (obj, descriptorItem) => applyDescriptorItem(obj, descriptorItem),
-    repository
+    repository,
   ) as T;
 
 export const applyDescriptorItem = (
   value: unknown,
-  descriptorItem: RepositoryProxyDescriptorItem
+  descriptorItem: RepositoryProxyDescriptorItem,
 ): unknown =>
   match(descriptorItem)
     .with(P.string, key => (isObject(value) ? value[key] : undefined))
@@ -86,7 +86,7 @@ export const bindDescriptorItem = (
   value: unknown,
   descriptorItem: RepositoryProxyDescriptorItem,
   binder: Binder,
-  bindDescriptor: Binder<RepositoryProxyDescriptor>
+  bindDescriptor: Binder<RepositoryProxyDescriptor>,
 ) =>
   match(descriptorItem)
     .with(P.string, key => (isObject(value) ? binder(value, key) : () => {}))
@@ -95,7 +95,7 @@ export const bindDescriptorItem = (
     .with({ pick: P.select() }, pick => bindPickOperator(value, pick, binder))
     .with({ pickArray: P.select() }, pickArray => bindPickArrayOperator(value, pickArray, binder))
     .with({ mapArray: P.select() }, mapArray =>
-      bindMapArrayOperator(value, mapArray, bindDescriptor)
+      bindMapArrayOperator(value, mapArray, bindDescriptor),
     )
     .with({ invokeMethod: P.select() }, () => () => {})
     .exhaustive();

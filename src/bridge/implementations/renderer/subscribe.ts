@@ -1,7 +1,7 @@
-import { onCleanup } from 'ags';
 import { repositoryImpl } from '@/repository';
 import { createRepositoryProxy } from '@/utils/repositoryProxy';
 import { bindRepositoryProxy } from '@/utils/repositoryProxy/bind';
+import { onCleanup } from 'ags';
 import type { BridgeMethodsMain, BridgeMethodsRenderer } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 
@@ -23,7 +23,7 @@ export const subscriptionMethods = (bridge: MethodsProxy<BridgeMethodsMain>) => 
           id,
           value,
         });
-      })
+      }),
     );
 
     return { id, value: bindable.get() };

@@ -1,18 +1,18 @@
-import { execAsync } from 'ags/process';
-import * as z from 'zod';
 import { config } from '@/config';
 import { asConnectable, poll } from '@/utils/binding';
+import { execAsync } from 'ags/process';
+import * as z from 'zod';
 
 const { updateInterval } = config().system;
 
 const zSensors = z.record(
   z.string(),
-  z.record(z.string(), z.union([z.record(z.string(), z.number().finite()), z.string()]))
+  z.record(z.string(), z.union([z.record(z.string(), z.number().finite()), z.string()])),
 );
 type Sensors = z.infer<typeof zSensors>;
 
 const sensors = poll<Sensors>({}, updateInterval, async () =>
-  zSensors.parse(JSON.parse(await execAsync(['sensors', '-j'])))
+  zSensors.parse(JSON.parse(await execAsync(['sensors', '-j']))),
 );
 
 const sensorProbes = config().system.temperatures;
@@ -27,8 +27,8 @@ const temperatures = sensors(out => {
           .flatMap(sensor =>
             Object.entries(sensor)
               .filter(([key]) => key.startsWith('temp') && key.endsWith('input'))
-              .map(([, temp]) => temp)
-          )
+              .map(([, temp]) => temp),
+          ),
       );
 
     return temperatures.length

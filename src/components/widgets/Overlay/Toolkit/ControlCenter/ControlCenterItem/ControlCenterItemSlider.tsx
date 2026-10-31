@@ -1,12 +1,12 @@
-import { throttle } from 'es-toolkit';
-import { DynamicIcon } from 'lucide-react/dynamic';
-import { useEffect, useMemo, useState } from 'react';
-import { z } from 'zod';
 import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import { useCleanup } from '@/hooks/useCleanup';
 import { useLatestCallback } from '@/hooks/useLatestCallback';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
+import { throttle } from 'es-toolkit';
+import { DynamicIcon } from 'lucide-react/dynamic';
+import { useEffect, useMemo, useState } from 'react';
+import { z } from 'zod';
 import * as styles from './ControlCenterItemSlider.css';
 import type { ControlCenterItem } from '@/config/schema';
 import type { IconName } from 'lucide-react/dynamic';

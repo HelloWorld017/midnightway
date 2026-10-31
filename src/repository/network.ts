@@ -1,8 +1,8 @@
+import { config } from '@/config';
+import { asConnectable, poll } from '@/utils/binding';
 import { execAsync } from 'ags/process';
 import AstalNetwork from 'gi://AstalNetwork';
 import * as z from 'zod';
-import { config } from '@/config';
-import { asConnectable, poll } from '@/utils/binding';
 
 const zIpOutput = z.array(
   z.object({
@@ -11,7 +11,7 @@ const zIpOutput = z.array(
       rx: z.object({ bytes: z.number().finite().nonnegative() }),
       tx: z.object({ bytes: z.number().finite().nonnegative() }),
     }),
-  })
+  }),
 );
 
 type Usage = {
@@ -49,7 +49,7 @@ const networkUsage = poll<Usage>(
       totalTx,
       totalRx,
     };
-  }
+  },
 );
 
 export const networkRepository = asConnectable({

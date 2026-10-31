@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
 import { transition } from '@/utils/css/transition';
+import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const containerStyle = css`
@@ -38,43 +38,47 @@ export const trayListStyle = css`
   gap: 0.2rem;
 `;
 
-export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) => css`
-  cursor: pointer;
-  color: ${theme.surface.fillSecondary};
-  font-family: ${theme.fonts.content};
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1rem;
-  padding: 0.4rem;
-  margin: -0.4rem;
-  opacity: ${+isVisible};
-  transition: ${transition(theme, ['opacity'])};
-  transform: translateZ(0);
-
-  &:hover {
-    opacity: ${isVisible ? 0.8 : 0};
-  }
-
-  ${!isVisible &&
+export const notificationClearAllStyle = (isVisible: boolean) => (theme: Theme) =>
   css`
-    pointer-events: none;
-  `}
-`;
+    cursor: pointer;
+    color: ${theme.surface.fillSecondary};
+    font-family: ${theme.fonts.content};
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1rem;
+    padding: 0.4rem;
+    margin: -0.4rem;
+    opacity: ${+isVisible};
+    transition: ${transition(theme, ['opacity'])};
+    transform: translateZ(0);
 
-export const noItemsStyle = (isEnabled: boolean) => (theme: Theme) => css`
-  position: absolute;
-  inset: 0;
-  padding: 6.4rem 1.6rem;
-  color: ${theme.surface.fillSecondary};
-  font-family: ${theme.fonts.content};
-  font-size: 1.2rem;
-  font-weight: 400;
-  text-align: center;
-  letter-spacing: -0.02em;
-  line-height: 1.6rem;
-  opacity: ${+isEnabled};
-  pointer-events: none;
-  user-select: none;
-  transition: ${transition(theme, ['opacity'])};
-`;
+    &:hover {
+      opacity: ${isVisible ? 0.8 : 0};
+    }
+
+    ${
+      !isVisible &&
+      css`
+        pointer-events: none;
+      `
+    }
+  `;
+
+export const noItemsStyle = (isEnabled: boolean) => (theme: Theme) =>
+  css`
+    position: absolute;
+    inset: 0;
+    padding: 6.4rem 1.6rem;
+    color: ${theme.surface.fillSecondary};
+    font-family: ${theme.fonts.content};
+    font-size: 1.2rem;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: -0.02em;
+    line-height: 1.6rem;
+    opacity: ${+isEnabled};
+    pointer-events: none;
+    user-select: none;
+    transition: ${transition(theme, ['opacity'])};
+  `;

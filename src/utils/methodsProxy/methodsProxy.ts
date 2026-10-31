@@ -5,7 +5,7 @@ export type MethodsProxy<T> = {
 };
 
 export const createMethodsProxy = <T>(
-  dispatcher: (name: string, params: unknown) => Promise<unknown>
+  dispatcher: (name: string, params: unknown) => Promise<unknown>,
 ) =>
   new Proxy<MethodsProxy<T>>({} as MethodsProxy<T>, {
     get(_target, key) {

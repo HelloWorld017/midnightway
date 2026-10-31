@@ -1,5 +1,4 @@
 import IconWorkspace1 from './workspace-1.svg';
-import IconWorkspace10 from './workspace-10.svg';
 import IconWorkspace2 from './workspace-2.svg';
 import IconWorkspace3 from './workspace-3.svg';
 import IconWorkspace4 from './workspace-4.svg';
@@ -8,6 +7,7 @@ import IconWorkspace6 from './workspace-6.svg';
 import IconWorkspace7 from './workspace-7.svg';
 import IconWorkspace8 from './workspace-8.svg';
 import IconWorkspace9 from './workspace-9.svg';
+import IconWorkspace10 from './workspace-10.svg';
 import type { ReactNode, SVGProps } from 'react';
 
 export const IconSetWorkspace = ({

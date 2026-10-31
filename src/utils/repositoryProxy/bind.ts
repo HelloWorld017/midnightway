@@ -1,6 +1,6 @@
-import { throttle } from 'es-toolkit';
 import { subscribeProperty } from '@/utils/binding';
 import { isObject } from '@/utils/type';
+import { throttle } from 'es-toolkit';
 import { applyDescriptor, applyDescriptorItem, bindDescriptorItem } from './operations';
 import { getRepositoryProxyDescriptor } from './repositoryProxy';
 import type { RepositoryProxy, RepositoryProxyDescriptor } from './repositoryProxy';
@@ -11,7 +11,7 @@ const isConnectable = (value: unknown): value is Connectable =>
 
 export const bindRepositoryProxy = <T, TRoot = Record<string, unknown>>(
   proxy: RepositoryProxy<T, TRoot>,
-  repositoryImpl: TRoot
+  repositoryImpl: TRoot,
 ) => {
   const [, ...descriptor] = getRepositoryProxyDescriptor(proxy);
   const get = () => applyDescriptor<T>(descriptor, repositoryImpl);
@@ -19,7 +19,7 @@ export const bindRepositoryProxy = <T, TRoot = Record<string, unknown>>(
   const bindDescriptor = (
     obj: unknown,
     callback: () => void,
-    [descriptorItem, ...next]: RepositoryProxyDescriptor
+    [descriptorItem, ...next]: RepositoryProxyDescriptor,
   ): (() => void) => {
     if (!descriptorItem) {
       return () => {};
@@ -40,7 +40,7 @@ export const bindRepositoryProxy = <T, TRoot = Record<string, unknown>>(
           cleanupChild = bindDescriptor(applyDescriptorItem(obj, descriptorItem), callback, next);
         });
       },
-      (object, descriptor) => bindDescriptor(object, callback, descriptor)
+      (object, descriptor) => bindDescriptor(object, callback, descriptor),
     );
 
     return () => {
