@@ -1,5 +1,3 @@
-import { useRef } from 'react';
-import { match } from 'ts-pattern';
 import { bridgeRenderer } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
 import {
@@ -8,26 +6,33 @@ import {
 } from '@/components/common/ContextMenu';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
 import { getRepositoryProxyDescriptor } from '@/utils/repositoryProxy';
+import { useRef } from 'react';
+import { match } from 'ts-pattern';
 import * as styles from './TrayItem.css';
 import type { MouseEvent } from 'react';
 
 export const TrayItem = ({ id }: { id: string }) => {
   const tray = useRepo(
-    repo.tray.$invokeMethod('get_item', id).$pick('title', 'id', 'iconName', 'isMenu')
+    repo.tray.$invokeMethod('get_item', id).$pick('title', 'id', 'iconName', 'isMenu'),
   );
 
   const trayTooltip = useRepo(
-    repo.tray.$invokeMethod('get_item', id).tooltip.$pick('title', 'description')
+    repo.tray.$invokeMethod('get_item', id).tooltip.$pick('title', 'description'),
   );
 
   const invoke = useInvokeRepo();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const setContextMenuModel = useSetContextMenuModel();
 
-  type Action = 'wait_menu' | 'activate' | 'secondary_activate' | 'menu';
-  const onAction = (e: MouseEvent, action: Action) => {
-    if (action === 'wait_menu') {
-      clickTimer.current = setTimeout(() => onAction(e, 'menu'), 250);
+  type Action = 'activate' | 'secondary_activate' | 'menu';
+  const onAction = (e: MouseEvent, action: Action, shouldWait = false) => {
+    if (clickTimer.current !== null) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+    }
+
+    if (shouldWait) {
+      clickTimer.current = setTimeout(() => onAction(e, action), 250);
       return;
     }
 
@@ -39,6 +44,7 @@ export const TrayItem = ({ id }: { id: string }) => {
     }
 
     if (action === 'menu') {
+      e.preventDefault();
       const trayMenu = tray.menuModel;
       setContextMenuModel(
         repositoryContextMenuModel(trayMenu, ({ action, actionTarget }) => {
@@ -53,22 +59,22 @@ export const TrayItem = ({ id }: { id: string }) => {
               actionTarget,
             })
             .catch(() => {});
-        })
+        }),
       );
     }
   };
 
   const onClick = (e: MouseEvent) => {
-    const action = match({ kind: e.type, menuPreferred: tray?.isMenu })
-      .with({ kind: 'click', menuPreferred: true }, (): Action => 'wait_menu')
-      .with({ kind: 'click', menuPreferred: false }, (): Action => 'activate')
-      .with({ kind: 'contextmenu', menuPreferred: true }, (): Action => 'menu')
-      .with({ kind: 'contextmenu', menuPreferred: false }, (): Action => 'secondary_activate')
-      .with({ kind: 'dblclick', menuPreferred: true }, (): Action => 'activate')
-      .otherwise(() => null);
+    const [action, shouldWait] = match({ kind: e.type, isMenu: tray?.isMenu ?? false })
+      .with({ kind: 'click', isMenu: true }, () => ['menu', true] as const)
+      .with({ kind: 'click', isMenu: false }, () => ['activate', true] as const)
+      .with({ kind: 'contextmenu' }, () => ['menu', false] as const)
+      .with({ kind: 'dblclick', isMenu: true }, () => ['activate', false] as const)
+      .with({ kind: 'dblclick', isMenu: false }, () => ['secondary_activate', false] as const)
+      .otherwise(() => [null, false]);
 
     if (action) {
-      onAction(e, action);
+      onAction(e, action, shouldWait);
     }
   };
 

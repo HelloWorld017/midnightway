@@ -17,7 +17,7 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
           if (nodes && menuModel) {
             setChildMap(childMap => ({
               ...childMap,
-              [menuModel.key(childMap)]: nodes,
+              [menuModel.key(target)]: nodes,
             }));
           }
         })
@@ -27,7 +27,7 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
     if (output) {
       setChildMap(childMap => ({
         ...childMap,
-        [menuModel!.key(childMap)]: output,
+        [menuModel!.key(target)]: output,
       }));
     }
 
