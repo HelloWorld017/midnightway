@@ -47,10 +47,11 @@ export const TrayItem = ({ id }: { id: string }) => {
 
     if (action === 'menu') {
       e.preventDefault();
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+
       const trayMenu = tray.menuModel;
-      void invoke(tray.$invokeMethod('about_to_show')).then(() => {
-        setContextMenuModel(
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setContextMenuModel(
+        invoke(tray.$invokeMethod('about_to_show')).then(() =>
           repositoryContextMenuModel(trayMenu, ({ action, actionTarget }) => {
             if (!action) {
               return;
@@ -64,8 +65,8 @@ export const TrayItem = ({ id }: { id: string }) => {
               })
               .catch(() => {});
           }),
-        );
-      });
+        ),
+      );
     }
   };
 

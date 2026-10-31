@@ -1,58 +1,95 @@
 import { useLatestCallback } from '@/hooks/useLatestCallback';
+import { useLatestRef } from '@/hooks/useLatestRef';
 import { buildContext } from '@/utils/context';
 import { isPromise } from '@/utils/promise';
-import { useEffect, useState } from 'react';
+import { useMemo, useReducer, useRef, useState } from 'react';
 import type { ContextMenuModel, ContextMenuNode, ContextMenuToken } from './types';
 
+type MenuModel = ContextMenuModel<Any, Any> | null;
+
 export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => {
-  const [menuModel, setMenuModel] = useState<ContextMenuModel<Any, Any> | null>(null);
-  const [childMap, setChildMap] = useState<Record<string, ContextMenuNode[]>>({});
+  const [menuModel, updateMenuModel] = useState<MenuModel>(null);
+  const menuModelRef = useLatestRef(menuModel);
+  const requestId = useRef(0);
+  const [, refresh] = useReducer(value => value + 1, 0);
+  const cache = useMemo(
+    () => ({
+      model: menuModel,
+      nodes: new Map<string, ContextMenuNode[]>(),
+      pending: new Map<string, Promise<void>>(),
+    }),
+    [menuModel],
+  );
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  const traverse = useLatestCallback((target: ContextMenuToken) => {
-    const output = menuModel?.traverse(target);
-    if (isPromise(output)) {
-      return output
-        .then(nodes => {
-          if (nodes && menuModel) {
-            setChildMap(childMap => ({
-              ...childMap,
-              [menuModel.key(target)]: nodes,
-            }));
+  const setMenuModel = useLatestCallback((model: PossiblyPromise<MenuModel>) => {
+    const id = ++requestId.current;
+    menuModelRef.current = null;
+
+    if (isPromise(model)) {
+      updateMenuModel(null);
+      void model
+        .then(next => {
+          if (requestId.current === id) {
+            menuModelRef.current = next;
+            updateMenuModel(next);
           }
         })
-        .catch(() => {});
+        .catch(error => {
+          if (requestId.current === id) {
+            console.error('Failed to open context menu', error);
+          }
+        });
+    } else {
+      menuModelRef.current = model;
+      updateMenuModel(model);
     }
-
-    if (output) {
-      setChildMap(childMap => ({
-        ...childMap,
-        [menuModel!.key(target)]: output,
-      }));
-    }
-
-    return undefined;
   });
 
   const expandToken = useLatestCallback((token: ContextMenuToken): ContextMenuNode[] | null => {
-    if (!menuModel) {
+    if (!menuModel || cache.model !== menuModelRef.current) {
       return null;
     }
 
     const key = menuModel.key(token);
-    if (!childMap[key]) {
-      const result = traverse(token);
-      if (isPromise(result)) {
-        throw result;
-      }
+    const nodes = cache.nodes.get(key);
+    if (nodes) {
+      return nodes;
+    }
+    const pending = cache.pending.get(key);
+    if (pending) {
+      throw pending;
     }
 
-    return childMap[key];
-  });
+    const id = requestId.current;
+    const output = menuModel.traverse(token);
+    if (!isPromise(output)) {
+      cache.nodes.set(key, output);
+      return output;
+    }
 
-  useEffect(() => {
-    setChildMap({});
-  }, [menuModel]);
+    const isCurrent = () => requestId.current === id && menuModelRef.current === menuModel;
+    const request = output
+      .then(nodes => {
+        if (isCurrent()) {
+          cache.nodes.set(key, nodes);
+        }
+      })
+      .catch(error => {
+        if (isCurrent()) {
+          console.error('Failed to load context menu', error);
+          cache.nodes.set(key, []);
+        }
+      })
+      .finally(() => {
+        cache.pending.delete(key);
+        if (isCurrent()) {
+          refresh();
+        }
+      });
+    cache.pending.set(key, request);
+    throw request;
+  });
 
   return {
     root: menuModel?.root as ContextMenuToken | undefined,
