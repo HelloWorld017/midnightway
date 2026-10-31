@@ -1,7 +1,6 @@
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useMeasure } from '@/hooks/useMeasure';
-import { useMergedRef } from '@/hooks/useMergedRef';
-import { Suspense, useMemo, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 import * as styles from './ContextMenu.css';
 import { ContextMenuProvider, useContextMenuProvider } from './ContextMenuProvider';
@@ -17,11 +16,12 @@ const ContextMenuSubmenu = ({ submenu }: { submenu: ContextMenuNode }) => {
   return (
     <div
       css={styles.submenuStyle}
-      onMouseEnter={() => setIsOpened(false)}
-      onMouseLeave={() => setIsOpened(true)}
+      onMouseEnter={() => setIsOpened(true)}
+      onMouseLeave={() => setIsOpened(false)}
     >
+      {submenu.label}
       {submenu.children && isOpenedDebounced && (
-        <ContextMenuFrame>
+        <ContextMenuFrame isSubmenu>
           <Suspense fallback={<ContextMenuFallback />}>
             <ContextMenuRenderer token={submenu.children} />
           </Suspense>
@@ -44,16 +44,16 @@ const ContextMenuItem = ({ item }: { item: ContextMenuNode }) => (
 
 const ContextMenuRenderer = ({ token }: { token: ContextMenuToken }) => {
   const expandToken = useContextMenuProvider(state => state.expandToken);
-  const menu = useMemo(() => expandToken(token), [expandToken, token]);
+  const menu = expandToken(token);
   if (!menu) {
     return null;
   }
 
-  const children = menu.map(node =>
+  const children = menu.map((node, index) =>
     match(node)
-      .with({ kind: 'submenu' }, submenu => <ContextMenuSubmenu submenu={submenu} />)
-      .with({ kind: 'section' }, section => <ContextMenuSection section={section} />)
-      .otherwise(item => <ContextMenuItem item={item} />),
+      .with({ kind: 'submenu' }, submenu => <ContextMenuSubmenu key={index} submenu={submenu} />)
+      .with({ kind: 'section' }, section => <ContextMenuSection key={index} section={section} />)
+      .otherwise(item => <ContextMenuItem key={index} item={item} />),
   );
 
   return <div css={styles.listStyle}>{children}</div>;
@@ -61,12 +61,17 @@ const ContextMenuRenderer = ({ token }: { token: ContextMenuToken }) => {
 
 type ContextMenuFrameProps = Pick<JSX.IntrinsicElements['div'], 'className' | 'style'> & {
   children: ReactNode;
+  isSubmenu?: boolean;
 };
 
-const ContextMenuFrame = ({ className, style, children }: ContextMenuFrameProps) => {
+const ContextMenuFrame = ({
+  className,
+  style,
+  children,
+  isSubmenu = false,
+}: ContextMenuFrameProps) => {
   const positionRef = useRef<HTMLDivElement | null>(null);
   const [measureRef, size] = useMeasure();
-  const frameRef = useMergedRef(positionRef, measureRef);
 
   const [isLeftwards, isUpwards] = (() => {
     const elem = positionRef.current;
@@ -85,8 +90,10 @@ const ContextMenuFrame = ({ className, style, children }: ContextMenuFrameProps)
   })();
 
   return (
-    <div className={className} style={style} ref={frameRef}>
-      <div css={styles.frameStyle(isLeftwards, isUpwards)}>{children}</div>
+    <div className={className} style={style} ref={positionRef}>
+      <div ref={measureRef} css={styles.frameStyle(isLeftwards, isUpwards, isSubmenu)}>
+        {children}
+      </div>
     </div>
   );
 };
@@ -100,8 +107,10 @@ const ContextMenuRoot = () => {
   return (
     <div ref={rootRef}>
       {root && (
-        <ContextMenuFrame style={style}>
-          <ContextMenuRenderer token={root} />
+        <ContextMenuFrame css={styles.rootStyle} style={style}>
+          <Suspense fallback={<ContextMenuFallback />}>
+            <ContextMenuRenderer token={root} />
+          </Suspense>
         </ContextMenuFrame>
       )}
     </div>

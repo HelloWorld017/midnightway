@@ -1,16 +1,19 @@
 import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
-export const frameStyle = (isLeftwards: boolean, isUpwards: boolean) => (theme: Theme) => css`
-  position: absolute;
-  top: 0;
-  background: ${theme.surface.bgBase};
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.6rem;
+export const frameStyle =
+  (isLeftwards: boolean, isUpwards: boolean, isSubmenu: boolean) => (theme: Theme) =>
+    css`
+      position: absolute;
+      top: 0;
+      background: ${theme.surface.bgBase};
+      padding: 0.4rem 0.6rem;
+      border-radius: 0.6rem;
+      width: max-content;
 
-  ${isLeftwards ? 'right' : 'left'}: calc(100% + 1rem);
-  ${isUpwards ? 'bottom' : 'top'}: 0;
-`;
+      ${isLeftwards ? 'right' : 'left'}: ${isSubmenu ? 'calc(100% + 1rem)' : '0'};
+      ${isUpwards ? 'bottom' : 'top'}: 0;
+    `;
 
 export const listStyle = css`
   display: flex;
@@ -25,6 +28,7 @@ export const fallbackStyle = css`
 
 export const rootStyle = css`
   position: fixed;
+  z-index: 1;
 `;
 
 export const itemStyle = (theme: Theme) => css`

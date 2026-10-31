@@ -3,6 +3,7 @@ import { repo } from '@/bridge/repository';
 import {
   repositoryContextMenuModel,
   useSetContextMenuModel,
+  useSetContextMenuPosition,
 } from '@/components/common/ContextMenu';
 import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
 import { getRepositoryProxyDescriptor } from '@/utils/repositoryProxy';
@@ -23,6 +24,7 @@ export const TrayItem = ({ id }: { id: string }) => {
   const invoke = useInvokeRepo();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const setContextMenuModel = useSetContextMenuModel();
+  const setContextMenuPosition = useSetContextMenuPosition();
 
   type Action = 'activate' | 'secondary_activate' | 'menu';
   const onAction = (e: MouseEvent, action: Action, shouldWait = false) => {
@@ -45,22 +47,25 @@ export const TrayItem = ({ id }: { id: string }) => {
 
     if (action === 'menu') {
       e.preventDefault();
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
       const trayMenu = tray.menuModel;
-      setContextMenuModel(
-        repositoryContextMenuModel(trayMenu, ({ action, actionTarget }) => {
-          if (!action) {
-            return;
-          }
+      void invoke(tray.$invokeMethod('about_to_show')).then(() => {
+        setContextMenuModel(
+          repositoryContextMenuModel(trayMenu, ({ action, actionTarget }) => {
+            if (!action) {
+              return;
+            }
 
-          bridgeRenderer
-            .invokeGAction({
-              descriptor: getRepositoryProxyDescriptor(tray.actionGroup),
-              action,
-              actionTarget,
-            })
-            .catch(() => {});
-        }),
-      );
+            bridgeRenderer
+              .invokeGAction({
+                descriptor: getRepositoryProxyDescriptor(tray.actionGroup),
+                action,
+                actionTarget,
+              })
+              .catch(() => {});
+          }),
+        );
+      });
     }
   };
 

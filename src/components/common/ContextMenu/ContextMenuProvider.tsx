@@ -55,7 +55,7 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
   }, [menuModel]);
 
   return {
-    root: menuModel?.root as ContextMenuNode,
+    root: menuModel?.root as ContextMenuToken | undefined,
     expandToken,
     setMenuModel,
     position,

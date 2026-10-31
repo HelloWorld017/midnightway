@@ -11,7 +11,7 @@ type DefaultContextMenuToken = { key: string; nodes: DefaultContextMenuNode[] };
 type DefaultContextMenuNode = ContextMenuNode<DefaultContextMenuToken, () => void>;
 
 export const defaultContextMenuModel = (
-  root: DefaultContextMenuNode[]
+  root: DefaultContextMenuNode[],
 ): ContextMenuModel<DefaultContextMenuToken, () => void> => ({
   root: { key: '', nodes: root },
   key: token => token.key,
@@ -22,7 +22,7 @@ export const defaultContextMenuModel = (
 type RepositoryMenuAction = { action: string | null; actionTarget: string | null };
 export const repositoryContextMenuModel = (
   root: RepositoryProxy<Gio.MenuModel>,
-  onAction: (action: RepositoryMenuAction) => void
+  onAction: (action: RepositoryMenuAction) => void,
 ): ContextMenuModel<RepositoryProxyDescriptor, RepositoryMenuAction> => ({
   root: getRepositoryProxyDescriptor(root),
   key: descriptor => repositoryProxyDescriptorToString(descriptor),

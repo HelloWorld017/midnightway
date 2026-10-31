@@ -1,7 +1,7 @@
-import Gio from 'gi://Gio?version=2.0';
-import { z } from 'zod';
 import { repositoryImpl } from '@/repository';
 import { applyDescriptor } from '@/utils/repositoryProxy/operations';
+import Gio from 'gi://Gio?version=2.0';
+import { z } from 'zod';
 import type { BridgeMethodsMain, BridgeMethodsRenderer, MenuNodeKind } from '@/bridge/types';
 import type { MethodsProxy } from '@/utils/methodsProxy';
 import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
@@ -9,7 +9,8 @@ import type { RepositoryProxyDescriptor } from '@/utils/repositoryProxy';
 export const traverseMenuImpl =
   (_bridge: MethodsProxy<BridgeMethodsMain>): BridgeMethodsRenderer['traverseMenu'] =>
   ({ descriptor }) => {
-    const menuModel = applyDescriptor<Gio.MenuModel>(descriptor, repositoryImpl);
+    const [, ...path] = descriptor;
+    const menuModel = applyDescriptor<Gio.MenuModel>(path, repositoryImpl);
     if (!menuModel) {
       return [];
     }
@@ -33,15 +34,15 @@ export const traverseMenuImpl =
           : ['item', null];
 
       const label = defaultString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_LABEL, null)?.unpack()
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_LABEL, null)?.unpack(),
       );
 
       const action = nullableString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_ACTION, null)?.unpack()
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_ACTION, null)?.unpack(),
       );
 
       const actionTarget = nullableString.parse(
-        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_TARGET, null)?.unpack()
+        menuModel.get_item_attribute_value(i, Gio.MENU_ATTRIBUTE_TARGET, null)?.unpack(),
       );
 
       return { kind, label, action, actionTarget, children };
