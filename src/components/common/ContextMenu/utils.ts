@@ -30,7 +30,11 @@ export const repositoryContextMenuModel = (
     const nodes = await bridgeRenderer.traverseMenu({ descriptor });
     return nodes.map(node => ({
       ...node,
-      action: { action: node.action, actionTarget: node.actionTarget },
+      label: node.label.replace(
+        /__|_(.)/gs,
+        (_, character: string | undefined) => character ?? '_',
+      ),
+      action: node.action ? { action: node.action, actionTarget: node.actionTarget } : null,
     }));
   },
   action: onAction,

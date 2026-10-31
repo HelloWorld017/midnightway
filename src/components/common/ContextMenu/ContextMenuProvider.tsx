@@ -3,12 +3,19 @@ import { useLatestRef } from '@/hooks/useLatestRef';
 import { buildContext } from '@/utils/context';
 import { isPromise } from '@/utils/promise';
 import { useMemo, useReducer, useRef, useState } from 'react';
-import type { ContextMenuModel, ContextMenuNode, ContextMenuToken } from './types';
+import type {
+  ContextMenuAction,
+  ContextMenuModel,
+  ContextMenuNode,
+  ContextMenuToken,
+} from './types';
 
 type MenuModel = ContextMenuModel<Any, Any> | null;
 
 export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => {
   const [menuModel, updateMenuModel] = useState<MenuModel>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [session, setSession] = useState(0);
   const menuModelRef = useLatestRef(menuModel);
   const requestId = useRef(0);
   const [, refresh] = useReducer(value => value + 1, 0);
@@ -24,6 +31,8 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
 
   const setMenuModel = useLatestCallback((model: PossiblyPromise<MenuModel>) => {
     const id = ++requestId.current;
+    setSession(id);
+    setIsOpen(model !== null);
     menuModelRef.current = null;
 
     if (isPromise(model)) {
@@ -33,17 +42,26 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
           if (requestId.current === id) {
             menuModelRef.current = next;
             updateMenuModel(next);
+            setIsOpen(next !== null);
           }
         })
         .catch(error => {
           if (requestId.current === id) {
             console.error('Failed to open context menu', error);
+            setIsOpen(false);
           }
         });
     } else {
       menuModelRef.current = model;
       updateMenuModel(model);
     }
+  });
+
+  const close = useLatestCallback(() => setMenuModel(null));
+  const activate = useLatestCallback((action: ContextMenuAction) => {
+    const model = menuModelRef.current;
+    close();
+    model?.action(action);
   });
 
   const expandToken = useLatestCallback((token: ContextMenuToken): ContextMenuNode[] | null => {
@@ -93,6 +111,10 @@ export const [ContextMenuProvider, useContextMenuProvider] = buildContext(() => 
 
   return {
     root: menuModel?.root as ContextMenuToken | undefined,
+    isOpen,
+    session,
+    close,
+    activate,
     expandToken,
     setMenuModel,
     position,

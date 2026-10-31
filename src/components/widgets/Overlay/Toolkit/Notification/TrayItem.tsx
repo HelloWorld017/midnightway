@@ -60,10 +60,11 @@ export const TrayItem = ({ id }: { id: string }) => {
             bridgeRenderer
               .invokeGAction({
                 descriptor: getRepositoryProxyDescriptor(tray.actionGroup),
-                action,
+                // GMenu uses a namespace; Gio.ActionGroup expects the local action name.
+                action: action.replace(/^dbusmenu\./, ''),
                 actionTarget,
               })
-              .catch(() => {});
+              .catch(error => console.error('Failed to activate tray menu action', error));
           }),
         ),
       );
