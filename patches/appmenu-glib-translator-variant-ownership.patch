@@ -1,0 +1,82 @@
+Fix ownership of menu attribute variants before exposing them to GMenuModel
+consumers. A hash table does not sink floating references; GJS can consume
+those references and later free variants still owned by the menu.
+
+--- a/item.c
++++ b/item.c
+@@ -101,4 +101,4 @@
+ 				g_hash_table_insert(item->attrs,
+ 				                    g_strdup(G_MENU_ATTRIBUTE_SUBMENU_ACTION),
+-				                    g_variant_new_string(name));
++				                    g_variant_ref_sink(g_variant_new_string(name)));
+ 				action_creator_found = true;
+@@ -117,4 +117,4 @@
+ 				g_hash_table_insert(item->attrs,
+ 				                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-				                    g_variant_new_string(name));
++				                    g_variant_ref_sink(g_variant_new_string(name)));
+ 				action_creator_found = true;
+@@ -127,4 +127,4 @@
+ 				g_hash_table_insert(item->attrs,
+ 				                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-				                    g_variant_new_string(name));
++				                    g_variant_ref_sink(g_variant_new_string(name)));
+ 				GVariant *vstr =
+@@ -154,4 +154,4 @@
+ 				g_hash_table_insert(item->attrs,
+ 				                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-				                    g_variant_new_string(name));
++				                    g_variant_ref_sink(g_variant_new_string(name)));
+ 				action_creator_found = true;
+@@ -161,4 +161,4 @@
+ 		{
+ 			item->action_type = DBUS_MENU_ACTION_SECTION;
+-			g_hash_table_insert(item->attrs, g_strdup(G_MENU_ATTRIBUTE_LABEL), value);
++			g_hash_table_insert(item->attrs, g_strdup(G_MENU_ATTRIBUTE_LABEL), g_variant_ref(value));
+ 			action_creator_found = true;
+@@ -172,4 +172,4 @@
+ 			g_hash_table_insert(item->attrs,
+ 			                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-			                    g_variant_new_string(name));
++			                    g_variant_ref_sink(g_variant_new_string(name)));
+ 			action_creator_found = true;
+@@ -180,4 +180,4 @@
+ 		g_hash_table_insert(item->attrs,
+ 		                    g_strdup(G_MENU_ATTRIBUTE_LABEL),
+-		                    g_variant_new_string(""));
++		                    g_variant_ref_sink(g_variant_new_string("")));
+ 	dbus_menu_item_update_props(item, props);
+@@ -302,5 +302,5 @@
+ 				g_hash_table_insert(item->attrs,
+ 				                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-				                    g_variant_new_string(
+-				                        DBUS_MENU_DISABLED_ACTION));
++				                    g_variant_ref_sink(g_variant_new_string(
++				                        DBUS_MENU_DISABLED_ACTION)));
+ 			}
+@@ -486,4 +486,4 @@
+ 					g_hash_table_insert(item->attrs,
+ 					                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-					                    g_variant_new_string(name));
++					                    g_variant_ref_sink(g_variant_new_string(name)));
+ 					properties_is_updated = true;
+@@ -500,9 +500,9 @@
+ 					g_hash_table_insert(item->attrs,
+ 					                    g_strdup(G_MENU_ATTRIBUTE_HIDDEN_WHEN),
+-					                    g_variant_new_string(
+-					                        G_MENU_HIDDEN_WHEN_ACTION_MISSING));
++					                    g_variant_ref_sink(g_variant_new_string(
++					                        G_MENU_HIDDEN_WHEN_ACTION_MISSING)));
+ 					g_hash_table_insert(item->attrs,
+ 					                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-					                    g_variant_new_string(
+-					                        DBUS_MENU_DISABLED_ACTION));
++					                    g_variant_ref_sink(g_variant_new_string(
++					                        DBUS_MENU_DISABLED_ACTION)));
+ 					properties_is_updated = true;
+@@ -591,4 +591,4 @@
+ 			g_hash_table_insert(item->attrs,
+ 			                    g_strdup(G_MENU_ATTRIBUTE_ACTION),
+-			                    g_variant_new_string(name));
++			                    g_variant_ref_sink(g_variant_new_string(name)));
+ 			properties_is_updated = true;

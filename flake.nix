@@ -43,6 +43,18 @@
         '';
       });
 
+      astalPkgsTray = astalPkgs.tray.overrideAttrs (old: {
+        propagatedBuildInputs = map (dep:
+          if (dep.pname or "") == "appmenu-glib-translator" then
+            dep.overrideAttrs (translator: {
+              patches = (translator.patches or []) ++ [
+                ./patches/appmenu-glib-translator-variant-ownership.patch
+              ];
+            })
+          else dep
+        ) old.propagatedBuildInputs;
+      });
+
       deps = [
         astalPkgs.astal4
         astalPkgs.battery
@@ -55,7 +67,7 @@
             ./patches/astal-notifd-images.patch
           ];
         }))
-        astalPkgs.tray
+        astalPkgsTray
         astalPkgs.wireplumber
         pkgs.glib
         pkgs.glib-networking
