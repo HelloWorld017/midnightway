@@ -108,7 +108,7 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
                 }
               }}
             >
-              <NotificationItem item={item} />
+              <NotificationItem item={item} compact />
             </div>
           </animated.div>
         ))}

@@ -92,6 +92,14 @@ export const descriptionStyle = (theme: Theme) => css`
   white-space: pre-line;
 `;
 
+export const lineClampStyle = (lines: number) => css`
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${lines};
+  max-height: ${lines}lh;
+  overflow: hidden;
+`;
+
 export const imageStyle = css`
   flex: 0 0 auto;
   border-radius: 1rem;
