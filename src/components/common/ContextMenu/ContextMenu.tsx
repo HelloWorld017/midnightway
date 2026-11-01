@@ -1,4 +1,5 @@
 import { useRootProvider } from '@/components/common/RootProvider';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { match } from 'ts-pattern';
@@ -270,7 +271,7 @@ const ContextMenuRoot = () => {
   const session = useContextMenuProvider(state => state.session);
   const close = useContextMenuProvider(state => state.close);
   const position = useContextMenuProvider(state => state.position);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useClickOutside<HTMLDivElement>({ isActive: isOpen, onClickOutside: close });
 
   useLayoutEffect(() => {
     if (!isOpen) {
@@ -279,12 +280,6 @@ const ContextMenuRoot = () => {
 
     const menuRoot = rootRef.current;
     const previousFocus = ownerDocument.activeElement;
-    const onPointerDown = (event: PointerEvent) => {
-      if (!menuRoot?.contains(event.target as Node)) {
-        close();
-      }
-    };
-
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape' || event.key === 'Tab') {
         if (event.key === 'Escape') {
@@ -302,7 +297,6 @@ const ContextMenuRoot = () => {
       }
     };
 
-    ownerDocument.addEventListener('pointerdown', onPointerDown, true);
     ownerDocument.addEventListener('keydown', onKeyDown, true);
     ownerDocument.addEventListener('scroll', onScroll, true);
     ownerWindow.addEventListener('blur', close);
@@ -312,7 +306,6 @@ const ContextMenuRoot = () => {
       const hadFocus =
         menuRoot?.contains(ownerDocument.activeElement) ||
         ownerDocument.activeElement === ownerDocument.body;
-      ownerDocument.removeEventListener('pointerdown', onPointerDown, true);
       ownerDocument.removeEventListener('keydown', onKeyDown, true);
       ownerDocument.removeEventListener('scroll', onScroll, true);
       ownerWindow.removeEventListener('blur', close);
@@ -326,7 +319,7 @@ const ContextMenuRoot = () => {
         previousFocus.focus({ preventScroll: true });
       }
     };
-  }, [isOpen, session, close, ownerDocument, ownerWindow]);
+  }, [isOpen, session, close, ownerDocument, ownerWindow, rootRef]);
 
   return (
     <>

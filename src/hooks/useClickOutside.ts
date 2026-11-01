@@ -5,36 +5,32 @@ import { useLatestCallback } from './useLatestCallback';
 type UseClickOutsideParams = {
   isActive: boolean;
   onClickOutside: () => void;
-  targetWindow?: Window | null;
 };
 
 export const useClickOutside = <T extends HTMLElement>({
   isActive,
   onClickOutside,
-  targetWindow,
 }: UseClickOutsideParams) => {
   const { window } = useRootProvider();
-  const resolvedWindow = targetWindow === undefined ? window : targetWindow;
   const excludeRef = useRef<T | null>(null);
   const onClickOutsideLatest = useLatestCallback(onClickOutside);
 
   useEffect(() => {
     if (isActive) {
-      const onHandle = (e: MouseEvent) => {
-        if (excludeRef.current?.contains(e.currentTarget as HTMLElement)) {
+      const onHandle = (event: PointerEvent) => {
+        if (event.target instanceof window.Node && excludeRef.current?.contains(event.target)) {
           return;
         }
 
-        e.preventDefault();
         onClickOutsideLatest();
       };
 
-      resolvedWindow?.addEventListener('click', onHandle, { capture: true });
-      return () => resolvedWindow?.removeEventListener('click', onHandle, { capture: true });
+      window.addEventListener('pointerdown', onHandle, { capture: true });
+      return () => window.removeEventListener('pointerdown', onHandle, { capture: true });
     }
 
     return undefined;
-  }, [resolvedWindow, isActive, onClickOutsideLatest]);
+  }, [window, isActive, onClickOutsideLatest]);
 
   return excludeRef;
 };

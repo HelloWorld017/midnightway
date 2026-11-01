@@ -84,6 +84,35 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
     overlayWindowRef(window);
   };
 
+  const updateOverlayInputRegion = () => {
+    const window = overlayWindowRef.current;
+    const hasToolkit = repositoryImpl.overlay.overlayItems.some(item => item.kind === 'toolkit');
+    window?.set_keymode(hasToolkit ? Keymode.ON_DEMAND : Keymode.NONE);
+
+    const surface = window?.get_surface();
+    if (!surface) {
+      return;
+    }
+
+    if (hasToolkit) {
+      surface.set_input_region(null);
+      return;
+    }
+
+    const region = new Cairo.Region();
+    const bounds = repositoryImpl.overlay.notificationBubblesBounds;
+    if (bounds && bounds.width > 0 && bounds.height > 0) {
+      region.unionRectangle({
+        x: Math.floor(bounds.x),
+        y: Math.floor(bounds.y),
+        width: Math.ceil(bounds.width),
+        height: Math.ceil(bounds.height),
+      });
+    }
+
+    surface.set_input_region(region);
+  };
+
   const bridge: Required<MdWebViewProps>['bridge'] = {};
   const updateOverlay = () => {
     const items = repositoryImpl.overlay.overlayItems;
@@ -106,8 +135,18 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
         },
       });
     }
+    updateOverlayInputRegion();
   };
+
   onCleanup(subscribeProperty(repositoryImpl.overlay, 'overlayItems', updateOverlay));
+  onCleanup(
+    subscribeProperty(
+      repositoryImpl.overlay,
+      'notificationBubblesBounds',
+      updateOverlayInputRegion,
+    ),
+  );
+
   onMount(updateOverlay);
 
   return [
@@ -155,6 +194,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       anchor={WindowAnchor.LEFT | WindowAnchor.RIGHT | WindowAnchor.TOP | WindowAnchor.BOTTOM}
       application={app}
       cssClasses={[transparentStyle]}
+      onRealize={updateOverlayInputRegion}
       $={setupOverlayWindow}
     ></window>,
   ] as Astal.Window[];
