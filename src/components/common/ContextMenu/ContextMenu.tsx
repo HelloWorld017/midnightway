@@ -1,5 +1,7 @@
+import { useRootProvider } from '@/components/common/RootProvider';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { match } from 'ts-pattern';
 import * as styles from './ContextMenu.css';
 import { ContextMenuProvider, useContextMenuProvider } from './ContextMenuProvider';
 import type { ContextMenuNode, ContextMenuToken } from './types';
@@ -151,6 +153,7 @@ const ContextMenuFrame = ({
   focusOnOpen = false,
   onBack,
 }: ContextMenuFrameProps) => {
+  const { window: ownerWindow, document: ownerDocument } = useRootProvider();
   const frameRef = useRef<HTMLDivElement>(null);
   const [placement, setPlacement] = useState<{ left: number; top: number } | null>(null);
   const isPositioned = placement !== null;
@@ -160,39 +163,45 @@ const ContextMenuFrame = ({
     if (!frame) {
       return undefined;
     }
-    const ownerDocument = frame.ownerDocument;
-    const ownerWindow = ownerDocument.defaultView;
+
     const place = () => {
       const margin = 8;
       const { clientWidth: width, clientHeight: height } = ownerDocument.documentElement;
       const rect = frame.getBoundingClientRect();
       const anchor = anchorRef?.current?.getBoundingClientRect();
+
       let left = anchor ? anchor.right + 4 : (position?.x ?? margin);
       let top = anchor ? anchor.top - 5 : (position?.y ?? margin);
+
       if (left + rect.width > width - margin) {
         left = anchor ? anchor.left - rect.width - 4 : left - rect.width;
       }
+
       top = Math.max(margin, Math.min(top, height - rect.height - margin));
       left = Math.max(margin, Math.min(left, width - rect.width - margin));
+
       setPlacement(previous =>
         previous?.left === left && previous.top === top ? previous : { left, top },
       );
     };
+
     place();
-    const observer = new ResizeObserver(place);
+
+    const observer = new ownerWindow.ResizeObserver(place);
     observer.observe(frame);
     if (anchorRef?.current) {
       observer.observe(anchorRef.current);
     }
-    ownerWindow?.addEventListener('resize', place);
-    // Submenus follow their trigger when the parent menu scrolls.
+
+    ownerWindow.addEventListener('resize', place);
     ownerDocument.addEventListener('scroll', place, true);
+
     return () => {
       observer.disconnect();
-      ownerWindow?.removeEventListener('resize', place);
+      ownerWindow.removeEventListener('resize', place);
       ownerDocument.removeEventListener('scroll', place, true);
     };
-  }, [position, anchorRef]);
+  }, [position, anchorRef, ownerDocument, ownerWindow]);
 
   useLayoutEffect(() => {
     if (focusOnOpen && isPositioned) {
@@ -201,36 +210,39 @@ const ContextMenuFrame = ({
   }, [focusOnOpen, isPositioned]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'Home', 'End'].includes(event.key)) {
+      return;
+    }
+
     if ((event.target as HTMLElement).closest('[role="menu"]') !== event.currentTarget) {
       return;
     }
-    if (event.key === 'ArrowLeft' && onBack) {
-      event.preventDefault();
-      event.stopPropagation();
-      onBack();
-      return;
-    }
-    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-      return;
-    }
+
     event.preventDefault();
     event.stopPropagation();
-    const items = Array.from(
+
+    if (event.key === 'ArrowLeft') {
+      onBack?.();
+      return;
+    }
+
+    const ancestorItems = Array.from(
       event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)'),
-    ).filter(item => item.closest('[role="menu"]') === event.currentTarget);
-    const index = items.indexOf(
-      event.currentTarget.ownerDocument.activeElement as HTMLButtonElement,
     );
-    const next =
-      event.key === 'Home'
-        ? 0
-        : event.key === 'End'
-          ? items.length - 1
-          : event.key === 'ArrowDown'
-            ? (index + 1) % items.length
-            : index < 0
-              ? items.length - 1
-              : (index - 1 + items.length) % items.length;
+
+    const items = ancestorItems.filter(
+      item => item.closest('[role="menu"]') === event.currentTarget,
+    );
+
+    const index = items.indexOf(ownerDocument.activeElement as HTMLButtonElement);
+
+    const next = match(event.key)
+      .with('Home', () => 0)
+      .with('End', () => items.length - 1)
+      .with('ArrowDown', () => (index + 1) % items.length)
+      .with('ArrowUp', () => (index - 1 + items.length) % items.length)
+      .otherwise(() => index);
+
     items[next]?.focus();
   };
 
@@ -252,20 +264,19 @@ const ContextMenuFrame = ({
 };
 
 const ContextMenuRoot = () => {
+  const { window: ownerWindow, document: ownerDocument } = useRootProvider();
   const root = useContextMenuProvider(state => state.root);
   const isOpen = useContextMenuProvider(state => state.isOpen);
   const session = useContextMenuProvider(state => state.session);
   const close = useContextMenuProvider(state => state.close);
   const position = useContextMenuProvider(state => state.position);
-  const [host, setHost] = useState<HTMLSpanElement | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!isOpen || !host) {
+    if (!isOpen) {
       return undefined;
     }
-    const ownerDocument = host.ownerDocument;
-    const ownerWindow = ownerDocument.defaultView;
+
     const menuRoot = rootRef.current;
     const previousFocus = ownerDocument.activeElement;
     const onPointerDown = (event: PointerEvent) => {
@@ -273,29 +284,30 @@ const ContextMenuRoot = () => {
         close();
       }
     };
+
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape' || event.key === 'Tab') {
         if (event.key === 'Escape') {
           event.preventDefault();
           event.stopPropagation();
         }
+
         close();
       }
     };
+
     const onScroll = (event: Event) => {
-      if (
-        !ownerWindow ||
-        !(event.target instanceof ownerWindow.Node) ||
-        !menuRoot?.contains(event.target)
-      ) {
+      if (!(event.target instanceof ownerWindow.Node) || !menuRoot?.contains(event.target)) {
         close();
       }
     };
+
     ownerDocument.addEventListener('pointerdown', onPointerDown, true);
     ownerDocument.addEventListener('keydown', onKeyDown, true);
     ownerDocument.addEventListener('scroll', onScroll, true);
-    ownerWindow?.addEventListener('blur', close);
-    ownerWindow?.addEventListener('resize', close);
+    ownerWindow.addEventListener('blur', close);
+    ownerWindow.addEventListener('resize', close);
+
     return () => {
       const hadFocus =
         menuRoot?.contains(ownerDocument.activeElement) ||
@@ -303,24 +315,22 @@ const ContextMenuRoot = () => {
       ownerDocument.removeEventListener('pointerdown', onPointerDown, true);
       ownerDocument.removeEventListener('keydown', onKeyDown, true);
       ownerDocument.removeEventListener('scroll', onScroll, true);
-      ownerWindow?.removeEventListener('blur', close);
-      ownerWindow?.removeEventListener('resize', close);
+      ownerWindow.removeEventListener('blur', close);
+      ownerWindow.removeEventListener('resize', close);
+
       if (
         hadFocus &&
-        ownerWindow &&
         previousFocus instanceof ownerWindow.HTMLElement &&
         previousFocus.isConnected
       ) {
         previousFocus.focus({ preventScroll: true });
       }
     };
-  }, [isOpen, session, close, host]);
+  }, [isOpen, session, close, ownerDocument, ownerWindow]);
 
   return (
     <>
-      <span hidden ref={setHost} />
       {isOpen &&
-        host &&
         createPortal(
           <div ref={rootRef}>
             <ContextMenuFrame key={session} position={position} focusOnOpen>
@@ -329,7 +339,7 @@ const ContextMenuRoot = () => {
               </Suspense>
             </ContextMenuFrame>
           </div>,
-          host.ownerDocument.body,
+          ownerDocument.body,
         )}
     </>
   );

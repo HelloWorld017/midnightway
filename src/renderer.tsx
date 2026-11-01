@@ -4,6 +4,7 @@ import { createI18nResource, I18nProvider } from '@simplei18n/core/react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
 import { bridgeRenderer, registerImplementations } from './bridge/renderer';
+import { RootProvider } from './components/common/RootProvider';
 import { ThemeProvider } from './components/common/ThemeProvider';
 import { Overlay } from './components/widgets/Overlay';
 import { StatusBar } from './components/widgets/StatusBar';
@@ -40,7 +41,11 @@ const rootInit = await bridgeRenderer.initParams();
 initConfigByValue(rootInit.config);
 
 // Run
-createRoot(document.querySelector('main')!).render(<App init={rootInit} />);
+createRoot(document.querySelector('main')!).render(
+  <RootProvider window={window}>
+    <App init={rootInit} />
+  </RootProvider>,
+);
 
 // Register Zygote
 // > To reduce parse overhead, as it is the critical path when creating overlay.
@@ -61,7 +66,9 @@ registerImplementations({
     children.set(id, root);
     root.render(
       <CacheProvider value={cache}>
-        <App init={initParams} />
+        <RootProvider window={childWindow}>
+          <App init={initParams} />
+        </RootProvider>
       </CacheProvider>,
     );
   },

@@ -1,3 +1,4 @@
+import { useRootProvider } from '@/components/common/RootProvider';
 import { useEffect, useRef } from 'react';
 import { useLatestCallback } from './useLatestCallback';
 
@@ -10,8 +11,10 @@ type UseClickOutsideParams = {
 export const useClickOutside = <T extends HTMLElement>({
   isActive,
   onClickOutside,
-  targetWindow = window,
+  targetWindow,
 }: UseClickOutsideParams) => {
+  const { window } = useRootProvider();
+  const resolvedWindow = targetWindow === undefined ? window : targetWindow;
   const excludeRef = useRef<T | null>(null);
   const onClickOutsideLatest = useLatestCallback(onClickOutside);
 
@@ -26,12 +29,12 @@ export const useClickOutside = <T extends HTMLElement>({
         onClickOutsideLatest();
       };
 
-      targetWindow?.addEventListener('click', onHandle, { capture: true });
-      return () => targetWindow?.removeEventListener('click', onHandle, { capture: true });
+      resolvedWindow?.addEventListener('click', onHandle, { capture: true });
+      return () => resolvedWindow?.removeEventListener('click', onHandle, { capture: true });
     }
 
     return undefined;
-  }, [targetWindow, isActive, onClickOutsideLatest]);
+  }, [resolvedWindow, isActive, onClickOutsideLatest]);
 
   return excludeRef;
 };
