@@ -65,7 +65,7 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
   return (
     <SurfaceProvider surface="floating">
       <ContextMenu>
-        <RenderArea role="presentation" blur={false} css={styles.backdropStyle} onClick={onClose} />
+        <RenderArea kind="input" role="presentation" css={styles.backdropStyle} onClick={onClose} />
         <RenderArea
           radius="3rem"
           css={styles.toolkitStyle(state.position.anchor)}

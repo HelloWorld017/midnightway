@@ -10,6 +10,8 @@ import { useNotifications } from '../Toolkit/Notification/hooks/useNotifications
 import * as styles from './NotificationBubbles.css';
 import type { NotificationBubblesState } from '@/repository/overlay';
 
+const AnimatedRenderArea = animated(RenderArea);
+
 export const NotificationBubbles = ({ state }: { state: NotificationBubblesState }) => {
   const notifications = useNotifications();
   const invoke = useInvokeRepo();
@@ -56,9 +58,14 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
 
   return (
     <SurfaceProvider surface="floating">
-      <div css={styles.containerStyle} aria-live="polite" aria-relevant="additions">
+      <RenderArea
+        kind="clip"
+        css={styles.containerStyle}
+        aria-live="polite"
+        aria-relevant="additions"
+      >
         {transitions((style, item) => (
-          <animated.div style={style} css={styles.transitionStyle}>
+          <AnimatedRenderArea kind="clip" style={style} css={styles.transitionStyle}>
             <div
               ref={refCallback(item.id)}
               css={styles.bubbleStyle}
@@ -81,9 +88,9 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
                 <NotificationItem css={styles.bubbleItemStyle} item={item} compact />
               </RenderArea>
             </div>
-          </animated.div>
+          </AnimatedRenderArea>
         ))}
-      </div>
+      </RenderArea>
     </SurfaceProvider>
   );
 };

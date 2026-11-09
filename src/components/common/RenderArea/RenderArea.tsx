@@ -1,58 +1,68 @@
 import { bridgeRenderer } from '@/bridge/renderer';
 import { useRootProvider } from '@/components/common/RootProvider';
-import { createContext, useContext, useLayoutEffect, useRef } from 'react';
+import { createContext, useContext, useLayoutEffect, useMemo, useRef } from 'react';
 import type { RenderArea as RenderAreaBounds } from '@/bridge/types';
-import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from 'react';
+import type { CSSProperties, HTMLAttributes, ReactNode, Ref, RefObject } from 'react';
 
-type AreaEntry = { element: HTMLDivElement; input: boolean; blur: boolean };
+type RenderAreaKind = 'clip' | 'input' | 'default';
+type AreaEntry = {
+  element: RefObject<HTMLDivElement | null>;
+  parent: AreaEntry | null;
+  kind: RenderAreaKind;
+};
 type AreaRegistry = Set<AreaEntry>;
-const RenderAreaContext = createContext<AreaRegistry | null>(null);
+
+const RegistryContext = createContext<AreaRegistry | null>(null);
+const ClipContext = createContext<AreaEntry | null>(null);
+
+// Cairo regions use integers; include pixels whose centers fall inside the area.
+const pixelBoundary = (coordinate: number) => Math.ceil(coordinate - 0.5);
 
 const measure = (entry: AreaEntry, ownerWindow: Window): RenderAreaBounds | null => {
-  const { element, input, blur } = entry;
-  const rect = element.getBoundingClientRect();
-  if ((!input && !blur) || rect.width <= 0 || rect.height <= 0) {
+  const element = entry.element.current;
+  if (!element || entry.kind === 'clip') {
     return null;
   }
 
-  let left = 0;
-  let top = 0;
-  let right = ownerWindow.innerWidth;
-  let bottom = ownerWindow.innerHeight;
-  for (let node: HTMLElement | null = element; node; node = node.parentElement) {
-    const style = ownerWindow.getComputedStyle(node);
-    if (style.display === 'none' || style.visibility === 'hidden') {
+  const rect = element.getBoundingClientRect();
+  if (
+    rect.width <= 0 ||
+    rect.height <= 0 ||
+    ownerWindow.getComputedStyle(element).visibility === 'hidden'
+  ) {
+    return null;
+  }
+
+  let left = Math.max(0, rect.left);
+  let top = Math.max(0, rect.top);
+  let right = Math.min(ownerWindow.innerWidth, rect.right);
+  let bottom = Math.min(ownerWindow.innerHeight, rect.bottom);
+
+  for (let parent = entry.parent; parent; parent = parent.parent) {
+    const clipElement = parent.element.current;
+    if (!clipElement) {
       return null;
     }
-    if (node === element) {
-      continue;
-    }
-    const bounds = node.getBoundingClientRect();
-    const scaleX = node.offsetWidth ? bounds.width / node.offsetWidth : 1;
-    const scaleY = node.offsetHeight ? bounds.height / node.offsetHeight : 1;
-    if (['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowX)) {
-      left = Math.max(left, bounds.left + node.clientLeft * scaleX);
-      right = Math.min(right, bounds.left + (node.clientLeft + node.clientWidth) * scaleX);
-    }
-    if (['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowY)) {
-      top = Math.max(top, bounds.top + node.clientTop * scaleY);
-      bottom = Math.min(bottom, bounds.top + (node.clientTop + node.clientHeight) * scaleY);
-    }
+
+    const clip = clipElement.getBoundingClientRect();
+    left = Math.max(left, clip.left);
+    top = Math.max(top, clip.top);
+    right = Math.min(right, clip.right);
+    bottom = Math.min(bottom, clip.bottom);
   }
-  if (
-    right <= left ||
-    bottom <= top ||
-    rect.right <= left ||
-    rect.left >= right ||
-    rect.bottom <= top ||
-    rect.top >= bottom
-  ) {
+
+  const x = pixelBoundary(left);
+  const y = pixelBoundary(top);
+  const width = pixelBoundary(right) - x;
+  const height = pixelBoundary(bottom) - y;
+  if (width <= 0 || height <= 0) {
     return null;
   }
 
   const radius = ownerWindow.getComputedStyle(element).borderTopLeftRadius.split(' ');
   const resolveRadius = (value: string, size: number, scale: number) =>
     value.endsWith('%') ? (parseFloat(value) / 100) * size : (parseFloat(value) || 0) * scale;
+
   const radiusX = Math.min(
     rect.width / 2,
     resolveRadius(
@@ -61,6 +71,7 @@ const measure = (entry: AreaEntry, ownerWindow: Window): RenderAreaBounds | null
       element.offsetWidth ? rect.width / element.offsetWidth : 1,
     ),
   );
+
   const radiusY = Math.min(
     rect.height / 2,
     resolveRadius(
@@ -70,17 +81,7 @@ const measure = (entry: AreaEntry, ownerWindow: Window): RenderAreaBounds | null
     ),
   );
 
-  return {
-    x: rect.x,
-    y: rect.y,
-    width: rect.width,
-    height: rect.height,
-    radiusX,
-    radiusY,
-    clip: { x: left, y: top, width: right - left, height: bottom - top },
-    input,
-    blur,
-  };
+  return { x, y, width, height, radiusX, radiusY, input: true, blur: entry.kind === 'default' };
 };
 
 export const RenderAreaProvider = ({
@@ -100,68 +101,84 @@ export const RenderAreaProvider = ({
       const areas = Array.from(registry, entry => measure(entry, ownerWindow)).filter(
         area => area !== null,
       );
+
       const serialized = JSON.stringify(areas);
       if (serialized !== previous) {
         previous = serialized;
         void bridgeRenderer.setRenderAreas({ surface, areas });
       }
+
       frame = ownerWindow.requestAnimationFrame(update);
     };
+
     update();
+
     return () => {
       ownerWindow.cancelAnimationFrame(frame);
       void bridgeRenderer.setRenderAreas({ surface, areas: [] });
     };
   }, [ownerWindow, registry, surface]);
 
-  return <RenderAreaContext value={registry}>{children}</RenderAreaContext>;
+  return (
+    <RegistryContext value={registry}>
+      <ClipContext value={null}>{children}</ClipContext>
+    </RegistryContext>
+  );
 };
 
 type RenderAreaProps = HTMLAttributes<HTMLDivElement> & {
+  kind?: RenderAreaKind;
+  root?: boolean;
   radius?: CSSProperties['borderRadius'];
-  input?: boolean;
-  blur?: boolean;
   ref?: Ref<HTMLDivElement>;
 };
 
 export const RenderArea = ({
+  kind = 'default',
+  root = false,
   radius,
-  input = true,
-  blur = true,
   style,
   ref,
+  children,
   ...props
 }: RenderAreaProps) => {
-  const registry = useContext(RenderAreaContext);
-  const elementRef = useRef<HTMLDivElement>(null);
-  if (!registry) {
-    throw new Error('RenderArea requires RenderAreaProvider');
-  }
+  const registry = useContext(RegistryContext);
+  const parent = useContext(ClipContext);
+  const element = useRef<HTMLDivElement>(null);
+  const entry = useMemo<AreaEntry>(
+    () => ({ element, parent: root ? null : parent, kind }),
+    [parent, root, kind],
+  );
 
   useLayoutEffect(() => {
-    const element = elementRef.current;
-    if (!element) {
+    if (!registry) {
       return undefined;
     }
-    const entry = { element, input, blur };
+
     registry.add(entry);
     return () => {
       registry.delete(entry);
     };
-  }, [registry, input, blur]);
+  }, [registry, entry]);
+
+  if (!registry) {
+    throw new Error('RenderArea requires RenderAreaProvider');
+  }
 
   return (
     <div
       {...props}
-      ref={element => {
-        elementRef.current = element;
+      ref={node => {
+        element.current = node;
         if (typeof ref === 'function') {
-          ref(element);
+          ref(node);
         } else if (ref) {
-          ref.current = element;
+          ref.current = node;
         }
       }}
       style={{ ...style, ...(radius !== undefined ? { borderRadius: radius } : {}) }}
-    />
+    >
+      <ClipContext value={entry}>{children}</ClipContext>
+    </div>
   );
 };

@@ -25,7 +25,7 @@ export const Clock = ({ isIdle }: { isIdle: boolean }) => {
   };
 
   return (
-    <RenderArea css={styles.clockStyle(isIdle)} input={isIdle} blur={false}>
+    <RenderArea css={styles.clockStyle(isIdle)} kind={isIdle ? 'input' : 'clip'}>
       <button css={styles.clockButtonStyle} type="button" ref={buttonRef} onClick={openCalendar}>
         <span css={styles.clockTextStyle(true)}>{time}</span>
         <span css={styles.clockDividerStyle} />

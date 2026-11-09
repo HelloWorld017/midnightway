@@ -12,8 +12,7 @@ type LeftBarProps = { isIdle: boolean } & ComponentProps<typeof BarWorkspace> &
 export const LeftBar = (props: LeftBarProps) => (
   <RenderArea
     css={commonStyles.barStyle(props.isIdle)}
-    input={props.isIdle}
-    blur={false}
+    kind={props.isIdle ? 'input' : 'clip'}
     radius="1.5rem"
   >
     <BarLauncher />

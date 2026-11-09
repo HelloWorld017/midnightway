@@ -250,9 +250,10 @@ const ContextMenuFrame = ({
 
   return (
     <RenderArea
+      root
+      kind="input"
       ref={frameRef}
       radius="0.7rem"
-      blur={false}
       css={styles.frameStyle}
       style={{ ...placement, visibility: placement ? 'visible' : 'hidden' }}
       role="menu"

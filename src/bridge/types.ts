@@ -27,7 +27,6 @@ export type RenderArea = {
   height: number;
   radiusX: number;
   radiusY: number;
-  clip: { x: number; y: number; width: number; height: number };
   input: boolean;
   blur: boolean;
 };

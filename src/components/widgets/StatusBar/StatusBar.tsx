@@ -50,14 +50,13 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
       <SurfaceProvider surface={surface}>
         {config().bar.autohide && (
           <RenderArea
-            blur={false}
+            kind="input"
             style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: 1 }}
           />
         )}
         <RenderArea
           css={styles.statusBarStyle(isIdle, isBarHidden)}
-          input={!isIdle && !isBarHidden}
-          blur={!isIdle && !isBarHidden}
+          kind={!isIdle && !isBarHidden ? 'default' : 'clip'}
         >
           <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
           <Clock isIdle={isIdle} />

@@ -12,7 +12,6 @@ import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
 import { MdWebView } from './MdWebView';
-import { inputRectanglesForArea } from './renderAreaGeometry';
 import type { MdWebViewProps } from './MdWebView';
 import type { BridgeMethodsMain, RenderArea } from '@/bridge/types';
 import type { Gdk } from 'ags/gtk4';
@@ -29,8 +28,8 @@ const transparentStyle = css`
 const inputRegionForAreas = (areas: RenderArea[]) => {
   const region = new Cairo.Region();
   for (const area of areas) {
-    for (const rectangle of inputRectanglesForArea(area)) {
-      region.unionRectangle(rectangle);
+    if (area.input) {
+      region.unionRectangle({ x: area.x, y: area.y, width: area.width, height: area.height });
     }
   }
   return region;

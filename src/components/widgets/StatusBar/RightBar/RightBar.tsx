@@ -10,8 +10,7 @@ type RightBarProps = { isIdle: boolean };
 export const RightBar = (props: RightBarProps) => (
   <RenderArea
     css={commonStyles.barStyle(props.isIdle)}
-    input={props.isIdle}
-    blur={false}
+    kind={props.isIdle ? 'input' : 'clip'}
     radius="1.5rem"
   >
     <BarTray />
