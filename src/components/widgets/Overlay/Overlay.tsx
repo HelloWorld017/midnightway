@@ -75,7 +75,7 @@ export const Overlay = () => {
         <animated.div style={style}>
           {match(item)
             .with({ kind: 'toolkit' }, toolkit => (
-              <Toolkit state={toolkit.state} isLeaving={(transition.phase as string) === 'leave'} />
+              <Toolkit popup={toolkit.popup} isLeaving={(transition.phase as string) === 'leave'} />
             ))
             .with({ kind: 'notificationBubbles' }, bubbles => (
               <NotificationBubbles state={bubbles.state} />

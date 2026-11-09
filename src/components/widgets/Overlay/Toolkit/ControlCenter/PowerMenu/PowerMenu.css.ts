@@ -14,7 +14,7 @@ export const backdropStyle = (theme: Theme) => css`
 
 export const powerButtonStyle = (theme: Theme) => css`
   display: flex;
-  padding: 1rem;
+  padding: 1.2rem 1rem;
   margin-top: auto;
   margin-left: auto;
   gap: 0.6rem;

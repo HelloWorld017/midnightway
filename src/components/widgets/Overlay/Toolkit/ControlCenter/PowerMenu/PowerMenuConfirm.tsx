@@ -17,9 +17,10 @@ defineI18n(
 type PowerMenuConfirmProps = {
   item: PowerMenuItem;
   onClose: () => void;
+  inline?: boolean;
 };
 
-export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
+export const PowerMenuConfirm = ({ item, onClose, inline = false }: PowerMenuConfirmProps) => {
   const hasConfirmedRef = useRef(false);
 
   const { t } = useI18n();
@@ -35,7 +36,10 @@ export const PowerMenuConfirm = ({ item, onClose }: PowerMenuConfirmProps) => {
   }, [state, itemRef, onClose]);
 
   return (
-    <label css={styles.labelStyle} style={{ '--percentage': `${(state / 105) * 100}%` }}>
+    <label
+      css={[styles.labelStyle, inline && styles.inlineStyle]}
+      style={{ '--percentage': `${(state / 105) * 100}%` }}
+    >
       <div css={styles.gradientStyle} />
       <div css={styles.sliderStyle}>
         <span css={styles.iconStyle}>{item.icon}</span>

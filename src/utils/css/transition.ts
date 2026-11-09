@@ -5,6 +5,7 @@ const TRANSITION_KEY = {
   'visibility': 'opacity',
   'opacity': 'opacity',
   'left': 'size',
+  'top': 'size',
   'width': 'size',
   'height': 'size',
   'padding': 'size',
@@ -18,6 +19,7 @@ const TRANSITION_KEY = {
   'background': 'background',
   'color': 'color',
   'border-color': 'color',
+  'border-radius': 'size',
 } satisfies Partial<Record<keyof CSS.PropertiesHyphen, keyof Theme['easings']>>;
 
 export const transition = (

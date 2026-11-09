@@ -1,6 +1,5 @@
 import { transition } from '@/utils/css/transition';
 import { css, keyframes } from '@emotion/react';
-import { match } from 'ts-pattern';
 import type { Theme } from '@emotion/react';
 
 const enterKeyframe = keyframes`
@@ -10,37 +9,31 @@ const enterKeyframe = keyframes`
 
 export const backdropStyle = (theme: Theme) => css`
   position: absolute;
-  inset: 0;
+  inset: 6rem 0 0;
   background: ${theme.colors.glass.bgBase};
 `;
 
-export const toolkitStyle = (anchor: 'left' | 'right' | 'center') => (theme: Theme) =>
-  css`
-    position: absolute;
-    top: 4rem;
-    width: 40rem;
-    height: 40rem;
-    overflow: hidden;
+export const toolkitStyle = (theme: Theme) => css`
+  position: absolute;
+  overflow: hidden;
+  background: ${theme.surface.bgBase};
+  transition: ${transition(theme, ['left', 'top', 'border-radius'])};
+  transform: translateX(-50%);
 
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 3rem;
-    background: ${theme.surface.bgBase};
-    transition: ${transition(theme, ['left', 'width'])};
+  animation-name: ${enterKeyframe};
+  animation-duration: ${theme.easings.opacity.duration}s;
+  animation-timing-function: ${theme.easings.opacity.easing};
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+`;
 
-    transform: ${match(anchor)
-      .with('left', () => 'translate(0)')
-      .with('center', () => 'translate(-50%)')
-      .with('right', () => 'translate(-100%)')
-      .exhaustive()};
-
-    animation-name: ${enterKeyframe};
-    animation-duration: ${theme.easings.opacity.duration}s;
-    animation-timing-function: ${theme.easings.opacity.easing};
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-  `;
+export const mainStyle = css`
+  width: min(40rem, calc(100vw - 2rem));
+  height: min(40rem, calc(100vh - 7rem));
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+`;
 
 export const asideStyle = (theme: Theme) => css`
   display: flex;
@@ -82,6 +75,10 @@ export const contentStyle = css`
   position: relative;
   flex: 1 1 0;
   min-width: 0;
+`;
+
+export const transitionContentStyle = css`
+  height: 100%;
 `;
 
 export const scrollerStyle = css`

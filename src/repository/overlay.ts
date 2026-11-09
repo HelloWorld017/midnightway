@@ -1,21 +1,31 @@
 import { asConnectable, writable } from '@/utils/binding';
-import { createComputed } from 'ags';
 import AstalNotifd from 'gi://AstalNotifd';
 import GLib from 'gi://GLib';
 
 export type OverlayItem =
-  | { kind: 'toolkit'; state: ToolkitState }
+  | { kind: 'toolkit'; popup: ToolkitPopup }
   | { kind: 'notificationBubbles'; state: NotificationBubblesState };
 
-export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'performance';
-export type ToolkitPosition = { x: number; anchor: 'left' | 'center' | 'right' };
-export type ToolkitState = { position: ToolkitPosition; kind: ToolkitKind };
+export type ToolkitKind = 'main' | 'sound' | 'tray' | 'notifications' | 'power-menu';
+export type ToolkitPopup = { kind: ToolkitKind; position: { x: number; y: number } };
 export type NotificationBubblesState = { ids: number[] };
 
 const BUBBLE_DURATION = 5000;
 
-const toolkitState = writable<ToolkitState | null>(null);
-const notificationBubblesState = writable<NotificationBubblesState | null>(null);
+const overlayItems = writable<OverlayItem[]>([]);
+
+const getBubbles = () =>
+  overlayItems.peek().find(item => item.kind === 'notificationBubbles')?.state ?? null;
+
+const setNotificationBubblesState = (state: NotificationBubblesState | null) => {
+  const items = overlayItems.peek().filter(item => item.kind !== 'notificationBubbles');
+  overlayItems.set(state ? [...items, { kind: 'notificationBubbles', state }] : items);
+};
+
+const setToolkitPopup = (popup: ToolkitPopup | null) => {
+  const items = overlayItems.peek().filter(item => item.kind !== 'toolkit');
+  overlayItems.set(popup ? [{ kind: 'toolkit', popup }, ...items] : items);
+};
 
 const notifd = AstalNotifd.get_default();
 notifd.ignore_timeout = true;
@@ -32,9 +42,9 @@ const pauseNotificationBubble = (id: number) => {
 
 const hideNotificationBubble = (id: number) => {
   pauseNotificationBubble(id);
-  const state = notificationBubblesState.peek();
+  const state = getBubbles();
   if (state?.ids.includes(id)) {
-    notificationBubblesState.set({ ids: state.ids.filter(current => current !== id) });
+    setNotificationBubblesState({ ids: state.ids.filter(current => current !== id) });
   }
 };
 
@@ -42,7 +52,7 @@ const resumeNotificationBubble = (id: number) => {
   pauseNotificationBubble(id);
   const notification = notifd.get_notification(id);
   if (
-    !notificationBubblesState.peek()?.ids.includes(id) ||
+    !getBubbles()?.ids.includes(id) ||
     !notification ||
     notification.urgency === AstalNotifd.Urgency.CRITICAL ||
     notification.expire_timeout === 0
@@ -62,39 +72,34 @@ const resumeNotificationBubble = (id: number) => {
 };
 
 notifd.connect('notified', (_source, id) => {
-  if (notifd.dont_disturb || toolkitState.peek()?.kind === 'notification') {
+  if (
+    notifd.dont_disturb ||
+    overlayItems.peek().some(item => item.kind === 'toolkit' && item.popup.kind === 'notifications')
+  ) {
     hideNotificationBubble(id);
     return;
   }
 
-  const ids = notificationBubblesState.peek()?.ids ?? [];
-  notificationBubblesState.set({ ids: [id, ...ids.filter(current => current !== id)] });
+  const ids = getBubbles()?.ids ?? [];
+  setNotificationBubblesState({ ids: [id, ...ids.filter(current => current !== id)] });
   resumeNotificationBubble(id);
 });
 
 notifd.connect('resolved', (_source, id) => hideNotificationBubble(id));
 
-const overlayItems = createComputed((): OverlayItem[] => {
-  const toolkit = toolkitState();
-  const bubbles = notificationBubblesState();
-  return [
-    ...(toolkit ? [{ kind: 'toolkit' as const, state: toolkit }] : []),
-    ...(bubbles ? [{ kind: 'notificationBubbles' as const, state: bubbles }] : []),
-  ];
-});
-
 export const overlayRepository = asConnectable({
   overlayItems,
-  toolkitState,
-  notificationBubblesState,
   pauseNotificationBubble,
   resumeNotificationBubble,
   closeEmptyNotificationBubbles: () => {
-    if (notificationBubblesState.peek()?.ids.length === 0) {
-      notificationBubblesState.set(null);
+    if (getBubbles()?.ids.length === 0) {
+      setNotificationBubblesState(null);
     }
   },
-  setToolkitState: (state: ToolkitState | null) => toolkitState.set(state),
-  setNotificationBubblesState: (state: NotificationBubblesState | null) =>
-    notificationBubblesState.set(state),
+  setToolkitPopup,
+  toggleToolkitPopup: (popup: ToolkitPopup) => {
+    const current = overlayItems.peek().find(item => item.kind === 'toolkit');
+    setToolkitPopup(current?.popup.kind === popup.kind ? null : popup);
+  },
+  setNotificationBubblesState,
 });

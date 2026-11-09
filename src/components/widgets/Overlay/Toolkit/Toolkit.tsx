@@ -1,66 +1,32 @@
-import { IconBell, IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { ContextMenu } from '@/components/common/ContextMenu';
 import { RenderArea } from '@/components/common/RenderArea';
+import { SizeAnimated } from '@/components/common/SizeAnimated';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { Transition } from '@/components/common/Transition';
 import { useInvokeRepo } from '@/hooks/useRepo';
-import { Calendar } from './Calendar';
-import { ControlCenter } from './ControlCenter';
-import { Notification } from './Notification';
+import { Main } from './Popup/Main/Main';
+import { Notifications } from './Popup/Notifications/Notifications';
+import { PowerMenuPopup } from './Popup/PowerMenu/PowerMenu';
+import { Sound } from './Popup/Sound/Sound';
+import { Tray } from './Popup/Tray/Tray';
 import * as styles from './Toolkit.css';
 import { ToolkitPortalProvider } from './ToolkitPortalProvider';
-import type { ToolkitKind, ToolkitState } from '@/repository/overlay';
+import type { ToolkitKind, ToolkitPopup } from '@/repository/overlay';
 import type { ReactNode } from 'react';
 
-const TOOLKIT_MAP: Record<ToolkitKind, { icon: ReactNode; element: ReactNode }> = {
-  'calendar': {
-    icon: <IconCalendar strokeWidth={2.5} />,
-    element: <Calendar />,
-  },
-  'control-center': {
-    icon: <IconSlidersHorizontal strokeWidth={2.5} />,
-    element: <ControlCenter />,
-  },
-  'notification': {
-    icon: <IconBell strokeWidth={2.5} />,
-    element: <Notification />,
-  },
-  'performance': { icon: null, element: null },
+const popups: Record<ToolkitKind, { element: ReactNode; halfWidth: string }> = {
+  'main': { element: <Main />, halfWidth: '20rem' },
+  'sound': { element: <Sound />, halfWidth: '15rem' },
+  'tray': { element: <Tray />, halfWidth: '15rem' },
+  'notifications': { element: <Notifications />, halfWidth: '18rem' },
+  'power-menu': { element: <PowerMenuPopup />, halfWidth: '10rem' },
 };
 
-const ToolkitMenu = ({ state }: { state: ToolkitState }) => {
+export const Toolkit = ({ popup, isLeaving }: { popup: ToolkitPopup; isLeaving: boolean }) => {
   const invoke = useInvokeRepo();
-  const setToolkitKind = (kind: ToolkitKind) => {
-    const nextState = state && { ...state, kind };
-    void invoke(repo.overlay.$invokeMethod('setToolkitState', nextState));
-  };
-
-  return (
-    <aside css={styles.asideStyle}>
-      {Object.entries(TOOLKIT_MAP).map(([key, { icon }]) => (
-        <button
-          key={key}
-          css={styles.asideItemStyle(state?.kind === key)}
-          type="button"
-          onClick={() => setToolkitKind(key as ToolkitKind)}
-        >
-          {icon}
-        </button>
-      ))}
-    </aside>
-  );
-};
-
-export const Toolkit = ({ state, isLeaving }: { state: ToolkitState; isLeaving: boolean }) => {
-  const invoke = useInvokeRepo();
-  const onClose = () => {
-    void invoke(repo.overlay.$invokeMethod('setToolkitState', null));
-  };
-
-  if (!state) {
-    return null;
-  }
+  const onClose = () => void invoke(repo.overlay.$invokeMethod('setToolkitPopup', null));
+  const halfWidth = `min(${popups[popup.kind].halfWidth}, 50vw - 1rem)`;
 
   return (
     <SurfaceProvider surface="floating">
@@ -68,19 +34,17 @@ export const Toolkit = ({ state, isLeaving }: { state: ToolkitState; isLeaving: 
         <RenderArea kind="input" role="presentation" css={styles.backdropStyle} onClick={onClose} />
         <RenderArea
           kind={isLeaving ? 'input' : 'default'}
-          radius="3rem"
-          css={styles.toolkitStyle(state.position.anchor)}
-          style={{ left: `${state.position.x}px` }}
+          radius={popup.kind === 'main' ? '3rem' : '1.6rem'}
+          css={styles.toolkitStyle}
+          style={{
+            left: `clamp(calc(${halfWidth} + 1rem), ${popup.position.x}px, calc(100vw - ${halfWidth} - 1rem))`,
+            top: `${popup.position.y}px`,
+          }}
         >
           <ToolkitPortalProvider css={styles.innerPortalStyle}>
-            <ToolkitMenu state={state} />
-            <main css={styles.contentStyle}>
-              <Transition kind={state.kind ?? ''}>
-                <div css={styles.scrollerStyle}>
-                  {state.kind && TOOLKIT_MAP[state.kind].element}
-                </div>
-              </Transition>
-            </main>
+            <SizeAnimated>
+              <Transition kind={popup.kind}>{popups[popup.kind].element}</Transition>
+            </SizeAnimated>
           </ToolkitPortalProvider>
         </RenderArea>
       </ContextMenu>

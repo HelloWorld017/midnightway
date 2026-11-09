@@ -18,6 +18,14 @@ export const containerStyle = (theme: Theme) => css`
   border: 1px solid ${theme.surface.fillLine};
 `;
 
+export const inlineStyle = css`
+  position: static;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+`;
+
 export const itemStyle = (theme: Theme) => css`
   cursor: pointer;
   display: flex;

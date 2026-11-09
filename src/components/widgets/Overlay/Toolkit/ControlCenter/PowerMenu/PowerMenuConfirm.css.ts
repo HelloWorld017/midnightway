@@ -17,6 +17,14 @@ export const labelStyle = (theme: Theme) => css`
   background: ${theme.surface.bgOverlay};
 `;
 
+export const inlineStyle = css`
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+`;
+
 export const guideStyle = (isVisible: boolean) => (theme: Theme) =>
   css`
     display: flex;

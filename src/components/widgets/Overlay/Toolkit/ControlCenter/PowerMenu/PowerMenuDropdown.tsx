@@ -19,9 +19,10 @@ defineI18n(
 
 type PowerMenuDropdownProps = {
   onConfirm: (item: PowerMenuItem) => void;
+  inline?: boolean;
 };
 
-export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
+export const PowerMenuDropdown = ({ onConfirm, inline = false }: PowerMenuDropdownProps) => {
   const { ts } = useI18n();
   const items = useMemo<(PowerMenuItem | null)[]>(
     () => [
@@ -68,7 +69,7 @@ export const PowerMenuDropdown = ({ onConfirm }: PowerMenuDropdownProps) => {
   };
 
   return (
-    <div css={styles.containerStyle}>
+    <div css={[styles.containerStyle, inline && styles.inlineStyle]}>
       {items.map((item, index) => (
         <Fragment key={index}>
           {item ? (

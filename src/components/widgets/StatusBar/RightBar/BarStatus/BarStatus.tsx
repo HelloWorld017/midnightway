@@ -19,6 +19,7 @@ import { formatNumberByDigits } from '@/utils/format';
 import { isFiniteNumber } from '@/utils/type';
 import { match, P } from 'ts-pattern';
 import { useNetworkState } from '../../hooks/useNetworkState';
+import { useToolkitPopup } from '../../hooks/useToolkitPopup';
 import * as styles from './BarStatus.css';
 import { useNetworkUsage } from './hooks/useNetworkUsage';
 import { usePerformanceValue } from './hooks/usePerformanceValue';
@@ -29,6 +30,7 @@ type BarStatusItemSoundProps = { item: BarStatusItemType & { kind: 'sound' } };
 const BarStatusItemSound = ({ item }: BarStatusItemSoundProps) => {
   const volume = useRepo(repo.sound.defaultSpeaker.volume);
   const isMuted = useRepo(repo.sound.defaultSpeaker.mute);
+  const onClick = useToolkitPopup('sound');
 
   const IconVolume = match({ volume, isMuted })
     .with({ isMuted: true }, () => IconVolumeX)
@@ -39,11 +41,11 @@ const BarStatusItemSound = ({ item }: BarStatusItemSoundProps) => {
   return (
     <>
       {isFiniteNumber(volume) && (
-        <div css={styles.statusItemStyle}>
+        <button css={styles.statusItemStyle} type="button" aria-label="Sound" onClick={onClick}>
           {/* oxlint-disable-next-line react/static-components */}
           <IconVolume css={styles.statusIconStyle} />
           {item.visibility === 'full' && formatNumberByDigits(volume * 100)}
-        </div>
+        </button>
       )}
     </>
   );
