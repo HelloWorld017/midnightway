@@ -52,7 +52,7 @@ const ToolkitMenu = ({ state }: { state: ToolkitState }) => {
   );
 };
 
-export const Toolkit = ({ state }: { state: ToolkitState }) => {
+export const Toolkit = ({ state, isLeaving }: { state: ToolkitState; isLeaving: boolean }) => {
   const invoke = useInvokeRepo();
   const onClose = () => {
     void invoke(repo.overlay.$invokeMethod('setToolkitState', null));
@@ -67,6 +67,7 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
       <ContextMenu>
         <RenderArea kind="input" role="presentation" css={styles.backdropStyle} onClick={onClose} />
         <RenderArea
+          kind={isLeaving ? 'input' : 'default'}
           radius="3rem"
           css={styles.toolkitStyle(state.position.anchor)}
           style={{ left: `${state.position.x}px` }}

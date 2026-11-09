@@ -3,6 +3,7 @@ import { repo } from '@/bridge/repository';
 import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { config } from '@/config';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useRepo } from '@/hooks/useRepo';
 import { useEffect, useMemo, useState } from 'react';
 import { Clock } from './Clock';
@@ -31,9 +32,11 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
 
   const [isHidden, setIsHidden] = useState(config().bar.autohide);
   const isIdle = activeWorkspace?.id !== focusedWorkspaceId || !focusedWorkspaceClients;
+  const isIdleDebounced = useDebouncedValue(isIdle, { delay: 200 });
 
   const surface: SurfaceKind = isIdle ? 'overlay' : 'glass';
   const isBarHidden = isHidden && !isIdle && !isToolkitOpen;
+  const isBarHiddenDebounced = useDebouncedValue(isBarHidden, { delay: 100 });
 
   useEffect(
     () =>
@@ -56,7 +59,11 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
         )}
         <RenderArea
           css={styles.statusBarStyle(isIdle, isBarHidden)}
-          kind={!isIdle && !isBarHidden ? 'default' : 'clip'}
+          kind={
+            !isIdle && !isIdleDebounced && !(isBarHidden && isBarHiddenDebounced)
+              ? 'default'
+              : 'clip'
+          }
         >
           <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
           <Clock isIdle={isIdle} />

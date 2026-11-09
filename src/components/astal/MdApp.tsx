@@ -8,6 +8,7 @@ import { onCleanup, onMount } from 'ags';
 import { Astal, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import Cairo from 'cairo';
+import GLib from 'gi://GLib';
 import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
@@ -19,6 +20,7 @@ import type { Gdk } from 'ags/gtk4';
 
 const BAR_HEIGHT_VISIBLE = 32;
 const BAR_HEIGHT_MAXIMIZED = 70;
+const OVERLAY_CLOSE_TIMEOUT = 1500;
 
 const { Keymode, Layer, WindowAnchor } = Astal;
 
@@ -46,6 +48,9 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const overlayContainer = new Gtk.Overlay();
   overlayContainer.set_child(overlayBlur);
   const overlayWebViewRef = ref<WebKit.WebView | null>(null);
+  let overlayCloseGeneration = 0;
+  let overlayClosing: number | null = null;
+  let overlayCloseTimeout = 0;
 
   const getAnyLivingBridge = () => barBridgeRef.current;
 
@@ -54,7 +59,8 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const renderAreas = { bar: [] as RenderArea[], overlay: [] as RenderArea[] };
   const updateInputRegion = (kind: 'bar' | 'overlay') => {
     const window = kind === 'bar' ? barWindowRef.current : overlayWindowRef.current;
-    window?.get_surface()?.set_input_region(inputRegionForAreas(renderAreas[kind]));
+    const inputAreas = kind === 'overlay' && overlayClosing !== null ? [] : renderAreas[kind];
+    window?.get_surface()?.set_input_region(inputRegionForAreas(inputAreas));
     (kind === 'bar' ? barBlur : overlayBlur).setAreas(renderAreas[kind]);
   };
 
@@ -76,6 +82,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   const setupOverlayWindow = (window: Astal.Window) => {
+    Gtk4LayerShell.set_namespace(window, 'midnightway-overlay');
     const eventController = new Gtk.EventControllerFocus();
     eventController.connect('leave', () => {
       overlayBridgeRef.current?.onOverlayCloseRequest();
@@ -101,19 +108,50 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       renderAreas[surface] = areas;
       updateInputRegion(surface);
     },
+    overlayExitFinished: ({ generation }) => finishOverlayClose(generation),
   };
+
+  const cancelOverlayClose = () => {
+    if (overlayCloseTimeout) {
+      GLib.source_remove(overlayCloseTimeout);
+      overlayCloseTimeout = 0;
+    }
+    overlayClosing = null;
+  };
+
+  const finishOverlayClose = (generation: number) => {
+    if (generation !== overlayClosing || repositoryImpl.overlay.overlayItems.length !== 0) {
+      return;
+    }
+
+    cancelOverlayClose();
+    renderAreas.overlay = [];
+    overlayWindowRef.current?.hide();
+    if (overlayWebViewRef.current) {
+      overlayContainer.remove_overlay(overlayWebViewRef.current);
+      overlayWebViewRef(null);
+    }
+    overlayBlur.setAreas([]);
+    overlayBridgeRef.current?.zygoteRelease({ id: 'overlay' });
+    overlayBridgeRef.current = null;
+    updateOverlayInputRegion();
+  };
+
   const updateOverlay = () => {
     const items = repositoryImpl.overlay.overlayItems;
     if (items.length === 0) {
-      renderAreas.overlay = [];
-      overlayWindowRef.current?.hide();
-      if (overlayWebViewRef.current) {
-        overlayContainer.remove_overlay(overlayWebViewRef.current);
-        overlayWebViewRef(null);
+      if (overlayWindowRef.current?.visible && overlayClosing === null) {
+        const generation = ++overlayCloseGeneration;
+        overlayClosing = generation;
+        overlayCloseTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, OVERLAY_CLOSE_TIMEOUT, () => {
+          overlayCloseTimeout = 0;
+          finishOverlayClose(generation);
+          return GLib.SOURCE_REMOVE;
+        });
+        overlayBridgeRef.current?.onOverlayClosing({ generation });
       }
-      overlayBlur.setAreas([]);
-      overlayBridgeRef.current?.zygoteRelease({ id: 'overlay' });
-      overlayBridgeRef.current = null;
+    } else {
+      cancelOverlayClose();
     }
 
     if (items.length > 0 && !overlayWindowRef.current?.visible) {
@@ -132,6 +170,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   onCleanup(subscribeProperty(repositoryImpl.overlay, 'overlayItems', updateOverlay));
+  onCleanup(cancelOverlayClose);
   onMount(updateOverlay);
 
   return [

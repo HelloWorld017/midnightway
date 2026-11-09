@@ -39,11 +39,13 @@ export type BridgeMethodsMain = {
   onUpdate: (params: { id: string; value: unknown }) => void;
   onHiddenChange: (params: { isHidden: boolean }) => void;
   onOverlayCloseRequest: (params: void) => void;
+  onOverlayClosing: (params: { generation: number }) => void;
 };
 
 export type BridgeMethodsRenderer = {
   initParams: (params: void) => InitParams;
   setRenderAreas: (params: { surface: 'bar' | 'overlay'; areas: RenderArea[] }) => void;
+  overlayExitFinished: (params: { generation: number }) => void;
   debug: (params: unknown) => void;
   subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;

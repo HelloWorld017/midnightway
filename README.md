@@ -35,6 +35,7 @@ The configuration file is on the `~/.config/midnightway/config.json`.
 
 ```nix
 # In home-manager
+wayland.windowManager.hyprland.settings.layerrule = [ "no_anim 1, match:namespace ^midnightway-overlay$" ];
 xdg.configFile."midnightway/config.json".text = builtins.toJSON {
   locale = "ko-KR";
   bar = {
