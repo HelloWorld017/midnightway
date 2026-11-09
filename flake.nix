@@ -127,7 +127,7 @@
         pnpmDeps = pkgs.fetchPnpmDeps {
           inherit pname version src EXTERN_AGS;
           fetcherVersion = 4;
-          hash = "sha256-VUpHnw76B7dnyXA0G8oK3V8aYYLvUmE9HtX7+lq5pgE=";
+          hash = "sha256-Mn91xfagP44kK5Bj5LEr/iKMXwzLoVgJkNirgX4k3gk=";
         };
 
         EXTERN_AGS = "${agsJsPkg}";
