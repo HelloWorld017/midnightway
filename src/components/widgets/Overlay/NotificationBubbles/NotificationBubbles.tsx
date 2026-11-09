@@ -1,5 +1,5 @@
 import { repo } from '@/bridge/repository';
-import { useRootProvider } from '@/components/common/RootProvider';
+import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { useRefMap } from '@/hooks/useRefMap';
 import { useInvokeRepo } from '@/hooks/useRepo';
@@ -11,11 +11,9 @@ import * as styles from './NotificationBubbles.css';
 import type { NotificationBubblesState } from '@/repository/overlay';
 
 export const NotificationBubbles = ({ state }: { state: NotificationBubblesState }) => {
-  const { window } = useRootProvider();
   const notifications = useNotifications();
   const invoke = useInvokeRepo();
 
-  const containerRef = useRef<HTMLDivElement>(null);
   const [refMap, refCallback] = useRefMap<number, HTMLDivElement>();
 
   const activeBubbles = useRef(new Set<number>());
@@ -56,38 +54,9 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
     }
   }, [invoke, state.ids]);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) {
-      return undefined;
-    }
-
-    const updateBounds = () => {
-      const { x, y, width, height } = container.getBoundingClientRect();
-      void invoke(
-        repo.overlay.$invokeMethod('setNotificationBubblesBounds', { x, y, width, height }),
-      );
-    };
-
-    const observer = new window.ResizeObserver(updateBounds);
-    observer.observe(container);
-    window.addEventListener('resize', updateBounds);
-    updateBounds();
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateBounds);
-    };
-  }, [invoke, window]);
-
   return (
     <SurfaceProvider surface="floating">
-      <div
-        ref={containerRef}
-        css={styles.containerStyle}
-        aria-live="polite"
-        aria-relevant="additions"
-      >
+      <div css={styles.containerStyle} aria-live="polite" aria-relevant="additions">
         {transitions((style, item) => (
           <animated.div style={style} css={styles.transitionStyle}>
             <div
@@ -108,7 +77,9 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
                 }
               }}
             >
-              <NotificationItem item={item} compact />
+              <RenderArea radius="1.6rem">
+                <NotificationItem css={styles.bubbleItemStyle} item={item} compact />
+              </RenderArea>
             </div>
           </animated.div>
         ))}

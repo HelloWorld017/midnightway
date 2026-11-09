@@ -11,13 +11,11 @@ export type ToolkitKind = 'control-center' | 'calendar' | 'notification' | 'perf
 export type ToolkitPosition = { x: number; anchor: 'left' | 'center' | 'right' };
 export type ToolkitState = { position: ToolkitPosition; kind: ToolkitKind };
 export type NotificationBubblesState = { ids: number[] };
-type NotificationBubblesBounds = { x: number; y: number; width: number; height: number };
 
 const BUBBLE_DURATION = 5000;
 
 const toolkitState = writable<ToolkitState | null>(null);
 const notificationBubblesState = writable<NotificationBubblesState | null>(null);
-const notificationBubblesBounds = writable<NotificationBubblesBounds | null>(null);
 
 const notifd = AstalNotifd.get_default();
 notifd.ignore_timeout = true;
@@ -89,15 +87,11 @@ export const overlayRepository = asConnectable({
   overlayItems,
   toolkitState,
   notificationBubblesState,
-  notificationBubblesBounds,
-  setNotificationBubblesBounds: (bounds: NotificationBubblesBounds | null) =>
-    notificationBubblesBounds.set(bounds),
   pauseNotificationBubble,
   resumeNotificationBubble,
   closeEmptyNotificationBubbles: () => {
     if (notificationBubblesState.peek()?.ids.length === 0) {
       notificationBubblesState.set(null);
-      notificationBubblesBounds.set(null);
     }
   },
   setToolkitState: (state: ToolkitState | null) => toolkitState.set(state),

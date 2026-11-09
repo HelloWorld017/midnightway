@@ -1,5 +1,6 @@
 import { registerImplementations } from '@/bridge/renderer';
 import { repo } from '@/bridge/repository';
+import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { config } from '@/config';
 import { useRepo } from '@/hooks/useRepo';
@@ -32,6 +33,7 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   const isIdle = activeWorkspace?.id !== focusedWorkspaceId || !focusedWorkspaceClients;
 
   const surface: SurfaceKind = isIdle ? 'overlay' : 'glass';
+  const isBarHidden = isHidden && !isIdle && !isToolkitOpen;
 
   useEffect(
     () =>
@@ -46,11 +48,21 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   return (
     <>
       <SurfaceProvider surface={surface}>
-        <div css={styles.statusBarStyle(isIdle, isHidden && !isIdle && !isToolkitOpen)}>
+        {config().bar.autohide && (
+          <RenderArea
+            blur={false}
+            style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: 1 }}
+          />
+        )}
+        <RenderArea
+          css={styles.statusBarStyle(isIdle, isBarHidden)}
+          input={!isIdle && !isBarHidden}
+          blur={!isIdle && !isBarHidden}
+        >
           <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
           <Clock isIdle={isIdle} />
           <RightBar isIdle={isIdle} />
-        </div>
+        </RenderArea>
       </SurfaceProvider>
     </>
   );

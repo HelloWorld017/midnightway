@@ -1,3 +1,4 @@
+import { RenderArea } from '@/components/common/RenderArea';
 import { useRootProvider } from '@/components/common/RootProvider';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -248,8 +249,10 @@ const ContextMenuFrame = ({
   };
 
   return (
-    <div
+    <RenderArea
       ref={frameRef}
+      radius="0.7rem"
+      blur={false}
       css={styles.frameStyle}
       style={{ ...placement, visibility: placement ? 'visible' : 'hidden' }}
       role="menu"
@@ -260,7 +263,7 @@ const ContextMenuFrame = ({
       onContextMenu={event => event.preventDefault()}
     >
       {children}
-    </div>
+    </RenderArea>
   );
 };
 

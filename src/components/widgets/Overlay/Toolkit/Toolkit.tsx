@@ -1,6 +1,7 @@
 import { IconBell, IconCalendar, IconSlidersHorizontal } from '@/assets/icons';
 import { repo } from '@/bridge/repository';
 import { ContextMenu } from '@/components/common/ContextMenu';
+import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { Transition } from '@/components/common/Transition';
 import { useInvokeRepo } from '@/hooks/useRepo';
@@ -64,8 +65,9 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
   return (
     <SurfaceProvider surface="floating">
       <ContextMenu>
-        <div role="presentation" css={styles.backdropStyle} onClick={onClose}></div>
-        <div
+        <RenderArea role="presentation" blur={false} css={styles.backdropStyle} onClick={onClose} />
+        <RenderArea
+          radius="3rem"
           css={styles.toolkitStyle(state.position.anchor)}
           style={{ left: `${state.position.x}px` }}
         >
@@ -79,7 +81,7 @@ export const Toolkit = ({ state }: { state: ToolkitState }) => {
               </Transition>
             </main>
           </ToolkitPortalProvider>
-        </div>
+        </RenderArea>
       </ContextMenu>
     </SurfaceProvider>
   );

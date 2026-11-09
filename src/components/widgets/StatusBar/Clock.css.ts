@@ -13,6 +13,12 @@ export const clockStyle = (isIdle: boolean) => css`
   transform: translate(-50%, -50%);
 `;
 
+export const clockButtonStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+`;
+
 export const clockTextStyle = (isChanging: boolean) => (theme: Theme) =>
   css`
     display: flex;

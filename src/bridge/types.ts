@@ -20,6 +20,18 @@ export type MenuNode = {
   children: RepositoryProxyDescriptor | null;
 };
 
+export type RenderArea = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radiusX: number;
+  radiusY: number;
+  clip: { x: number; y: number; width: number; height: number };
+  input: boolean;
+  blur: boolean;
+};
+
 /* Bridge */
 export type BridgeMethodsMain = {
   zygoteFork: (params: { id: string; initParams: InitParams }) => void;
@@ -31,6 +43,7 @@ export type BridgeMethodsMain = {
 
 export type BridgeMethodsRenderer = {
   initParams: (params: void) => InitParams;
+  setRenderAreas: (params: { surface: 'bar' | 'overlay'; areas: RenderArea[] }) => void;
   debug: (params: unknown) => void;
   subscribe: (params: { descriptor: RepositoryProxyDescriptor }) => { id: string; value: unknown };
   unsubscribe: (params: { id: string }) => void;

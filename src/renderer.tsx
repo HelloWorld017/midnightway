@@ -4,6 +4,7 @@ import { createI18nResource, I18nProvider } from '@simplei18n/core/react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
 import { bridgeRenderer, registerImplementations } from './bridge/renderer';
+import { RenderAreaProvider } from './components/common/RenderArea';
 import { RootProvider } from './components/common/RootProvider';
 import { ThemeProvider } from './components/common/ThemeProvider';
 import { Overlay } from './components/widgets/Overlay';
@@ -22,13 +23,15 @@ const App = ({ init }: AppProps) => (
   <I18nProvider lang={translationLocales[init.config.locale]} resource={i18nResource}>
     <ThemeProvider>
       <Global styles={[globalStyle]} />
-      {match(init)
-        .with({ kind: 'status-bar' }, statusBarInit => (
-          <StatusBar monitorName={statusBarInit.params.monitor} />
-        ))
-        .with({ kind: 'overlay' }, () => <Overlay />)
-        .with({ kind: 'dock' }, () => null)
-        .otherwise(() => null)}
+      <RenderAreaProvider surface={init.kind === 'overlay' ? 'overlay' : 'bar'}>
+        {match(init)
+          .with({ kind: 'status-bar' }, statusBarInit => (
+            <StatusBar monitorName={statusBarInit.params.monitor} />
+          ))
+          .with({ kind: 'overlay' }, () => <Overlay />)
+          .with({ kind: 'dock' }, () => null)
+          .otherwise(() => null)}
+      </RenderAreaProvider>
     </ThemeProvider>
   </I18nProvider>
 );

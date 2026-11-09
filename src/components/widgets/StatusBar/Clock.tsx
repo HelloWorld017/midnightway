@@ -1,4 +1,5 @@
 import { repo } from '@/bridge/repository';
+import { RenderArea } from '@/components/common/RenderArea';
 import { useNow } from '@/hooks/useNow';
 import { useInvokeRepo } from '@/hooks/useRepo';
 import { locale } from '@/i18n';
@@ -24,10 +25,12 @@ export const Clock = ({ isIdle }: { isIdle: boolean }) => {
   };
 
   return (
-    <button css={styles.clockStyle(isIdle)} type="button" ref={buttonRef} onClick={openCalendar}>
-      <span css={styles.clockTextStyle(true)}>{time}</span>
-      <span css={styles.clockDividerStyle} />
-      <span css={styles.clockTextStyle(false)}>{date}</span>
-    </button>
+    <RenderArea css={styles.clockStyle(isIdle)} input={isIdle} blur={false}>
+      <button css={styles.clockButtonStyle} type="button" ref={buttonRef} onClick={openCalendar}>
+        <span css={styles.clockTextStyle(true)}>{time}</span>
+        <span css={styles.clockDividerStyle} />
+        <span css={styles.clockTextStyle(false)}>{date}</span>
+      </button>
+    </RenderArea>
   );
 };

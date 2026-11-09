@@ -8,6 +8,7 @@ import type { BridgeRepository } from '@/bridge/types';
 
 type Notification = BridgeRepository['notification']['notifications'][number];
 export type NotificationItemProps = {
+  className?: string;
   compact?: boolean;
   item: Pick<
     Notification,
@@ -15,7 +16,7 @@ export type NotificationItemProps = {
   > & { actions: Pick<Notification['actions'][number], 'id' | 'label'>[] };
 };
 
-export const NotificationItem = ({ item, compact = false }: NotificationItemProps) => {
+export const NotificationItem = ({ className, item, compact = false }: NotificationItemProps) => {
   const invoke = useInvokeRepo();
   const bodyMarkup = useSanitizeHTML(item?.body ?? '');
 
@@ -36,7 +37,7 @@ export const NotificationItem = ({ item, compact = false }: NotificationItemProp
   };
 
   return (
-    <div css={styles.containerStyle}>
+    <div css={styles.containerStyle} className={className}>
       <div css={styles.headerStyle}>
         <div css={styles.headerTextContainerStyle}>
           <span css={styles.headerTextStyle}>{item.appName}</span>

@@ -12,11 +12,11 @@ import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
 import { MdWebView } from './MdWebView';
+import { inputRectanglesForArea } from './renderAreaGeometry';
 import type { MdWebViewProps } from './MdWebView';
-import type { BridgeMethodsMain } from '@/bridge/types';
+import type { BridgeMethodsMain, RenderArea } from '@/bridge/types';
 import type { Gdk } from 'ags/gtk4';
 
-const BAR_HEIGHT_HIDDEN = 1;
 const BAR_HEIGHT_VISIBLE = 32;
 const BAR_HEIGHT_MAXIMIZED = 70;
 
@@ -25,6 +25,16 @@ const { Keymode, Layer, WindowAnchor } = Astal;
 const transparentStyle = css`
   background: transparent;
 `;
+
+const inputRegionForAreas = (areas: RenderArea[]) => {
+  const region = new Cairo.Region();
+  for (const area of areas) {
+    for (const rectangle of inputRectanglesForArea(area)) {
+      region.unionRectangle(rectangle);
+    }
+  }
+  return region;
+};
 
 export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const barWindowRef = ref<Astal.Window | null>(null);
@@ -36,29 +46,16 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
 
   /* Bar States */
   const shouldAutohideBar = config().bar.autohide;
-  const isBarHiddenRef = ref(false);
-  const isBarMaximizedRef = ref(false);
-
-  const updateInputRegion = () => {
-    const region = new Cairo.Region();
-    region.unionRectangle({
-      x: 0,
-      y: 0,
-      width: monitor.get_geometry().width,
-      height: match({ maximized: isBarMaximizedRef.current, hidden: isBarHiddenRef.current })
-        .with({ maximized: true }, () => BAR_HEIGHT_MAXIMIZED)
-        .with({ hidden: true }, () => BAR_HEIGHT_HIDDEN)
-        .otherwise(() => BAR_HEIGHT_VISIBLE),
-    });
-
-    const surface = barWindowRef.current?.get_surface();
-    surface?.set_input_region(region);
+  // The same per-surface data also registers blur areas for a future GTK blur layer.
+  const renderAreas = { bar: [] as RenderArea[], overlay: [] as RenderArea[] };
+  const updateInputRegion = (kind: 'bar' | 'overlay') => {
+    const window = kind === 'bar' ? barWindowRef.current : overlayWindowRef.current;
+    window?.get_surface()?.set_input_region(inputRegionForAreas(renderAreas[kind]));
+    window?.queue_draw();
   };
 
   const updateBarIsHidden = (nextIsHidden: boolean) => {
     barBridgeRef.current?.onHiddenChange({ isHidden: nextIsHidden });
-    isBarHiddenRef(nextIsHidden);
-    updateInputRegion();
   };
 
   const setupBarWindow = (window: Astal.Window) => {
@@ -88,35 +85,22 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
     const window = overlayWindowRef.current;
     const hasToolkit = repositoryImpl.overlay.overlayItems.some(item => item.kind === 'toolkit');
     window?.set_keymode(hasToolkit ? Keymode.ON_DEMAND : Keymode.NONE);
-
-    const surface = window?.get_surface();
-    if (!surface) {
-      return;
-    }
-
-    if (hasToolkit) {
-      surface.set_input_region(null);
-      return;
-    }
-
-    const region = new Cairo.Region();
-    const bounds = repositoryImpl.overlay.notificationBubblesBounds;
-    if (bounds && bounds.width > 0 && bounds.height > 0) {
-      region.unionRectangle({
-        x: Math.floor(bounds.x),
-        y: Math.floor(bounds.y),
-        width: Math.ceil(bounds.width),
-        height: Math.ceil(bounds.height),
-      });
-    }
-
-    surface.set_input_region(region);
+    updateInputRegion('overlay');
   };
 
-  const bridge: Required<MdWebViewProps>['bridge'] = {};
+  const bridge: Required<MdWebViewProps>['bridge'] = {
+    setRenderAreas: ({ surface, areas }) => {
+      if (surface === 'overlay' && !overlayWindowRef.current?.visible) {
+        return;
+      }
+      renderAreas[surface] = areas;
+      updateInputRegion(surface);
+    },
+  };
   const updateOverlay = () => {
     const items = repositoryImpl.overlay.overlayItems;
     if (items.length === 0) {
+      renderAreas.overlay = [];
       overlayWindowRef.current?.hide();
       overlayWindowRef.current?.set_child(null);
       overlayBridgeRef.current?.zygoteRelease({ id: 'overlay' });
@@ -139,14 +123,6 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   };
 
   onCleanup(subscribeProperty(repositoryImpl.overlay, 'overlayItems', updateOverlay));
-  onCleanup(
-    subscribeProperty(
-      repositoryImpl.overlay,
-      'notificationBubblesBounds',
-      updateOverlayInputRegion,
-    ),
-  );
-
   onMount(updateOverlay);
 
   return [
@@ -158,7 +134,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       application={app}
       cssClasses={[transparentStyle]}
       $={setupBarWindow}
-      onRealize={updateInputRegion}
+      onRealize={() => updateInputRegion('bar')}
       defaultHeight={BAR_HEIGHT_MAXIMIZED}
     >
       <MdWebView

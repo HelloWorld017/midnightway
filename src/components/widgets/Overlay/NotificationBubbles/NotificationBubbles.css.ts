@@ -18,12 +18,12 @@ export const transitionStyle = css`
   transform-origin: top right;
 `;
 
-export const bubbleStyle = (theme: Theme) => css`
+export const bubbleStyle = css`
   padding-bottom: 0.8rem;
   overflow-wrap: anywhere;
+`;
 
-  > div {
-    background: ${theme.surface.bgBase};
-    border: 1px solid ${theme.surface.fillLine};
-  }
+export const bubbleItemStyle = (theme: Theme) => css`
+  background: ${theme.surface.bgBase};
+  border: 1px solid ${theme.surface.fillLine};
 `;
