@@ -24,6 +24,6 @@ export const bubbleStyle = css`
 `;
 
 export const bubbleItemStyle = (theme: Theme) => css`
-  background: ${theme.surface.bgBase};
+  background: color-mix(${theme.surface.bgBase} 90%, transparent 10%);
   border: 1px solid ${theme.surface.fillLine};
 `;

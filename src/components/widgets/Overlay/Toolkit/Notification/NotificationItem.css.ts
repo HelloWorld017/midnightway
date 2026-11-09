@@ -46,6 +46,12 @@ export const headerTextStyle = (theme: Theme) => css`
   letter-spacing: -0.02em;
 `;
 
+export const expandIndicatorStyle = (theme: Theme) => css`
+  flex: 0 0 auto;
+  color: ${theme.surface.fillSecondary};
+  font-size: 1rem;
+`;
+
 export const headerDividerStyle = (theme: Theme) => css`
   background: ${theme.surface.fillLine};
   width: 0.1rem;
@@ -136,10 +142,12 @@ export const actionsStyle = css`
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.4rem;
-  margin-top: 0.6rem;
+  padding-top: 0.6rem;
 `;
 
 export const actionStyle = (theme: Theme) => css`
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;

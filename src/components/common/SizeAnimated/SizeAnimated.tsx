@@ -5,9 +5,10 @@ import type { ReactNode } from 'react';
 type SizeAnimatedProps = {
   className?: string;
   children: ReactNode;
+  axis?: 'x' | 'y' | 'xy';
 };
 
-export const SizeAnimated = ({ className, children }: SizeAnimatedProps) => {
+export const SizeAnimated = ({ className, children, axis = 'xy' }: SizeAnimatedProps) => {
   const [innerRef, size] = useMeasure();
 
   return (
@@ -15,11 +16,17 @@ export const SizeAnimated = ({ className, children }: SizeAnimatedProps) => {
       className={className}
       css={styles.sizeAnimatedStyle}
       style={{
-        width: size ? `${size[0]}px` : 'initial',
-        height: size ? `${size[1]}px` : 'initial',
+        width: axis !== 'y' && size ? `${size[0]}px` : undefined,
+        height: axis !== 'x' && size ? `${size[1]}px` : undefined,
       }}
     >
-      <div css={!!size && styles.sizeAnimatedChildrenStyle} ref={innerRef}>
+      <div
+        css={[
+          axis === 'xy' && !!size && styles.sizeAnimatedChildrenStyle,
+          axis === 'x' && styles.widthAnimatedChildrenStyle,
+        ]}
+        ref={innerRef}
+      >
         {children}
       </div>
     </div>

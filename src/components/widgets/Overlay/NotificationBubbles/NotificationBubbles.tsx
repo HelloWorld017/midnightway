@@ -22,7 +22,6 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
   const activeBubblesRef = useRef(new Set<number>());
   const [visibleBubbles, setVisibleBubbles] = useState(() => new Set<number>());
   const visibleBubblesRef = useLatestRef(visibleBubbles);
-  const [, setLayoutVersion] = useState(0);
 
   const bubbles = useMemo(
     () => state.ids.flatMap(id => notifications?.filter(item => item.id === id) ?? []),
@@ -31,7 +30,7 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
 
   const transitions = useTransition(bubbles, {
     keys: item => item.id,
-    from: { x: 48, opacity: 0, height: 0, scale: 0.96 },
+    from: { x: 48, opacity: 0, height: 0 as number | 'auto', scale: 0.96 },
     enter: item => async next => {
       activeBubblesRef.current.add(item.id);
 
@@ -42,14 +41,12 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
       }
 
       await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight ?? 0, scale: 1 });
+      await next({ height: 'auto', immediate: true });
     },
 
-    update: item => async next => {
-      await next({ height: refMap.get(item.id)?.offsetHeight ?? 0 });
-    },
-
-    leave: () => async next => {
+    leave: item => async next => {
       await next({ x: 48, opacity: 0, scale: 0.96 });
+      await next({ height: refMap.get(item.id)?.offsetHeight ?? 0, immediate: true });
       await next({ height: 0 });
     },
 
@@ -115,12 +112,7 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
               }}
             >
               <RenderArea kind={visibleBubbles.has(item.id) ? 'default' : 'input'} radius="1.6rem">
-                <NotificationItem
-                  css={styles.bubbleItemStyle}
-                  item={item}
-                  compact
-                  onExpandActions={() => setLayoutVersion(version => version + 1)}
-                />
+                <NotificationItem css={styles.bubbleItemStyle} item={item} compact />
               </RenderArea>
             </div>
           </AnimatedRenderArea>

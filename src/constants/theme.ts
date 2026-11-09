@@ -27,11 +27,14 @@ export const DEFAULT_THEME = {
   colors: {
     overlay: {
       bgBase: '#101010',
+      bgElevated: '#1a1a1a',
+      bgElevatedHover: '#1f1f1f',
+      bgElevatedActive: '#181818',
       fillPrimary: '#ffffff',
       fillSecondary: 'rgba(255, 255, 255, .5)',
       fillHighlight: '#ffffff',
       fillHighlightText: '#1179f8',
-      fillLine: 'rgba(255, 255, 255, .05)',
+      fillLine: 'rgba(255, 255, 255, .03)',
     },
     glass: {
       bgBase: 'rgba(0, 0, 0, .1)',

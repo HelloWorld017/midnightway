@@ -13,3 +13,7 @@ export const sizeAnimatedChildrenStyle = css`
   top: 0;
   left: 0;
 `;
+
+export const widthAnimatedChildrenStyle = css`
+  width: max-content;
+`;
