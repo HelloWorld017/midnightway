@@ -1,10 +1,11 @@
 import { repo } from '@/bridge/repository';
 import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
+import { useLatestRef } from '@/hooks/useLatestRef';
 import { useRefMap } from '@/hooks/useRefMap';
 import { useInvokeRepo } from '@/hooks/useRepo';
 import { animated, useTransition } from '@react-spring/web';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NotificationItem } from '../Toolkit/Notification/NotificationItem';
 import { useNotifications } from '../Toolkit/Notification/hooks/useNotifications';
 import * as styles from './NotificationBubbles.css';
@@ -18,7 +19,10 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
 
   const [refMap, refCallback] = useRefMap<number, HTMLDivElement>();
 
-  const activeBubbles = useRef(new Set<number>());
+  const activeBubblesRef = useRef(new Set<number>());
+  const [visibleBubbles, setVisibleBubbles] = useState(() => new Set<number>());
+  const visibleBubblesRef = useLatestRef(visibleBubbles);
+
   const bubbles = useMemo(
     () => state.ids.flatMap(id => notifications?.filter(item => item.id === id) ?? []),
     [state.ids, notifications],
@@ -28,7 +32,14 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
     keys: item => item.id,
     from: { x: 48, opacity: 0, height: 0, scale: 0.96 },
     enter: item => async next => {
-      activeBubbles.current.add(item.id);
+      activeBubblesRef.current.add(item.id);
+
+      if (!visibleBubblesRef.current.has(item.id)) {
+        const nextVisibleBubbles = new Set(visibleBubblesRef.current);
+        nextVisibleBubbles.add(item.id);
+        setVisibleBubbles(nextVisibleBubbles);
+      }
+
       await next({ x: 0, opacity: 1, height: refMap.get(item.id)?.offsetHeight ?? 0, scale: 1 });
     },
 
@@ -42,22 +53,40 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
     },
 
     config: { tension: 280, friction: 28 },
+    onChange: ({ value }, _, item) => {
+      if (!item) {
+        return;
+      }
+
+      const isHidden = (value.opacity as number) < 0.2;
+      if (isHidden !== !visibleBubblesRef.current.has(item.id)) {
+        const nextVisibleBubbles = new Set(visibleBubblesRef.current);
+        nextVisibleBubbles[isHidden ? 'delete' : 'add'](item.id);
+        setVisibleBubbles(nextVisibleBubbles);
+      }
+    },
     onDestroyed: item => {
-      activeBubbles.current.delete(item.id);
-      if (activeBubbles.current.size === 0) {
+      activeBubblesRef.current.delete(item.id);
+      if (activeBubblesRef.current.size === 0) {
         void invoke(repo.overlay.$invokeMethod('closeEmptyNotificationBubbles'));
+      }
+
+      if (visibleBubblesRef.current.has(item.id)) {
+        const nextVisibleBubbles = new Set(visibleBubblesRef.current);
+        nextVisibleBubbles.delete(item.id);
+        setVisibleBubbles(nextVisibleBubbles);
       }
     },
   });
 
   useEffect(() => {
-    if (state.ids.length === 0 && activeBubbles.current.size === 0) {
+    if (state.ids.length === 0 && activeBubblesRef.current.size === 0) {
       void invoke(repo.overlay.$invokeMethod('closeEmptyNotificationBubbles'));
     }
   }, [invoke, state.ids]);
 
   return (
-    <SurfaceProvider surface="floating">
+    <SurfaceProvider surface="overlay">
       <RenderArea
         kind="clip"
         css={styles.containerStyle}
@@ -84,7 +113,7 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
                 }
               }}
             >
-              <RenderArea radius="1.6rem">
+              <RenderArea kind={visibleBubbles.has(item.id) ? 'default' : 'input'} radius="1.6rem">
                 <NotificationItem css={styles.bubbleItemStyle} item={item} compact />
               </RenderArea>
             </div>

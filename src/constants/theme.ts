@@ -31,6 +31,7 @@ export const DEFAULT_THEME = {
       fillSecondary: 'rgba(255, 255, 255, .5)',
       fillHighlight: '#ffffff',
       fillHighlightText: '#1179f8',
+      fillLine: 'rgba(255, 255, 255, .05)',
     },
     glass: {
       bgBase: 'rgba(0, 0, 0, .1)',
