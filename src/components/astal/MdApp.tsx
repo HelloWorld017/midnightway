@@ -11,6 +11,7 @@ import Cairo from 'cairo';
 import Gtk4LayerShell from 'gi://Gtk4LayerShell';
 import WebKit from 'gi://WebKit';
 import { match } from 'ts-pattern';
+import { BlurLayer } from './BlurLayer';
 import { MdWebView } from './MdWebView';
 import type { MdWebViewProps } from './MdWebView';
 import type { BridgeMethodsMain, RenderArea } from '@/bridge/types';
@@ -29,7 +30,7 @@ const inputRegionForAreas = (areas: RenderArea[]) => {
   const region = new Cairo.Region();
   for (const area of areas) {
     if (area.input) {
-      region.unionRectangle({ x: area.x, y: area.y, width: area.width, height: area.height });
+      region.unionRectangle(area.clipBounds);
     }
   }
   return region;
@@ -40,17 +41,21 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
   const barBridgeRef = ref<BridgeMethodsMain | null>(null);
   const overlayWindowRef = ref<Astal.Window | null>(null);
   const overlayBridgeRef = ref<BridgeMethodsMain | null>(null);
+  const barBlur = new BlurLayer({ hexpand: true, vexpand: true, canTarget: false });
+  const overlayBlur = new BlurLayer({ hexpand: true, vexpand: true, canTarget: false });
+  const overlayContainer = new Gtk.Overlay();
+  overlayContainer.set_child(overlayBlur);
+  const overlayWebViewRef = ref<WebKit.WebView | null>(null);
 
   const getAnyLivingBridge = () => barBridgeRef.current;
 
   /* Bar States */
   const shouldAutohideBar = config().bar.autohide;
-  // The same per-surface data also registers blur areas for a future GTK blur layer.
   const renderAreas = { bar: [] as RenderArea[], overlay: [] as RenderArea[] };
   const updateInputRegion = (kind: 'bar' | 'overlay') => {
     const window = kind === 'bar' ? barWindowRef.current : overlayWindowRef.current;
     window?.get_surface()?.set_input_region(inputRegionForAreas(renderAreas[kind]));
-    window?.queue_draw();
+    (kind === 'bar' ? barBlur : overlayBlur).setAreas(renderAreas[kind]);
   };
 
   const updateBarIsHidden = (nextIsHidden: boolean) => {
@@ -77,6 +82,7 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
     });
 
     window.add_controller(eventController);
+    window.set_child(overlayContainer);
     overlayWindowRef(window);
   };
 
@@ -101,7 +107,11 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
     if (items.length === 0) {
       renderAreas.overlay = [];
       overlayWindowRef.current?.hide();
-      overlayWindowRef.current?.set_child(null);
+      if (overlayWebViewRef.current) {
+        overlayContainer.remove_overlay(overlayWebViewRef.current);
+        overlayWebViewRef(null);
+      }
+      overlayBlur.setAreas([]);
       overlayBridgeRef.current?.zygoteRelease({ id: 'overlay' });
       overlayBridgeRef.current = null;
     }
@@ -136,30 +146,35 @@ export const MdApp = ({ monitor }: { monitor: Gdk.Monitor }) => {
       onRealize={() => updateInputRegion('bar')}
       defaultHeight={BAR_HEIGHT_MAXIMIZED}
     >
-      <MdWebView
-        initParams={{ kind: 'status-bar', params: { monitor: monitor.connector ?? '' } }}
-        onCreateChild={({ self, navigationAction }) => {
-          const navigationURI = navigationAction.get_request().get_uri();
-          const forkId = navigationURI.match(/\?(.*)$/)?.at(1);
-          const targetWindow = match(forkId)
-            .with('overlay', () => overlayWindowRef.current)
-            .otherwise(() => null);
+      <overlay>
+        {barBlur}
+        <MdWebView
+          $type="overlay"
+          initParams={{ kind: 'status-bar', params: { monitor: monitor.connector ?? '' } }}
+          onCreateChild={({ self, navigationAction }) => {
+            const navigationURI = navigationAction.get_request().get_uri();
+            const forkId = navigationURI.match(/\?(.*)$/)?.at(1);
+            const targetWindow = match(forkId)
+              .with('overlay', () => overlayWindowRef.current)
+              .otherwise(() => null);
 
-          if (targetWindow) {
-            const webView = new WebKit.WebView({
-              hexpand: true,
-              vexpand: true,
-              relatedView: self,
-            });
-            targetWindow.set_child(webView);
-            return webView;
-          }
+            if (targetWindow) {
+              const webView = new WebKit.WebView({
+                hexpand: true,
+                vexpand: true,
+                relatedView: self,
+              });
+              overlayWebViewRef(webView);
+              overlayContainer.add_overlay(webView);
+              return webView;
+            }
 
-          return null;
-        }}
-        bridge={bridge}
-        setupBridge={barBridgeRef}
-      />
+            return null;
+          }}
+          bridge={bridge}
+          setupBridge={barBridgeRef}
+        />
+      </overlay>
     </window>,
     <window
       visible={false}

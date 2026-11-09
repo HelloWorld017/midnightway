@@ -81,7 +81,17 @@ const measure = (entry: AreaEntry, ownerWindow: Window): RenderAreaBounds | null
     ),
   );
 
-  return { x, y, width, height, radiusX, radiusY, input: true, blur: entry.kind === 'default' };
+  return {
+    x: rect.left,
+    y: rect.top,
+    width: rect.width,
+    height: rect.height,
+    radiusX,
+    radiusY,
+    clipBounds: { x, y, width, height },
+    input: true,
+    blur: entry.kind === 'default',
+  };
 };
 
 export const RenderAreaProvider = ({
