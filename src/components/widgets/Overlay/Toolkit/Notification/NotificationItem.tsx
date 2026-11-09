@@ -3,6 +3,7 @@ import { repo } from '@/bridge/repository';
 import { useInvokeRepo } from '@/hooks/useRepo';
 import { useSanitizeHTML } from '@/hooks/useSanitizeHTML';
 import { formatDistanceToNow } from 'date-fns';
+import { useRef, useState } from 'react';
 import * as styles from './NotificationItem.css';
 import type { BridgeRepository } from '@/bridge/types';
 
@@ -10,15 +11,32 @@ type Notification = BridgeRepository['notification']['notifications'][number];
 export type NotificationItemProps = {
   className?: string;
   compact?: boolean;
+  onExpandActions?: () => void;
   item: Pick<
     Notification,
     'id' | 'appName' | 'time' | 'summary' | 'body' | 'image' | 'category'
   > & { actions: Pick<Notification['actions'][number], 'id' | 'label'>[] };
 };
 
-export const NotificationItem = ({ className, item, compact = false }: NotificationItemProps) => {
+export const NotificationItem = ({
+  className,
+  item,
+  compact = false,
+  onExpandActions,
+}: NotificationItemProps) => {
   const invoke = useInvokeRepo();
   const bodyMarkup = useSanitizeHTML(item?.body ?? '');
+  const [actionsExpanded, setActionsExpanded] = useState(false);
+  const focusActionRef = useRef(false);
+  const hasActions = !!item.actions?.length;
+  const canExpandActions = compact && hasActions;
+
+  const expandActions = () => {
+    if (canExpandActions && !actionsExpanded) {
+      setActionsExpanded(true);
+      onExpandActions?.();
+    }
+  };
 
   const onAction = (actionId: string) => {
     const action = repo.notification
@@ -38,6 +56,18 @@ export const NotificationItem = ({ className, item, compact = false }: Notificat
 
   return (
     <div css={styles.containerStyle} className={className}>
+      {canExpandActions && !actionsExpanded && (
+        <button
+          type="button"
+          css={styles.expandActionsStyle}
+          aria-label="Show notification actions"
+          aria-expanded={false}
+          onClick={event => {
+            focusActionRef.current = event.detail === 0;
+            expandActions();
+          }}
+        />
+      )}
       <div css={styles.headerStyle}>
         <div css={styles.headerTextContainerStyle}>
           <span css={styles.headerTextStyle}>{item.appName}</span>
@@ -55,13 +85,19 @@ export const NotificationItem = ({ className, item, compact = false }: Notificat
           <p css={[styles.descriptionStyle, compact && styles.lineClampStyle(4)]} {...bodyMarkup} />
         </div>
       </div>
-      {!!item.actions?.length && (
+      {hasActions && (!compact || actionsExpanded) && (
         <div css={styles.actionsStyle}>
-          {item.actions.map(action => (
+          {item.actions.map((action, index) => (
             <button
               key={action.id}
               css={styles.actionStyle}
               type="button"
+              ref={element => {
+                if (index === 0 && element && focusActionRef.current) {
+                  focusActionRef.current = false;
+                  element.focus();
+                }
+              }}
               onClick={() => onAction(action.id)}
             >
               {action.label}

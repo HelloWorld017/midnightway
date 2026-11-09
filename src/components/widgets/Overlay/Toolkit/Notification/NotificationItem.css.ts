@@ -3,11 +3,26 @@ import { css } from '@emotion/react';
 import type { Theme } from '@emotion/react';
 
 export const containerStyle = (theme: Theme) => css`
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1.6rem;
   border-radius: 1.6rem;
   background: ${theme.surface.bgSection};
+`;
+
+export const expandActionsStyle = (theme: Theme) => css`
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${theme.surface.fillPrimary};
+    outline-offset: -2px;
+  }
 `;
 
 export const headerStyle = css`
@@ -40,6 +55,8 @@ export const headerDividerStyle = (theme: Theme) => css`
 `;
 
 export const dismissStyle = (theme: Theme) => css`
+  position: relative;
+  z-index: 2;
   cursor: pointer;
   margin-left: auto;
   margin-top: -0.4rem;
@@ -90,6 +107,11 @@ export const descriptionStyle = (theme: Theme) => css`
   line-height: 1.2rem;
   letter-spacing: -0.02em;
   white-space: pre-line;
+
+  a {
+    position: relative;
+    z-index: 2;
+  }
 `;
 
 export const lineClampStyle = (lines: number) => css`

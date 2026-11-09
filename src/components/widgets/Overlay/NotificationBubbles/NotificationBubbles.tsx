@@ -22,6 +22,7 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
   const activeBubblesRef = useRef(new Set<number>());
   const [visibleBubbles, setVisibleBubbles] = useState(() => new Set<number>());
   const visibleBubblesRef = useLatestRef(visibleBubbles);
+  const [, setLayoutVersion] = useState(0);
 
   const bubbles = useMemo(
     () => state.ids.flatMap(id => notifications?.filter(item => item.id === id) ?? []),
@@ -114,7 +115,12 @@ export const NotificationBubbles = ({ state }: { state: NotificationBubblesState
               }}
             >
               <RenderArea kind={visibleBubbles.has(item.id) ? 'default' : 'input'} radius="1.6rem">
-                <NotificationItem css={styles.bubbleItemStyle} item={item} compact />
+                <NotificationItem
+                  css={styles.bubbleItemStyle}
+                  item={item}
+                  compact
+                  onExpandActions={() => setLayoutVersion(version => version + 1)}
+                />
               </RenderArea>
             </div>
           </AnimatedRenderArea>
