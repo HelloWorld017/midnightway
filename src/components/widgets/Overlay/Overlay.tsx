@@ -9,6 +9,7 @@ import {
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 import { NotificationBubbles } from './NotificationBubbles';
+import * as styles from './Overlay.css';
 import { Toolkit } from './Toolkit';
 import type { OverlayItem } from '@/repository/overlay';
 
@@ -90,6 +91,7 @@ export const Overlay = () => {
       {transitions((style, { item }, transition) => (
         <animated.div
           inert={item.kind === 'toolkit' && (transition.phase as string) === 'leave'}
+          css={styles.overlayStyle}
           style={{
             ...style,
             pointerEvents:

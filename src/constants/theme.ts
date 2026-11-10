@@ -44,8 +44,8 @@ export const DEFAULT_THEME = {
       fillHighlightText: 'rgba(0, 0, 0, .5)',
     },
     floating: {
-      bgBase: 'rgba(45, 45, 45, .9)',
-      bgBackdrop: 'rgba(45, 45, 45, .6)',
+      bgBase: 'rgba(36, 36, 36, .9)',
+      bgBackdrop: 'rgba(36, 36, 36, .6)',
       bgOverlay: '#202020',
       bgElevated: 'rgba(255, 255, 255, .1)',
       bgElevatedHover: 'rgba(255, 255, 255, .15)',

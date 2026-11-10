@@ -19,7 +19,7 @@ const popups: Record<ToolkitKind, { component: ComponentType<{ width: string }>;
   {
     'main': { component: Main, width: 40 },
     'sound': { component: Sound, width: 30 },
-    'tray': { component: Tray, width: 30 },
+    'tray': { component: Tray, width: 20 },
     'notifications': { component: Notifications, width: 36 },
     'power-menu': { component: PowerMenuPopup, width: 20 },
   };
