@@ -12,7 +12,7 @@ import { match } from 'ts-pattern';
 import * as styles from './TrayItem.css';
 import type { MouseEvent } from 'react';
 
-export const TrayItem = ({ id }: { id: string }) => {
+export const TrayItem = ({ id, className }: { id: string; className?: string }) => {
   const tray = useRepo(
     repo.tray.$invokeMethod('get_item', id).$pick('title', 'id', 'iconName', 'isMenu'),
   );
@@ -92,9 +92,11 @@ export const TrayItem = ({ id }: { id: string }) => {
 
   return (
     <button
+      className={className}
       css={styles.trayStyle}
       type="button"
       onClick={onClick}
+      onDoubleClick={onClick}
       onContextMenu={onClick}
       title={trayTooltip?.description}
     >

@@ -58,6 +58,7 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
           />
         )}
         <RenderArea
+          data-status-bar=""
           css={styles.statusBarStyle(isIdle, isBarHidden)}
           kind={
             !isIdle && !isIdleDebounced && !(isBarHidden && isBarHiddenDebounced)

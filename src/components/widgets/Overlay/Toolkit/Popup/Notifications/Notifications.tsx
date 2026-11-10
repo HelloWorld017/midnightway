@@ -1,8 +1,8 @@
 import { NotificationSection } from '../../Notification/Notification';
-import * as styles from '../popup.css';
+import * as styles from '../index.css';
 
-export const Notifications = () => (
-  <div css={styles.popupStyle('36rem')}>
+export const Notifications = ({ width }: { width: string }) => (
+  <div css={styles.popupStyle(width)}>
     <NotificationSection />
   </div>
 );

@@ -15,11 +15,11 @@ const tabs = {
   'notification': { icon: <IconBell strokeWidth={2.5} />, element: <Notification /> },
 };
 
-export const Main = () => {
+export const Main = ({ width }: { width: string }) => {
   const [tab, setTab] = useState<keyof typeof tabs>('calendar');
 
   return (
-    <div css={styles.mainStyle}>
+    <div css={styles.mainStyle(width)}>
       <aside css={styles.asideStyle}>
         {(Object.keys(tabs) as (keyof typeof tabs)[]).map(key => (
           <button

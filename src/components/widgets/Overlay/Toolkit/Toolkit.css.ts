@@ -9,7 +9,7 @@ const enterKeyframe = keyframes`
 
 export const backdropStyle = (theme: Theme) => css`
   position: absolute;
-  inset: 6rem 0 0;
+  inset: 0;
   background: ${theme.colors.glass.bgBase};
 `;
 
@@ -17,7 +17,7 @@ export const toolkitStyle = (theme: Theme) => css`
   position: absolute;
   overflow: hidden;
   background: ${theme.surface.bgBase};
-  transition: ${transition(theme, ['left', 'top', 'border-radius'])};
+  transition: ${transition.multiplier(0.5)(theme, ['left', 'top', 'border-radius'])};
   transform: translateX(-50%);
 
   animation-name: ${enterKeyframe};
@@ -27,8 +27,8 @@ export const toolkitStyle = (theme: Theme) => css`
   animation-fill-mode: forwards;
 `;
 
-export const mainStyle = css`
-  width: min(40rem, calc(100vw - 2rem));
+export const mainStyle = (width: string) => css`
+  width: min(${width}, calc(100vw - 2rem));
   height: min(40rem, calc(100vh - 7rem));
   display: flex;
   gap: 1rem;

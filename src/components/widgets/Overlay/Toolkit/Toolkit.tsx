@@ -13,37 +13,47 @@ import { Tray } from './Popup/Tray/Tray';
 import * as styles from './Toolkit.css';
 import { ToolkitPortalProvider } from './ToolkitPortalProvider';
 import type { ToolkitKind, ToolkitPopup } from '@/repository/overlay';
-import type { ReactNode } from 'react';
+import type { ComponentType } from 'react';
 
-const popups: Record<ToolkitKind, { element: ReactNode; halfWidth: string }> = {
-  'main': { element: <Main />, halfWidth: '20rem' },
-  'sound': { element: <Sound />, halfWidth: '15rem' },
-  'tray': { element: <Tray />, halfWidth: '15rem' },
-  'notifications': { element: <Notifications />, halfWidth: '18rem' },
-  'power-menu': { element: <PowerMenuPopup />, halfWidth: '10rem' },
-};
+const popups: Record<ToolkitKind, { component: ComponentType<{ width: string }>; width: number }> =
+  {
+    'main': { component: Main, width: 40 },
+    'sound': { component: Sound, width: 30 },
+    'tray': { component: Tray, width: 30 },
+    'notifications': { component: Notifications, width: 36 },
+    'power-menu': { component: PowerMenuPopup, width: 20 },
+  };
 
 export const Toolkit = ({ popup, isLeaving }: { popup: ToolkitPopup; isLeaving: boolean }) => {
   const invoke = useInvokeRepo();
   const onClose = () => void invoke(repo.overlay.$invokeMethod('setToolkitPopup', null));
-  const halfWidth = `min(${popups[popup.kind].halfWidth}, 50vw - 1rem)`;
+  const { component: Popup, width } = popups[popup.kind];
+  const edgeOffset = `min(${width / 2}rem, 50vw - 1rem)`;
 
   return (
     <SurfaceProvider surface="floating">
       <ContextMenu>
-        <RenderArea kind="input" role="presentation" css={styles.backdropStyle} onClick={onClose} />
+        <RenderArea
+          kind="input"
+          role="presentation"
+          css={styles.backdropStyle}
+          style={{ top: `${popup.position.y - 4}px` }}
+          onClick={onClose}
+        />
         <RenderArea
           kind={isLeaving ? 'input' : 'default'}
           radius={popup.kind === 'main' ? '3rem' : '1.6rem'}
           css={styles.toolkitStyle}
           style={{
-            left: `clamp(calc(${halfWidth} + 1rem), ${popup.position.x}px, calc(100vw - ${halfWidth} - 1rem))`,
+            left: `clamp(calc(${edgeOffset} + 1rem), ${popup.position.x}px, calc(100vw - ${edgeOffset} - 1rem))`,
             top: `${popup.position.y}px`,
           }}
         >
           <ToolkitPortalProvider css={styles.innerPortalStyle}>
-            <SizeAnimated>
-              <Transition kind={popup.kind}>{popups[popup.kind].element}</Transition>
+            <SizeAnimated skipInitialAnimation>
+              <Transition kind={popup.kind}>
+                <Popup width={`${width}rem`} />
+              </Transition>
             </SizeAnimated>
           </ToolkitPortalProvider>
         </RenderArea>

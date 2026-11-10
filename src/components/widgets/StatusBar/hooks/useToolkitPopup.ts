@@ -7,13 +7,12 @@ export const useToolkitPopup = (kind: ToolkitKind) => {
   const invoke = useInvokeRepo();
   return (event: MouseEvent<HTMLElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    const rootSize = parseFloat(
-      getComputedStyle(event.currentTarget.ownerDocument.documentElement).fontSize,
-    );
+    const bar = event.currentTarget.closest('[data-status-bar]');
+    const barBottom = bar?.getBoundingClientRect().bottom ?? rect.bottom;
     void invoke(
       repo.overlay.$invokeMethod('toggleToolkitPopup', {
         kind,
-        position: { x: rect.left + rect.width / 2, y: Math.max(rect.bottom + 8, rootSize * 6) },
+        position: { x: rect.left + rect.width / 2, y: barBottom + 4 },
       }),
     );
   };

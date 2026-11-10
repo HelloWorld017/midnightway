@@ -79,11 +79,7 @@ export const musicHeaderArtistStyle = (isVisible: boolean) => (theme: Theme) =>
     opacity: ${+isVisible};
     visibility: ${isVisible ? 'visibile' : 'hidden'};
     transform: translateX(${isVisible ? '0' : '-2rem'});
-    transition: ${transition(
-      theme,
-      ['color', 'opacity', 'visibility', 'transform'],
-      isVisible ? 0.4 : 0,
-    )};
+    transition: ${transition.delay(isVisible ? 0.4 : 0)(theme, ['color', 'opacity', 'visibility', 'transform'])};
 
     display: block;
     flex: 1 1 0;
@@ -105,7 +101,7 @@ export const musicArtistStyle = (isVisible: boolean) => (theme: Theme) =>
     opacity: ${+isVisible};
     visibility: ${isVisible ? 'visibile' : 'hidden'};
     transform: translateY(${isVisible ? '0' : '-100%'});
-    transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.2)};
+    transition: ${transition.delay(0.2)(theme, ['color', 'opacity', 'visibility', 'transform'])};
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

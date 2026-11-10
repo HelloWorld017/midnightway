@@ -56,7 +56,7 @@ export const weatherConditionStyle = (isVisible: boolean) => (theme: Theme) =>
     opacity: ${+isVisible};
     visibility: ${isVisible ? 'visibile' : 'hidden'};
     transform: translateY(${isVisible ? '0' : '-100%'});
-    transition: ${transition(theme, ['color', 'opacity', 'visibility', 'transform'], 0.4)};
+    transition: ${transition.delay(0.4)(theme, ['color', 'opacity', 'visibility', 'transform'])};
     white-space: nowrap;
   `;
 

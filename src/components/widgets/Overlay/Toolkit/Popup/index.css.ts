@@ -8,6 +8,23 @@ export const popupStyle = (width: string) => css`
   padding: 1.2rem;
 `;
 
+export const trayListStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  list-style: none;
+`;
+
+export const trayItemStyle = (theme: Theme) => css`
+  width: 100%;
+  max-width: none;
+  padding: 0.8rem 1rem;
+
+  &:hover {
+    background: ${theme.surface.bgElevatedHover};
+  }
+`;
+
 export const emptyStyle = (theme: Theme) => css`
   color: ${theme.surface.fillSecondary};
   font-family: ${theme.fonts.content};
