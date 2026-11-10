@@ -25,6 +25,7 @@ export const toolkitStyle = (theme: Theme) => css`
   animation-timing-function: ${theme.easings.opacity.easing};
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
+  z-index: 2;
 `;
 
 export const mainStyle = (width: string) => css`

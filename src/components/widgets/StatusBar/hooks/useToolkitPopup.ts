@@ -6,6 +6,7 @@ import type { MouseEvent } from 'react';
 export const useToolkitPopup = (kind: ToolkitKind, anchor: ToolkitPopup['anchor']) => {
   const invoke = useInvokeRepo();
   return (event: MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
     const rect = event.currentTarget.getBoundingClientRect();
     const bar = event.currentTarget.closest('[data-status-bar]');
     const barBottom = bar?.getBoundingClientRect().bottom ?? rect.bottom;

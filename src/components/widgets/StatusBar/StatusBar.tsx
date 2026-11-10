@@ -4,7 +4,7 @@ import { RenderArea } from '@/components/common/RenderArea';
 import { SurfaceProvider } from '@/components/common/ThemeProvider';
 import { config } from '@/config';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { useRepo } from '@/hooks/useRepo';
+import { useInvokeRepo, useRepo } from '@/hooks/useRepo';
 import { useEffect, useMemo, useState } from 'react';
 import { Clock } from './Clock';
 import { LeftBar } from './LeftBar';
@@ -17,6 +17,7 @@ type StatusBarProps = {
 };
 
 export const StatusBar = ({ monitorName }: StatusBarProps) => {
+  const invoke = useInvokeRepo();
   const focusedWorkspaceId = useRepo(repo.hyprland.focusedWorkspace.id);
   const focusedWorkspaceClients = useRepo(repo.hyprland.focusedWorkspace.clients.length);
   const activeWorkspace = useRepo(
@@ -37,6 +38,13 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
   const surface: SurfaceKind = isIdle ? 'overlay' : 'glass';
   const isBarHidden = isHidden && !isIdle && !isToolkitOpen;
   const isBarHiddenDebounced = useDebouncedValue(isBarHidden, { delay: 100 });
+  const shouldBlur = !isIdle && !isIdleDebounced && !(isBarHidden && isBarHiddenDebounced);
+
+  const onClick = () => {
+    if (isToolkitOpen) {
+      void invoke(repo.overlay.$invokeMethod('setToolkitPopup', null));
+    }
+  };
 
   useEffect(
     () =>
@@ -59,12 +67,10 @@ export const StatusBar = ({ monitorName }: StatusBarProps) => {
         )}
         <RenderArea
           data-status-bar=""
+          role="presentation"
           css={styles.statusBarStyle(isIdle, isBarHidden)}
-          kind={
-            !isIdle && !isIdleDebounced && !(isBarHidden && isBarHiddenDebounced)
-              ? 'default'
-              : 'clip'
-          }
+          kind={shouldBlur ? 'default' : isToolkitOpen ? 'input' : 'clip'}
+          onClick={onClick}
         >
           <LeftBar activeWorkspace={activeWorkspace} isIdle={isIdle} />
           <Clock isIdle={isIdle} />
