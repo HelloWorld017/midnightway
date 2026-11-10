@@ -7,7 +7,11 @@ export type OverlayItem =
   | { kind: 'notificationBubbles'; state: NotificationBubblesState };
 
 export type ToolkitKind = 'main' | 'sound' | 'tray' | 'notifications' | 'power-menu';
-export type ToolkitPopup = { kind: ToolkitKind; position: { x: number; y: number } };
+export type ToolkitPopup = {
+  kind: ToolkitKind;
+  anchor: 'left' | 'center' | 'right';
+  position: { x: number; y: number };
+};
 export type NotificationBubblesState = { ids: number[] };
 
 const BUBBLE_DURATION = 5000;

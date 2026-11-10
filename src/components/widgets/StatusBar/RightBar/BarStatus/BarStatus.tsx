@@ -30,7 +30,7 @@ type BarStatusItemSoundProps = { item: BarStatusItemType & { kind: 'sound' } };
 const BarStatusItemSound = ({ item }: BarStatusItemSoundProps) => {
   const volume = useRepo(repo.sound.defaultSpeaker.volume);
   const isMuted = useRepo(repo.sound.defaultSpeaker.mute);
-  const onClick = useToolkitPopup('sound');
+  const onClick = useToolkitPopup('sound', 'right');
 
   const IconVolume = match({ volume, isMuted })
     .with({ isMuted: true }, () => IconVolumeX)

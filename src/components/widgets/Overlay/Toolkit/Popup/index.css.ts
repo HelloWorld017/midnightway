@@ -3,7 +3,8 @@ import type { Theme } from '@emotion/react';
 
 export const popupStyle = (width: string) => css`
   width: min(${width}, calc(100vw - 2rem));
-  max-height: calc(100vh - 7rem);
+  max-height: calc(75vh - 7rem);
+  min-height: 35vh;
   overflow-y: auto;
   padding: 1.2rem;
 `;

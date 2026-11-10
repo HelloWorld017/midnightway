@@ -11,7 +11,7 @@ export const Clock = ({ isIdle }: { isIdle: boolean }) => {
   const time = useMemo(() => format(now, 'HH:mm:ss', { locale: locale().date }), [now]);
   const date = useMemo(() => format(now, 'MMM do (EEE)', { locale: locale().date }), [now]);
 
-  const openCalendar = useToolkitPopup('main');
+  const openCalendar = useToolkitPopup('main', 'center');
 
   return (
     <RenderArea css={styles.clockStyle(isIdle)} kind={isIdle ? 'input' : 'clip'}>

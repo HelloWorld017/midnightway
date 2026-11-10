@@ -3,7 +3,7 @@ import { useToolkitPopup } from '../hooks/useToolkitPopup';
 import * as styles from './BarPower.css';
 
 export const BarPower = () => {
-  const onClick = useToolkitPopup('power-menu');
+  const onClick = useToolkitPopup('power-menu', 'right');
   return (
     <button type="button" aria-label="Power menu" onClick={onClick}>
       <IconPower css={styles.powerIconStyle} />

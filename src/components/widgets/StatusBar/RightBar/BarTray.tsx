@@ -3,7 +3,7 @@ import { useToolkitPopup } from '../hooks/useToolkitPopup';
 import * as styles from './BarTray.css';
 
 export const BarTray = () => {
-  const onClick = useToolkitPopup('tray');
+  const onClick = useToolkitPopup('tray', 'right');
   return (
     <button type="button" aria-label="System tray" onClick={onClick}>
       <IconStatusTray css={styles.trayIconStyle} />

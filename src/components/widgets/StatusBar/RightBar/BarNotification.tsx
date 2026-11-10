@@ -6,7 +6,7 @@ import * as styles from './BarNotification.css';
 
 export const BarNotification = () => {
   const notificationLength = useRepo(repo.notification.notifications.length);
-  const onClick = useToolkitPopup('notifications');
+  const onClick = useToolkitPopup('notifications', 'right');
   return (
     <button
       css={styles.notificationIconStyle(!!notificationLength)}
